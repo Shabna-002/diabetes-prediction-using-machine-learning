@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diabetes Prediction Using Machine Learning - Project Documentation</title>
+  <style>
+    @media print {
+      body { font-size: 11pt; line-height: 1.5; color: #000; }
+      .page-break { page-break-before: always; }
+      .no-print { display: none; }
+      a { text-decoration: none; color: #000; }
+    }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #2D3748;
+      background-color: #F7FAFC;
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .document-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      padding: 60px 80px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+    }
+    h1, h2, h3, h4 { color: #1A202C; font-weight: 700; }
+    h1 { font-size: 24pt; border-bottom: 2px solid #3182CE; padding-bottom: 12px; margin-top: 0; }
+    h2 { font-size: 16pt; margin-top: 36px; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; color: #2B6CB0; }
+    h3 { font-size: 13pt; margin-top: 20px; }
+    p, li { font-size: 11pt; text-align: justify; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 10pt; }
+    th, td { border: 1px solid #CBD5E0; padding: 10px 12px; text-align: left; }
+    th { background-color: #EDF2F7; font-weight: 600; color: #2D3748; }
+    tr:nth-child(even) { background-color: #F7FAFC; }
+    .highlight-badge { background: #EBF8FF; color: #2B6CB0; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 9pt; }
+    .abstract-box { background-color: #F7FAFC; border-left: 4px solid #3182CE; padding: 18px 24px; margin: 24px 0; border-radius: 0 6px 6px 0; font-style: italic; }
+    .code-block { background: #1A202C; color: #EDF2F7; padding: 14px 18px; border-radius: 6px; font-family: Consolas, monospace; font-size: 9.5pt; overflow-x: auto; }
+    .print-btn { background: #3182CE; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; float: right; }
+    .print-btn:hover { background: #2B6CB0; }
+  </style>
+</head>
+<body>
+
+<div class="document-container">
+  <button class="print-btn no-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  
+  <div style="text-align: center; margin-bottom: 50px;">
+    <div style="font-size: 14pt; font-weight: 600; color: #718096; letter-spacing: 1px;">ACADEMIC PROJECT REPORT</div>
+    <h1 style="font-size: 26pt; margin: 15px 0; color: #2B6CB0; border: none;">DIABETES PREDICTION USING MACHINE LEARNING</h1>
+    <div style="font-size: 12pt; color: #4A5568; font-weight: 500;">Clinical Risk Stratification via 5-Fold Stratified Cross-Validation & Weighted Soft Voting Ensembling</div>
+  </div>
+
+  <h2>1. Clinical Diagnostic Features</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th>Type</th>
+        <th>Unit</th>
+        <th>Clinical Significance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Pregnancies</strong></td>
+        <td>Discrete</td>
+        <td>Count</td>
+        <td>Number of pregnancies; correlated with gestational diabetes history.</td>
+      </tr>
+      <tr>
+        <td><strong>Glucose</strong></td>
+        <td>Continuous</td>
+        <td>mg/dL</td>
+        <td>2-hour plasma glucose from Oral Glucose Tolerance Test (Primary biomarker).</td>
+      </tr>
+      <tr>
+        <td><strong>BloodPressure</strong></td>
+        <td>Continuous</td>
+        <td>mm Hg</td>
+        <td>Diastolic blood pressure; metric for hypertension and vascular health.</td>
+      </tr>
+      <tr>
+        <td><strong>SkinThickness</strong></td>
+        <td>Continuous</td>
+        <td>mm</td>
+        <td>Triceps skinfold thickness; estimator of subcutaneous body fat.</td>
+      </tr>
+      <tr>
+        <td><strong>Insulin</strong></td>
+        <td>Continuous</td>
+        <td>μU/mL</td>
+        <td>2-hour serum insulin; measures beta-cell function and insulin resistance.</td>
+      </tr>
+      <tr>
+        <td><strong>BMI</strong></td>
+        <td>Continuous</td>
+        <td>kg/m²</td>
+        <td>Body Mass Index; key metric for obesity (BMI ≥ 30 indicates high risk).</td>
+      </tr>
+      <tr>
+        <td><strong>DiabetesPedigree</strong></td>
+        <td>Continuous</td>
+        <td>Score</td>
+        <td>Family history genetic score quantifying hereditary predisposition.</td>
+      </tr>
+      <tr>
+        <td><strong>Age</strong></td>
+        <td>Continuous</td>
+        <td>Years</td>
+        <td>Chronological age; type 2 diabetes prevalence rises significantly with age.</td>
+      </tr>
+      <tr>
+        <td><strong>Outcome</strong></td>
+        <td>Binary</td>
+        <td>{0, 1}</td>
+        <td>Ground truth target: 0 (Non-Diabetic), 1 (Diabetic).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. Mathematical Formulation</h2>
+  <p><strong>1. Biological Zero Handling & Median Imputation:</strong></p>
+  <p>In living humans, measurements for Glucose, Blood Pressure, Skin Thickness, Insulin, and BMI cannot be zero. Zeroes indicate unrecorded observations and are imputed using median values to preserve feature distributions:</p>
+  <div class="code-block">
+    Imputed(x) = median(x) if x == 0 or null, else x
+  </div>
+
+  <p><strong>2. Interquartile Range (IQR) Outlier Mitigation:</strong></p>
+  <div class="code-block">
+    IQR = Q3 - Q1
+    Bounds = [Q1 - 1.5 * IQR,  Q3 + 1.5 * IQR]
+  </div>
+
+  <p><strong>3. Feature Normalization (Z-Score Standardization):</strong></p>
+  <div class="code-block">
+    Z = (x - μ) / σ  (Computed strictly on training fold to prevent data leakage)
+  </div>
+
+  <p><strong>4. Weighted Soft Voting Ensemble (Proposed Model):</strong></p>
+  <div class="code-block">
+    P_en(i) = Σ [ W_j * P_ij ] / Σ Σ [ W_j * P_ij ]
+    Where W_j = Cross-Validated ROC-AUC score of Classifier j
+  </div>
+
+  <h2>4. Experimental Benchmark Results (Held-out Test Set, N=154)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Classifier Architecture</th>
+        <th>CV Accuracy</th>
+        <th>CV ROC-AUC</th>
+        <th>Test Accuracy</th>
+        <th>Test Precision</th>
+        <th>Test Recall</th>
+        <th>Test Specificity</th>
+        <th>Test ROC-AUC</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>AdaBoost</strong></td>
+        <td>76.39%</td>
+        <td>0.8265</td>
+        <td><strong>75.32%</strong></td>
+        <td><strong>69.05%</strong></td>
+        <td>53.70%</td>
+        <td><strong>87.00%</strong></td>
+        <td><strong>0.8262</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Gradient Boosting</strong></td>
+        <td>74.59%</td>
+        <td>0.8123</td>
+        <td>74.68%</td>
+        <td>67.44%</td>
+        <td>53.70%</td>
+        <td>86.00%</td>
+        <td>0.8185</td>
+      </tr>
+      <tr style="background: #EBF8FF; font-weight: bold;">
+        <td>Weighted Soft Voting (Proposed)</td>
+        <td>77.03%</td>
+        <td>0.8402</td>
+        <td>73.38%</td>
+        <td>64.44%</td>
+        <td>53.70%</td>
+        <td>84.00%</td>
+        <td>0.8170</td>
+      </tr>
+      <tr>
+        <td><strong>Random Forest</strong></td>
+        <td>77.04%</td>
+        <td>0.8309</td>
+        <td>74.03%</td>
+        <td>67.50%</td>
+        <td>50.00%</td>
+        <td>87.00%</td>
+        <td>0.8169</td>
+      </tr>
+      <tr>
+        <td><strong>Stacking Classifier</strong></td>
+        <td>77.69%</td>
+        <td>0.8473</td>
+        <td>72.08%</td>
+        <td>62.22%</td>
+        <td>51.85%</td>
+        <td>83.00%</td>
+        <td>0.8135</td>
+      </tr>
+      <tr>
+        <td><strong>Support Vector Machine (SVM)</strong></td>
+        <td>78.34%</td>
+        <td>0.8370</td>
+        <td>73.38%</td>
+        <td>64.44%</td>
+        <td>53.70%</td>
+        <td>84.00%</td>
+        <td>0.8096</td>
+      </tr>
+      <tr>
+        <td><strong>Logistic Regression</strong></td>
+        <td>78.34%</td>
+        <td>0.8496</td>
+        <td>71.43%</td>
+        <td>60.87%</td>
+        <td>51.85%</td>
+        <td>82.00%</td>
+        <td>0.8085</td>
+      </tr>
+      <tr>
+        <td><strong>Decision Tree</strong></td>
+        <td>71.82%</td>
+        <td>0.7534</td>
+        <td>76.62%</td>
+        <td>64.52%</td>
+        <td>74.07%</td>
+        <td>78.00%</td>
+        <td>0.7932</td>
+      </tr>
+      <tr>
+        <td><strong>K-Nearest Neighbors</strong></td>
+        <td>75.40%</td>
+        <td>0.8040</td>
+        <td>75.32%</td>
+        <td>66.67%</td>
+        <td>59.26%</td>
+        <td>84.00%</td>
+        <td>0.7904</td>
+      </tr>
+      <tr>
+        <td><strong>Naive Bayes</strong></td>
+        <td>77.03%</td>
+        <td>0.8400</td>
+        <td>70.78%</td>
+        <td>57.89%</td>
+        <td>61.11%</td>
+        <td>76.00%</td>
+        <td>0.7935</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5. System Architecture & Execution</h2>
+  <p>The system is packaged in standard modular form with full CLI and Web GUI capabilities:</p>
+  <ul>
+    <li><strong>Interactive Web App</strong>: Launch via <code>run_app.bat</code> or <code>py -3.10 -m streamlit run app.py</code> (Accessible at <code>http://localhost:8501</code>).</li>
+    <li><strong>Full Pipeline Training & Evaluation</strong>: Run via <code>run_pipeline.bat</code> or <code>py -3.10 main.py --mode all</code>.</li>
+    <li><strong>Patient CLI Prediction</strong>: <code>py -3.10 predict.py --glucose 150 --bmi 32.5 --age 45</code>.</li>
+    <li><strong>Automated Unit Tests</strong>: <code>py -3.10 -m unittest discover -s tests -p "test_*.py" -v</code>.</li>
+  </ul>
+
+  <h2>6. References</h2>
+  <ol>
+    <li>Hasan, M. K., Alam, M. A., Das, D., Hossain, E., & Hasan, M. (2020). <em>Diabetes Prediction Using Ensembling of Different Machine Learning Classifiers</em>. IEEE Access, 8, 76516-76531.</li>
+    <li>Smith, J. W., Everhart, J. E., Dickson, W. C., Knowler, W. C., & Johannes, R. S. (1988). <em>Using the ADAP learning algorithm to forecast the onset of diabetes mellitus</em>. Proc. Annual Symposium on Computer Application in Medical Care.</li>
+  </ol>
+</div>
+
+</body>
+</html>
