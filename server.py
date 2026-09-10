@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'src'))
 from predict import load_artifacts, preprocess_patient
 from data_preprocessing import FEATURE_NAMES
 
-PORT = 5000
+PORT = int(os.environ.get("PORT", 5000))
 WEB_DIR = os.path.join(BASE_DIR, 'website')
 
 # Cache model artifacts at startup
@@ -283,7 +283,7 @@ except ImportError:
 
 def run_server():
     os.makedirs(WEB_DIR, exist_ok=True)
-    server_address = ('', PORT)
+    server_address = ('0.0.0.0', PORT)
     httpd = DefaultHTTPServer(server_address, DiabetesRequestHandler)
     print("=" * 65)
     print(f" Diabetes ML Clinical Decision Portal Running Successfully!")
