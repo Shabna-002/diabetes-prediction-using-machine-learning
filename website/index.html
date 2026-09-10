@@ -43,6 +43,66 @@
       body { background: #fff !important; color: #000 !important; }
       .print-shadow-none { box-shadow: none !important; border: 1px solid #ddd !important; }
     }
+    body {
+      background: linear-gradient(-45deg, #f0f9ff, #f8fafc, #ecfdf5, #f5f3ff, #f0f9ff);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      position: relative;
+      overflow-x: hidden;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      z-index: -2;
+      pointer-events: none;
+      animation: floatOrb 22s infinite alternate ease-in-out;
+    }
+    .orb-1 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #38bdf8, #0284c7);
+      top: -120px;
+      left: -100px;
+    }
+    .orb-2 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #34d399, #059669);
+      bottom: 5%;
+      right: -140px;
+      animation-duration: 28s;
+      animation-delay: -7s;
+    }
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #a78bfa, #6366f1);
+      top: 45%;
+      left: 30%;
+      animation-duration: 25s;
+      animation-delay: -12s;
+    }
+    @keyframes floatOrb {
+      0% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(50px, 70px) scale(1.1); }
+      100% { transform: translate(-30px, -40px) scale(0.95); }
+    }
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
     input[type=range] {
       accent-color: #0284c7;
     }
@@ -51,7 +111,13 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- ANIMATED BACKGROUND ELEMENTS -->
+  <div class="orb orb-1 no-print"></div>
+  <div class="orb orb-2 no-print"></div>
+  <div class="orb orb-3 no-print"></div>
+  <canvas id="bgCanvas" class="no-print"></canvas>
 
   <!-- NAVBAR -->
   <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
@@ -839,7 +905,75 @@
     window.addEventListener('DOMContentLoaded', () => {
       loadBenchmarks();
       loadPreset('healthy');
+      initAnimatedBackground();
     });
+
+    // Medical / Neural Network Particle Animation
+    function initAnimatedBackground() {
+      const canvas = document.getElementById('bgCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = (canvas.width = window.innerWidth);
+      let height = (canvas.height = window.innerHeight);
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = [];
+      const count = Math.min(55, Math.max(25, Math.floor((width * height) / 28000)));
+      const colors = ['rgba(2, 132, 199, 0.45)', 'rgba(16, 185, 129, 0.45)', 'rgba(99, 102, 241, 0.35)', 'rgba(14, 165, 233, 0.4)'];
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.6,
+          r: Math.random() * 2.2 + 1.2,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Connecting lines between nodes
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 125) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(14, 165, 233, ${0.16 * (1 - dist / 125)})`;
+              ctx.lineWidth = 0.75;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Particle nodes
+        for (let p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+        }
+
+        requestAnimationFrame(render);
+      }
+      render();
+    }
   </script>
 </body>
 </html>
