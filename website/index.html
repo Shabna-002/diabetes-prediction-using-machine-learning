@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Diabetes Prediction Using Machine Learning | Clinical Decision Portal</title>
+  <title>DiaPredict AI | Clinical Diabetes Decision Support System</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -15,8 +21,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+          },
           colors: {
             brand: {
               50: '#f0f9ff',
@@ -44,11 +54,20 @@
       .print-shadow-none { box-shadow: none !important; border: 1px solid #ddd !important; }
     }
     body {
-      background: linear-gradient(-45deg, #f0f9ff, #f8fafc, #ecfdf5, #f5f3ff, #f0f9ff);
-      background-size: 400% 400%;
-      animation: gradientShift 20s ease infinite;
+      font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+      transition: background-color 0.4s ease, color 0.4s ease;
       position: relative;
       overflow-x: hidden;
+    }
+    .bg-gradient-light {
+      background: linear-gradient(-45deg, #f0f9ff, #f8fafc, #ecfdf5, #f5f3ff, #f0f9ff);
+      background-size: 400% 400%;
+      animation: gradientShift 22s ease infinite;
+    }
+    .dark .bg-gradient-dark {
+      background: linear-gradient(-45deg, #030712, #0b1329, #081a29, #0f172a, #030712);
+      background-size: 400% 400%;
+      animation: gradientShift 22s ease infinite;
     }
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -63,17 +82,22 @@
       z-index: -2;
       pointer-events: none;
       animation: floatOrb 22s infinite alternate ease-in-out;
+      transition: opacity 0.5s ease;
+    }
+    .dark .orb {
+      opacity: 0.22;
+      filter: blur(95px);
     }
     .orb-1 {
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, #38bdf8, #0284c7);
-      top: -120px;
-      left: -100px;
-    }
-    .orb-2 {
       width: 520px;
       height: 520px;
+      background: radial-gradient(circle, #38bdf8, #0284c7);
+      top: -140px;
+      left: -120px;
+    }
+    .orb-2 {
+      width: 540px;
+      height: 540px;
       background: radial-gradient(circle, #34d399, #059669);
       bottom: 5%;
       right: -140px;
@@ -81,8 +105,8 @@
       animation-delay: -7s;
     }
     .orb-3 {
-      width: 400px;
-      height: 400px;
+      width: 440px;
+      height: 440px;
       background: radial-gradient(circle, #a78bfa, #6366f1);
       top: 45%;
       left: 30%;
@@ -103,15 +127,109 @@
       z-index: -1;
       pointer-events: none;
     }
+    .glass-card {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 20px 45px -15px rgba(2, 132, 199, 0.08), 0 0 1px 1px rgba(255, 255, 255, 0.5) inset;
+      border-radius: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .dark .glass-card {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+    }
+    .glass-inner {
+      background: rgba(248, 250, 252, 0.7);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 1rem;
+      transition: all 0.2s ease;
+    }
+    .dark .glass-inner {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .clean-input {
+      border-radius: 0.75rem;
+      border: 1px solid #cbd5e1;
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f172a;
+      transition: all 0.2s ease;
+    }
+    .dark .clean-input {
+      border: 1px solid #334155;
+      background: rgba(30, 41, 59, 0.95);
+      color: #f8fafc;
+    }
+    .clean-input:focus {
+      outline: none;
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+    }
     input[type=range] {
-      accent-color: #0284c7;
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 9999px;
+      background: #e2e8f0;
+      outline: none;
+      transition: background 0.2s ease;
+    }
+    .dark input[type=range] {
+      background: #334155;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0284c7;
+      border: 2px solid #ffffff;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #0369a1;
+    }
+    .dark input[type=range]::-webkit-slider-thumb {
+      background: #38bdf8;
+      border-color: #0f172a;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
     .gauge-circle {
-      transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.5s ease;
+      transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+    }
+    .btn-shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0) 20%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 80%
+      );
+      transform: rotate(30deg) translate(-100%, -100%);
+      transition: transform 0.8s ease;
+    }
+    .btn-shimmer:hover::after {
+      transform: rotate(30deg) translate(100%, 100%);
     }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+<body class="bg-gradient-light dark:bg-gradient-dark text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans">
 
   <!-- ANIMATED BACKGROUND ELEMENTS -->
   <div class="orb orb-1 no-print"></div>
@@ -119,30 +237,59 @@
   <div class="orb orb-3 no-print"></div>
   <canvas id="bgCanvas" class="no-print"></canvas>
 
-  <!-- NAVBAR -->
-  <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
+  <!-- MODERN MEDICAL HEADER / NAVBAR -->
+  <nav class="backdrop-blur-xl bg-white/70 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-800/80 sticky top-0 z-50 transition-colors duration-300 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center text-xl shadow-md">
-            <i class="fa-solid fa-heart-pulse"></i>
+      <div class="flex justify-between h-20 items-center">
+        
+        <!-- Brand Identity -->
+        <div class="flex items-center space-x-3.5">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-teal-400 text-white flex items-center justify-center text-xl shadow-lg shadow-sky-500/25 relative group">
+            <i class="fa-solid fa-heart-pulse animate-pulse"></i>
+            <span class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900"></span>
           </div>
           <div>
-            <span class="text-xl font-bold tracking-tight text-slate-900">Dia<span class="text-sky-600">Predict</span> AI</span>
-            <span class="text-xs block text-slate-500 font-semibold">Clinical ML Decision Support</span>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                Dia<span class="bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">Predict</span>
+              </span>
+              <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded-md bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800/60">
+                AI Clinical v2.5
+              </span>
+            </div>
+            <span class="text-xs block text-slate-500 dark:text-slate-400 font-semibold tracking-tight">
+              Hospital Decision Support &amp; Risk Stratification
+            </span>
           </div>
         </div>
-        <div class="hidden md:flex space-x-8 text-sm font-semibold text-slate-600">
-          <a href="#calculator" class="hover:text-sky-600 transition">Clinical Predictor</a>
-          <a href="#benchmarks" class="hover:text-sky-600 transition">Model Benchmarks</a>
-          <a href="#batch" class="hover:text-sky-600 transition">Batch Screening</a>
+
+        <!-- Middle Nav Links -->
+        <div class="hidden md:flex items-center space-x-8 text-sm font-bold text-slate-600 dark:text-slate-300">
+          <a href="#calculator" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-stethoscope text-sky-500 text-xs"></i> Clinical Predictor
+          </a>
+          <a href="#benchmarks" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line text-indigo-500 text-xs"></i> Model Benchmarks
+          </a>
+          <a href="#batch" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-users text-teal-500 text-xs"></i> Batch Screening
+          </a>
         </div>
-        <div class="flex items-center space-x-3">
-          <button onclick="loadPreset('healthy')" class="text-xs px-3 py-1.5 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-700 font-semibold hover:bg-emerald-100 transition">
-            <i class="fa-solid fa-user-check mr-1"></i> Healthy Demo
+
+        <!-- Right Quick Actions & Dark Mode Toggle -->
+        <div class="flex items-center space-x-2.5">
+          <button onclick="loadPreset('healthy')" class="hidden sm:inline-flex text-xs px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-100 transition shadow-sm items-center gap-1.5">
+            <i class="fa-solid fa-user-check text-emerald-500"></i> Healthy Demo
           </button>
-          <button onclick="loadPreset('diabetic')" class="text-xs px-3 py-1.5 rounded-lg border border-rose-300 bg-rose-50 text-rose-700 font-semibold hover:bg-rose-100 transition">
-            <i class="fa-solid fa-triangle-exclamation mr-1"></i> High-Risk Demo
+          <button onclick="loadPreset('diabetic')" class="hidden sm:inline-flex text-xs px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800/80 bg-rose-50/80 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-100 transition shadow-sm items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> High-Risk Demo
+          </button>
+
+          <!-- Dark / Light Theme Toggle -->
+          <button id="themeToggleBtn" onclick="toggleTheme()" 
+                  class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center justify-center shadow-sm"
+                  title="Toggle Dark / Light Theme">
+            <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
           </button>
         </div>
       </div>
@@ -150,44 +297,57 @@
   </nav>
 
   <!-- HERO SECTION -->
-  <header class="bg-gradient-to-b from-sky-50 via-white to-slate-50 border-b border-slate-200 py-12 px-4 sm:px-6 lg:px-8 no-print">
-    <div class="max-w-5xl mx-auto text-center">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-100 border border-sky-200 text-sky-800 text-xs font-semibold mb-4">
-        <span class="w-2 h-2 rounded-full bg-sky-600 animate-pulse"></span>
-        Machine Learning Clinical Screening Tool
+  <header class="py-12 sm:py-14 px-4 sm:px-6 lg:px-8 text-center relative no-print">
+    <div class="max-w-4xl mx-auto space-y-4">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 dark:bg-sky-950/80 border border-sky-200 dark:border-sky-800/80 text-sky-700 dark:text-sky-300 text-xs font-bold shadow-sm">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+        <span>ADA Clinical Guidelines &amp; Ensembled Machine Learning</span>
       </div>
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-        Diabetes Prediction Using <span class="text-sky-600">Machine Learning</span>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+        Diabetes Risk Prediction &amp; <br class="hidden sm:inline"/>
+        <span class="bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-400 bg-clip-text text-transparent">
+          Clinical Decision Portal
+        </span>
       </h1>
-      <p class="mt-4 text-base sm:text-lg text-slate-600 max-w-3xl mx-auto">
-        Early detection decision-support system evaluating demographic and physiological biomarkers using Logistic Regression, Decision Tree, Random Forest, Support Vector Machine (SVM), and Weighted Soft Voting Ensembles.
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
+        Comprehensive diagnostic intelligence system evaluating physiological biomarkers, lifestyle predictors, and demographic indices across 10 validated ML architectures.
       </p>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <a href="#calculator" class="bg-sky-600 hover:bg-sky-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2">
-          <i class="fa-solid fa-stethoscope"></i> Assess Patient Risk
+      <div class="pt-3 flex flex-wrap justify-center gap-3">
+        <a href="#calculator" class="btn-shimmer bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg shadow-sky-600/25 transition flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Launch Patient Evaluation
         </a>
-        <a href="#benchmarks" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-semibold px-6 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2">
-          <i class="fa-solid fa-chart-line"></i> View Model Benchmark
+        <a href="#benchmarks" class="bg-white/80 dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold px-6 py-3 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-chart-pie text-indigo-500"></i> Model Benchmarks
         </a>
       </div>
     </div>
   </header>
 
   <!-- MAIN APPLICATION CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 flex-1 w-full">
 
     <!-- PREDICTOR SECTION -->
-    <section id="calculator" class="scroll-mt-24 mb-16">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-6">
+    <section id="calculator" class="scroll-mt-28 mb-16">
+      
+      <!-- Section Header with Model Selector -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
-          <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-notes-medical text-sky-600"></i> Individual Patient Risk Assessment
+          <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-1">
+            <i class="fa-solid fa-clipboard-check"></i> Patient Screening Module
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Patient Biomarker &amp; Lifestyle Assessment
           </h2>
-          <p class="text-sm text-slate-500 mt-1">Adjust patient biomarkers below or select a quick clinical profile.</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Enter clinical laboratory measurements or select a standard clinical reference profile.
+          </p>
         </div>
-        <div class="mt-4 md:mt-0 flex items-center gap-3">
-          <label for="modelSelect" class="text-xs font-semibold text-slate-600">Active Model:</label>
-          <select id="modelSelect" class="text-sm bg-white border border-slate-300 rounded-lg px-3 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+
+        <!-- Active Model Selector Dropdown -->
+        <div class="flex items-center gap-2.5 bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-2 shadow-sm backdrop-blur-md">
+          <i class="fa-solid fa-robot text-sky-600 dark:text-sky-400 pl-2"></i>
+          <label for="modelSelect" class="text-xs font-bold text-slate-700 dark:text-slate-300">Model:</label>
+          <select id="modelSelect" class="clean-input text-xs font-bold py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-sky-500/30">
             <option value="Weighted Soft Voting Ensemble (Proposed)" selected>Weighted Soft Voting Ensemble (Proposed)</option>
             <option value="Random Forest">Random Forest</option>
             <option value="Support Vector Machine">Support Vector Machine (SVM)</option>
@@ -200,33 +360,40 @@
         </div>
       </div>
 
+      <!-- Main Layout: 7 Cols Inputs, 5 Cols Separate Result Card -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- INPUT PARAMETERS CARD (7 COLS) -->
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 no-print">
-          <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-            <h3 class="text-lg font-bold text-slate-800">Biomarker Inputs</h3>
-            <div class="flex gap-2">
-              <button onclick="loadPreset('healthy')" class="text-xs px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium">Healthy</button>
-              <button onclick="loadPreset('prediabetic')" class="text-xs px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium">Pre-Diabetic</button>
-              <button onclick="loadPreset('diabetic')" class="text-xs px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium">Diabetic</button>
+        <div class="lg:col-span-7 glass-card p-6 sm:p-8 space-y-6 no-print">
+          <div class="flex flex-wrap justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800 gap-2">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-sky-600"></i> Clinical Parameters
+              </h3>
+              <p class="text-xs text-slate-400 dark:text-slate-500">Synchronized numerical inputs &amp; physiological reference ranges</p>
+            </div>
+            <!-- Preset Buttons -->
+            <div class="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+              <button type="button" onclick="loadPreset('healthy')" class="text-xs px-2.5 py-1 rounded-lg font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition">Healthy</button>
+              <button type="button" onclick="loadPreset('prediabetic')" class="text-xs px-2.5 py-1 rounded-lg font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition">Pre-Diabetic</button>
+              <button type="button" onclick="loadPreset('diabetic')" class="text-xs px-2.5 py-1 rounded-lg font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition">Diabetic</button>
             </div>
           </div>
 
           <form id="predictionForm" onsubmit="event.preventDefault(); runPrediction();" class="space-y-5">
             
             <!-- Patient Biological Sex / Gender -->
-            <div class="space-y-1.5 pb-2 border-b border-slate-100">
-              <label class="font-semibold text-slate-700 text-sm flex items-center gap-1.5">
-                <i class="fa-solid fa-venus-mars text-indigo-600"></i> Patient Biological Sex / Gender
+            <div class="space-y-1.5 pb-2 border-b border-slate-100 dark:border-slate-800/80">
+              <label class="font-semibold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-venus-mars text-indigo-500 dark:text-indigo-400"></i> Patient Biological Sex / Gender
               </label>
               <div class="grid grid-cols-2 gap-3">
                 <button type="button" id="btnGenderFemale" onclick="setGender('Female')" 
-                        class="py-2.5 px-4 rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-700 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm">
+                        class="py-2.5 px-4 rounded-xl border-2 border-sky-600 bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm">
                   <i class="fa-solid fa-venus text-pink-500 text-sm"></i> Female (Gestational Screening)
                 </button>
                 <button type="button" id="btnGenderMale" onclick="setGender('Male')" 
-                        class="py-2.5 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 transition">
+                        class="py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-2 transition">
                   <i class="fa-solid fa-mars text-blue-500 text-sm"></i> Male (Visceral Profile)
                 </button>
               </div>
@@ -234,89 +401,89 @@
             </div>
 
             <!-- Physical Activity & Exercise Level -->
-            <div class="space-y-1.5 pb-2 border-b border-slate-100">
+            <div class="space-y-1.5 pb-2 border-b border-slate-100 dark:border-slate-800/80">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
-                  <i class="fa-solid fa-person-running text-emerald-600"></i> Physical Activity & Exercise Level
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-person-running text-emerald-500 dark:text-emerald-400"></i> Physical Activity &amp; Exercise Level
                 </label>
-                <span id="txtActivityDescription" class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span id="txtActivityDescription" class="text-xs font-semibold text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                   Moderate (150-299 min/wk)
                 </span>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button type="button" id="btnActSedentary" onclick="setActivity('Sedentary')"
-                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1">
                   <i class="fa-solid fa-couch text-rose-500 text-base"></i>
                   <span class="font-bold text-xs">Sedentary</span>
-                  <span class="text-[10px] text-slate-400">&lt;30 min/wk</span>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500">&lt;30 min/wk</span>
                 </button>
                 <button type="button" id="btnActLight" onclick="setActivity('Light')"
-                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1">
                   <i class="fa-solid fa-person-walking text-amber-500 text-base"></i>
                   <span class="font-bold text-xs">Light</span>
-                  <span class="text-[10px] text-slate-400">30-149 min/wk</span>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500">30-149 min/wk</span>
                 </button>
                 <button type="button" id="btnActModerate" onclick="setActivity('Moderate')"
-                  class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-person-running text-emerald-600 text-base"></i>
+                  class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-center transition flex flex-col items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-person-running text-emerald-600 dark:text-emerald-400 text-base"></i>
                   <span class="font-bold text-xs">Moderate</span>
-                  <span class="text-[10px] text-emerald-600 font-medium">150-299 min/wk</span>
+                  <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">150-299 min/wk</span>
                 </button>
                 <button type="button" id="btnActActive" onclick="setActivity('Active')"
-                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1">
                   <i class="fa-solid fa-dumbbell text-sky-500 text-base"></i>
                   <span class="font-bold text-xs">Active</span>
-                  <span class="text-[10px] text-slate-400">300+ min/wk</span>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500">300+ min/wk</span>
                 </button>
               </div>
               <input type="hidden" id="patientActivity" value="Moderate">
             </div>
 
             <!-- Smoking & Tobacco Exposure Status -->
-            <div class="space-y-1.5 pb-2 border-b border-slate-100">
+            <div class="space-y-1.5 pb-2 border-b border-slate-100 dark:border-slate-800/80">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
-                  <i class="fa-solid fa-smoking text-amber-600"></i> Smoking & Tobacco Exposure
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-smoking text-amber-500 dark:text-amber-400"></i> Smoking &amp; Tobacco Exposure
                 </label>
-                <span id="txtSmokingDescription" class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span id="txtSmokingDescription" class="text-xs font-semibold text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
                   Never Smoked (Lowest Risk)
                 </span>
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <button type="button" id="btnSmokeNever" onclick="setSmoking('Never')"
-                  class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm">
-                  <i class="fa-solid fa-ban-smoking text-emerald-600 text-base"></i>
+                  class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-center transition flex flex-col items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-ban-smoking text-emerald-600 dark:text-emerald-400 text-base"></i>
                   <span class="font-bold text-xs">Never Smoked</span>
-                  <span class="text-[10px] text-emerald-600 font-medium">Non-Smoker</span>
+                  <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Non-Smoker</span>
                 </button>
                 <button type="button" id="btnSmokeFormer" onclick="setSmoking('Former')"
-                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1">
                   <i class="fa-solid fa-clock-rotate-left text-amber-500 text-base"></i>
                   <span class="font-bold text-xs">Former Smoker</span>
-                  <span class="text-[10px] text-slate-400">Quit / Recovery</span>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500">Quit / Recovery</span>
                 </button>
                 <button type="button" id="btnSmokeCurrent" onclick="setSmoking('Current')"
-                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1">
                   <i class="fa-solid fa-smoking text-rose-500 text-base"></i>
                   <span class="font-bold text-xs">Current Smoker</span>
-                  <span class="text-[10px] text-slate-400">Active Nicotine</span>
+                  <span class="text-[10px] text-slate-400 dark:text-slate-500">Active Nicotine</span>
                 </button>
               </div>
               <input type="hidden" id="patientSmoking" value="Never">
             </div>
 
             <!-- HbA1c Level (Gold-Standard Glycemic Marker) -->
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
-                  <i class="fa-solid fa-vial-circle-check text-rose-600"></i> HbA1c Glycated Hemoglobin
-                  <span class="text-xs font-normal text-slate-400">(%)</span>
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-vial-circle-check text-rose-500"></i> HbA1c Glycated Hemoglobin
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(%)</span>
                 </label>
                 <input type="number" id="num_HbA1c" min="4.0" max="15.0" step="0.1" value="5.8" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_HbA1c" min="4.0" max="15.0" step="0.1" value="5.8" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Normal: &lt;5.7%</span>
                 <span>Pre-diabetic: 5.7 - 6.4%</span>
                 <span>Diabetic: &ge;6.5%</span>
@@ -324,17 +491,17 @@
             </div>
 
             <!-- Glucose -->
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
                   <i class="fa-solid fa-droplet text-rose-500"></i> Plasma Glucose Concentration
-                  <span class="text-xs font-normal text-slate-400">(mg/dL)</span>
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(mg/dL)</span>
                 </label>
                 <input type="number" id="num_Glucose" min="40" max="260" step="1" value="120" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_Glucose" min="40" max="260" step="1" value="120" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Normal: &lt;100</span>
                 <span>Pre-diabetic: 100-125</span>
                 <span>Diabetic: &ge;126</span>
@@ -342,17 +509,17 @@
             </div>
 
             <!-- BMI -->
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
                   <i class="fa-solid fa-weight-scale text-amber-500"></i> Body Mass Index (BMI)
-                  <span class="text-xs font-normal text-slate-400">(kg/m²)</span>
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(kg/m²)</span>
                 </label>
                 <input type="number" id="num_BMI" min="12" max="60" step="0.1" value="28.5" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_BMI" min="12" max="60" step="0.1" value="28.5" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Normal: 18.5 - 24.9</span>
                 <span>Overweight: 25 - 29.9</span>
                 <span>Obese: &ge;30</span>
@@ -360,17 +527,17 @@
             </div>
 
             <!-- Blood Pressure -->
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
                   <i class="fa-solid fa-gauge text-sky-500"></i> Diastolic Blood Pressure
-                  <span class="text-xs font-normal text-slate-400">(mm Hg)</span>
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(mm Hg)</span>
                 </label>
                 <input type="number" id="num_BloodPressure" min="40" max="140" step="1" value="74" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_BloodPressure" min="40" max="140" step="1" value="74" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Normal: &lt;80 mm Hg</span>
                 <span>Pre-hypertension: 80 - 89</span>
                 <span>Hypertension: &ge;90</span>
@@ -378,34 +545,34 @@
             </div>
 
             <!-- Insulin -->
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
                   <i class="fa-solid fa-syringe text-indigo-500"></i> 2-Hour Serum Insulin
-                  <span class="text-xs font-normal text-slate-400">(μU/mL)</span>
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(μU/mL)</span>
                 </label>
                 <input type="number" id="num_Insulin" min="10" max="600" step="1" value="105" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_Insulin" min="10" max="600" step="1" value="105" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Normal Fasting: 16 - 166 μU/mL</span>
                 <span>Elevated: &gt;166</span>
               </div>
             </div>
 
             <!-- Patient Age (Primary Diagnostic Feature) -->
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
-                  <i class="fa-solid fa-calendar-days text-teal-600"></i> Patient Age (Clinical Risk Feature)
-                  <span class="text-xs font-normal text-slate-400">(years)</span>
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-calendar-days text-teal-500"></i> Patient Age (Clinical Risk Feature)
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">(years)</span>
                 </label>
                 <input type="number" id="num_Age" min="18" max="100" step="1" value="38" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_Age" min="18" max="100" step="1" value="38" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Younger Adult: &lt;35 yrs</span>
                 <span>Mid-Adult Risk: 35-44 yrs</span>
                 <span>Guideline Screening: &ge;45 yrs</span>
@@ -414,50 +581,54 @@
 
             <!-- Two Column Row: Pregnancies & Skin Thickness -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div class="space-y-1" id="pregnanciesContainer">
+              <div class="space-y-1.5" id="pregnanciesContainer">
                 <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700 flex items-center gap-1" id="lblPregnancies">
+                  <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1" id="lblPregnancies">
                     <i class="fa-solid fa-person-breastfeeding text-pink-500"></i> Pregnancies
                   </label>
                   <input type="number" id="num_Pregnancies" min="0" max="20" step="1" value="2" 
-                    class="w-16 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800">
+                    class="clean-input w-20 px-2.5 py-1.5 text-right text-sm font-bold shadow-xs">
                 </div>
                 <input type="range" id="range_Pregnancies" min="0" max="20" step="1" value="2" class="w-full">
               </div>
 
-              <div class="space-y-1">
+              <div class="space-y-1.5">
                 <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700 flex items-center gap-1">
+                  <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
                     <i class="fa-solid fa-ruler-vertical text-purple-500"></i> Skinfold (mm)
                   </label>
                   <input type="number" id="num_SkinThickness" min="5" max="80" step="1" value="25" 
-                    class="w-16 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800">
+                    class="clean-input w-20 px-2.5 py-1.5 text-right text-sm font-bold shadow-xs">
                 </div>
                 <input type="range" id="range_SkinThickness" min="5" max="80" step="1" value="25" class="w-full">
               </div>
             </div>
 
             <!-- Diabetes Pedigree Function -->
-            <div class="space-y-1 pt-2">
+            <div class="space-y-1.5 pt-2">
               <div class="flex justify-between items-center text-sm">
-                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
-                  <i class="fa-solid fa-dna text-emerald-600"></i> Diabetes Pedigree Function (Genetic History)
-                  <span class="text-xs font-normal text-slate-400">[0.05 - 2.50]</span>
+                <label class="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-dna text-emerald-500"></i> Diabetes Pedigree Function (Genetic History)
+                  <span class="text-xs font-normal text-slate-400 dark:text-slate-500">[0.05 - 2.50]</span>
                 </label>
                 <input type="number" id="num_DiabetesPedigreeFunction" min="0.05" max="2.50" step="0.01" value="0.42" 
-                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+                  class="clean-input w-24 px-3 py-1.5 text-right text-sm font-bold shadow-xs">
               </div>
               <input type="range" id="range_DiabetesPedigreeFunction" min="0.05" max="2.50" step="0.01" value="0.42" class="w-full">
-              <div class="flex justify-between text-[11px] text-slate-400">
+              <div class="flex justify-between text-[11px] text-slate-400 dark:text-slate-500">
                 <span>Low Family Risk: &lt;0.4</span>
                 <span>Moderate: 0.4 - 0.6</span>
                 <span>High Hereditary: &ge;0.6</span>
               </div>
             </div>
 
+            <!-- ATTRACTIVE PREDICT DIABETES BUTTON -->
             <div class="pt-4">
-              <button type="submit" id="btnPredict" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-base">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Compute Clinical Risk Assessment
+              <button type="submit" id="btnPredict" 
+                      class="btn-shimmer w-full bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500 hover:from-sky-600 hover:via-indigo-700 hover:to-teal-600 text-white font-extrabold py-4 px-6 rounded-2xl shadow-xl shadow-sky-500/25 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2.5 text-base tracking-wide uppercase">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-lg"></i>
+                <span>Compute Clinical Risk Assessment</span>
+                <i class="fa-solid fa-arrow-right text-sm opacity-80"></i>
               </button>
             </div>
           </form>
@@ -466,13 +637,13 @@
         <!-- ASSESSMENT RESULT CARD (5 COLS) -->
         <div class="lg:col-span-5 space-y-6">
           
-          <div id="resultCard" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 print-shadow-none">
+          <div id="resultCard" class="glass-card p-6 sm:p-8 print-shadow-none relative overflow-hidden">
             <div class="flex justify-between items-start mb-6">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Diagnostic Verdict</span>
-                <h3 id="resVerdict" class="text-2xl font-extrabold text-slate-800 mt-1">Pending Evaluation</h3>
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Diagnostic Verdict</span>
+                <h3 id="resVerdict" class="text-2xl font-extrabold text-slate-800 dark:text-white mt-1">Pending Evaluation</h3>
               </div>
-              <span id="resBadge" class="px-3 py-1 text-xs font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+              <span id="resBadge" class="px-3.5 py-1 text-xs font-bold rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-xs">
                 Awaiting Input
               </span>
             </div>
@@ -481,57 +652,57 @@
             <div class="flex flex-col items-center justify-center my-6">
               <div class="relative w-44 h-44 flex items-center justify-center">
                 <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                  <circle cx="60" cy="60" r="50" stroke="#f1f5f9" stroke-width="12" fill="none" />
+                  <circle cx="60" cy="60" r="50" stroke="#f1f5f9" class="stroke-slate-200/80 dark:stroke-slate-800" stroke-width="12" fill="none" />
                   <circle id="gaugeProgress" class="gauge-circle" cx="60" cy="60" r="50" 
                           stroke="#0284c7" stroke-width="12" stroke-dasharray="314.16" stroke-dashoffset="314.16" 
                           stroke-linecap="round" fill="none" />
                 </svg>
                 <div class="absolute flex flex-col items-center justify-center text-center">
-                  <span id="resProbability" class="text-3xl font-extrabold text-slate-800">--%</span>
-                  <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Diabetes Risk</span>
+                  <span id="resProbability" class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">--%</span>
+                  <span class="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Diabetes Risk</span>
                 </div>
               </div>
-              <p id="resModelUsed" class="text-xs text-slate-400 mt-2 font-medium">Model: Weighted Soft Voting Ensemble</p>
+              <p id="resModelUsed" class="text-xs text-slate-400 dark:text-slate-500 mt-2 font-medium">Model: Weighted Soft Voting Ensemble</p>
             </div>
 
             <!-- CLINICAL RECOMMENDATION BOX -->
-            <div id="recommendationBox" class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-sm mb-6">
-              <p class="font-semibold text-slate-700 flex items-center gap-1.5 mb-1">
-                <i class="fa-solid fa-user-doctor text-sky-600"></i> Clinical Guidance:
+            <div id="recommendationBox" class="glass-inner p-4 text-sm mb-6">
+              <p class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 mb-1">
+                <i class="fa-solid fa-user-doctor text-sky-600 dark:text-sky-400"></i> Clinical Guidance:
               </p>
-              <p id="resRecommendation" class="text-slate-600 text-xs leading-relaxed">
+              <p id="resRecommendation" class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
                 Enter patient clinical markers and click compute to receive an automated stratified evaluation.
               </p>
             </div>
 
             <!-- ACTION BUTTONS -->
             <div class="flex gap-3 no-print">
-              <button onclick="window.print()" class="flex-1 py-2 px-4 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+              <button onclick="window.print()" class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs">
                 <i class="fa-solid fa-print"></i> Print Assessment
               </button>
-              <button onclick="resetInputs()" class="py-2 px-4 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold transition">
+              <button onclick="resetInputs()" class="py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition shadow-xs">
                 <i class="fa-solid fa-rotate-left"></i> Reset
               </button>
             </div>
           </div>
 
           <!-- BIOMARKER STATUS TABLE -->
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 print-shadow-none">
-            <h4 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-chart-simple text-sky-600"></i> Biomarker Reference Stratification
+          <div class="glass-card p-6 print-shadow-none">
+            <h4 class="text-sm font-extrabold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-chart-simple text-sky-600 dark:text-sky-400"></i> Biomarker Reference Stratification
             </h4>
             <div id="biomarkerList" class="space-y-2.5">
-              <div class="text-xs text-slate-400 italic">Run risk assessment to view clinical biomarker classification.</div>
+              <div class="text-xs text-slate-400 dark:text-slate-500 italic">Run risk assessment to view clinical biomarker classification.</div>
             </div>
           </div>
 
           <!-- MULTI-MODEL CONSENSUS -->
-          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 print-shadow-none no-print">
-            <h4 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-network-wired text-indigo-600"></i> Multi-Model Agreement
+          <div class="glass-card p-6 print-shadow-none no-print">
+            <h4 class="text-sm font-extrabold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-network-wired text-indigo-600 dark:text-indigo-400"></i> Multi-Model Agreement
             </h4>
             <div id="consensusList" class="space-y-2 text-xs">
-              <div class="text-xs text-slate-400 italic">Model predictions will populate after assessment.</div>
+              <div class="text-xs text-slate-400 dark:text-slate-500 italic">Model predictions will populate after assessment.</div>
             </div>
           </div>
 
@@ -541,22 +712,22 @@
     </section>
 
     <!-- BENCHMARKS & MODEL COMPARISON SECTION -->
-    <section id="benchmarks" class="scroll-mt-24 mb-16 no-print">
+    <section id="benchmarks" class="scroll-mt-28 mb-16 no-print">
       <div class="mb-6">
-        <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-chart-pie text-sky-600"></i> Model Benchmarking & Performance
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-sky-600 dark:text-sky-400"></i> Model Benchmarking &amp; Performance
         </h2>
-        <p class="text-sm text-slate-500 mt-1">
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
           Comparative performance evaluated on held-out stratified test samples (N=154) across 5-Fold Stratified Cross-Validation.
         </p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Chart Column (6 cols) -->
-        <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-          <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center justify-between">
-            <span>Accuracy & ROC-AUC Comparison</span>
-            <span class="text-xs font-normal text-slate-400">Higher is better</span>
+        <div class="lg:col-span-6 glass-card p-6">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center justify-between">
+            <span>Accuracy &amp; ROC-AUC Comparison</span>
+            <span class="text-xs font-semibold text-slate-400 dark:text-slate-500">Higher is better</span>
           </h3>
           <div class="h-72">
             <canvas id="benchmarkChart"></canvas>
@@ -564,11 +735,11 @@
         </div>
 
         <!-- Table Column (6 cols) -->
-        <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 overflow-x-auto">
-          <h3 class="text-base font-bold text-slate-800 mb-4">Official Performance Matrix</h3>
+        <div class="lg:col-span-6 glass-card p-6 overflow-x-auto">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Official Performance Matrix</h3>
           <table class="w-full text-left text-xs border-collapse">
             <thead>
-              <tr class="border-b border-slate-200 text-slate-500 font-semibold bg-slate-50">
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold bg-slate-50/60 dark:bg-slate-800/60">
                 <th class="py-2.5 px-3">Classifier</th>
                 <th class="py-2.5 px-2">CV Acc</th>
                 <th class="py-2.5 px-2">Test Acc</th>
@@ -577,7 +748,7 @@
                 <th class="py-2.5 px-2">ROC-AUC</th>
               </tr>
             </thead>
-            <tbody id="metricsTableBody" class="divide-y divide-slate-100 text-slate-700">
+            <tbody id="metricsTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
               <!-- Dynamically populated via JavaScript -->
             </tbody>
           </table>
@@ -586,24 +757,24 @@
     </section>
 
     <!-- BATCH SCREENING SECTION -->
-    <section id="batch" class="scroll-mt-24 mb-16 no-print">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-        <div class="flex justify-between items-start mb-4">
+    <section id="batch" class="scroll-mt-28 mb-16 no-print">
+      <div class="glass-card p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-users text-sky-600"></i> Batch Clinical Screening
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-users text-sky-600 dark:text-sky-400"></i> Batch Clinical Screening
             </h2>
-            <p class="text-sm text-slate-500 mt-1">Screen multiple patients simultaneously using automated ML inference.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Screen multiple patients simultaneously using automated ML inference.</p>
           </div>
-          <button onclick="runBatchDemo()" class="px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 text-xs font-bold border border-sky-200 transition">
+          <button onclick="runBatchDemo()" class="px-4 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/60 text-xs font-bold border border-sky-200 dark:border-sky-800 transition shadow-xs flex items-center gap-1.5">
             <i class="fa-solid fa-play mr-1"></i> Run 5-Patient Screening Demo
           </button>
         </div>
 
-        <div class="overflow-x-auto mt-4">
+        <div class="overflow-x-auto">
           <table id="batchTable" class="w-full text-xs text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold">
+              <tr class="bg-slate-50/70 dark:bg-slate-800/70 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold">
                 <th class="p-2.5">Patient ID</th>
                 <th class="p-2.5">Glucose</th>
                 <th class="p-2.5">BMI</th>
@@ -615,9 +786,9 @@
                 <th class="p-2.5">Risk Tier</th>
               </tr>
             </thead>
-            <tbody id="batchTableBody" class="divide-y divide-slate-100 text-slate-700">
+            <tbody id="batchTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
               <tr>
-                <td colspan="9" class="p-4 text-center text-slate-400 italic">Click "Run 5-Patient Screening Demo" to load and evaluate multi-patient records.</td>
+                <td colspan="9" class="p-4 text-center text-slate-400 dark:text-slate-500 italic">Click "Run 5-Patient Screening Demo" to load and evaluate multi-patient records.</td>
               </tr>
             </tbody>
           </table>
@@ -625,15 +796,13 @@
       </div>
     </section>
 
-
-
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-white border-t border-slate-200 py-8 px-4 text-center text-xs text-slate-500 no-print">
+  <footer class="bg-white/70 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 py-8 px-4 text-center text-xs text-slate-500 dark:text-slate-400 no-print">
     <div class="max-w-7xl mx-auto space-y-2">
-      <p class="font-semibold text-slate-700">Diabetes Prediction Using Machine Learning & Ensembling</p>
-      <p class="text-slate-400">⚠️ Disclaimer: This tool is intended for educational screening and decision support only. Professional medical diagnosis requires accredited laboratory tests.</p>
+      <p class="font-semibold text-slate-700 dark:text-slate-300">Diabetes Prediction Using Machine Learning &amp; Ensembling</p>
+      <p class="text-slate-400 dark:text-slate-500">⚠️ Disclaimer: This tool is intended for educational screening and decision support only. Professional medical diagnosis requires accredited laboratory tests.</p>
     </div>
   </footer>
 
@@ -641,6 +810,55 @@
   <script>
     const features = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'];
     let benchmarkChartInstance = null;
+
+    // Dark / Light Theme System with localStorage persistence
+    function initTheme() {
+      const saved = localStorage.getItem('diapredict-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        applyTheme('dark');
+      } else {
+        applyTheme('light');
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    }
+
+    function applyTheme(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('diapredict-theme', 'dark');
+        if (icon) icon.className = 'fa-solid fa-sun text-base text-amber-400';
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('diapredict-theme', 'light');
+        if (icon) icon.className = 'fa-solid fa-moon text-base text-slate-600';
+      }
+      updateChartTheme(theme === 'dark');
+    }
+
+    function updateChartTheme(isDark) {
+      if (!benchmarkChartInstance) return;
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(226, 232, 240, 0.6)';
+      
+      if (benchmarkChartInstance.options.scales.x) {
+        benchmarkChartInstance.options.scales.x.ticks.color = textColor;
+        benchmarkChartInstance.options.scales.x.grid.color = gridColor;
+      }
+      if (benchmarkChartInstance.options.scales.y) {
+        benchmarkChartInstance.options.scales.y.ticks.color = textColor;
+        benchmarkChartInstance.options.scales.y.grid.color = gridColor;
+      }
+      if (benchmarkChartInstance.options.plugins && benchmarkChartInstance.options.plugins.legend) {
+        benchmarkChartInstance.options.plugins.legend.labels.color = textColor;
+      }
+      benchmarkChartInstance.update();
+    }
 
     // Precomputed Benchmark Metrics (Guarantees display even when offline / file://)
     const STATIC_METRICS = [
@@ -721,18 +939,18 @@
       const rngPreg = document.getElementById('range_Pregnancies');
 
       if (g === 'Male') {
-        if (btnMale) btnMale.className = "py-2.5 px-4 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm";
-        if (btnFemale) btnFemale.className = "py-2.5 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 transition";
+        if (btnMale) btnMale.className = "py-2.5 px-4 rounded-xl border-2 border-indigo-600 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm";
+        if (btnFemale) btnFemale.className = "py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-2 transition";
         if (numPreg) numPreg.value = 0;
         if (rngPreg) rngPreg.value = 0;
         if (pregContainer) {
-          pregContainer.style.opacity = '0.4';
+          pregContainer.style.opacity = '0.35';
           pregContainer.style.pointerEvents = 'none';
         }
         if (lblPreg) lblPreg.innerHTML = '<i class="fa-solid fa-person-breastfeeding text-slate-400"></i> Pregnancies (0 - N/A for Male)';
       } else {
-        if (btnFemale) btnFemale.className = "py-2.5 px-4 rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-700 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm";
-        if (btnMale) btnMale.className = "py-2.5 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 transition";
+        if (btnFemale) btnFemale.className = "py-2.5 px-4 rounded-xl border-2 border-sky-600 bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm";
+        if (btnMale) btnMale.className = "py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-xs flex items-center justify-center gap-2 transition";
         if (pregContainer) {
           pregContainer.style.opacity = '1';
           pregContainer.style.pointerEvents = 'auto';
@@ -745,26 +963,26 @@
       'Sedentary': {
         btnId: 'btnActSedentary',
         desc: 'Sedentary (<30 min/wk)',
-        tagClass: 'text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       },
       'Light': {
         btnId: 'btnActLight',
         desc: 'Light (30-149 min/wk)',
-        tagClass: 'text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       },
       'Moderate': {
         btnId: 'btnActModerate',
         desc: 'Moderate (150-299 min/wk)',
-        tagClass: 'text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       },
       'Active': {
         btnId: 'btnActActive',
         desc: 'Active (300+ min/wk)',
-        tagClass: 'text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 text-sky-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-2 py-0.5 rounded-full border border-sky-200 dark:border-sky-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       }
     };
 
@@ -785,7 +1003,7 @@
         if (k === lvl) {
           btn.className = activityConfigs[k].activeBtnClass;
         } else {
-          btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1';
+          btn.className = 'p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1';
         }
       });
     }
@@ -794,20 +1012,20 @@
       'Never': {
         btnId: 'btnSmokeNever',
         desc: 'Never Smoked (Lowest Risk)',
-        tagClass: 'text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       },
       'Former': {
         btnId: 'btnSmokeFormer',
         desc: 'Former Smoker (Quit / Recovery)',
-        tagClass: 'text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       },
       'Current': {
         btnId: 'btnSmokeCurrent',
         desc: 'Current Smoker (+30-40% T2D Risk)',
-        tagClass: 'text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200',
-        activeBtnClass: 'p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+        tagClass: 'text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-800',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 text-center transition flex flex-col items-center gap-1 shadow-sm'
       }
     };
 
@@ -828,7 +1046,7 @@
         if (k === status) {
           btn.className = smokingConfigs[k].activeBtnClass;
         } else {
-          btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1';
+          btn.className = 'p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-center transition flex flex-col items-center gap-1';
         }
       });
     }
@@ -1052,15 +1270,15 @@
       const recEl = document.getElementById('resRecommendation');
 
       verdictEl.innerText = isDiabetic ? "⚠️ Diabetes Risk Indicated" : "✅ Non-Diabetic Risk Profile";
-      verdictEl.className = `text-2xl font-extrabold mt-1 ${isDiabetic ? 'text-rose-600' : 'text-emerald-600'}`;
+      verdictEl.className = `text-2xl font-extrabold mt-1 tracking-tight ${isDiabetic ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`;
 
       badgeEl.innerText = data.risk_tier;
       if (data.risk_class === 'low') {
-        badgeEl.className = "px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300";
+        badgeEl.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shadow-xs";
       } else if (data.risk_class === 'moderate') {
-        badgeEl.className = "px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-300";
+        badgeEl.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 shadow-xs";
       } else {
-        badgeEl.className = "px-3 py-1 text-xs font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-300";
+        badgeEl.className = "px-3.5 py-1 text-xs font-bold rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 shadow-xs";
       }
 
       probEl.innerText = probPercent;
@@ -1079,17 +1297,17 @@
       const bList = document.getElementById('biomarkerList');
       bList.innerHTML = '';
       data.biomarkers.forEach(b => {
-        let badgeStyle = "bg-emerald-50 text-emerald-700 border-emerald-200";
-        if (b.badge === 'warning') badgeStyle = "bg-amber-50 text-amber-700 border-amber-200";
-        if (b.badge === 'danger') badgeStyle = "bg-rose-50 text-rose-700 border-rose-200";
-        if (b.badge === 'info') badgeStyle = "bg-sky-50 text-sky-700 border-sky-200";
+        let badgeStyle = "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+        if (b.badge === 'warning') badgeStyle = "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+        if (b.badge === 'danger') badgeStyle = "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800";
+        if (b.badge === 'info') badgeStyle = "bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800";
 
         bList.innerHTML += `
-          <div class="flex justify-between items-center p-2 rounded-lg bg-slate-50 border border-slate-100">
+          <div class="flex justify-between items-center p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 transition">
             <div>
-              <span class="font-semibold text-slate-800 text-xs">${b.name}:</span>
-              <span class="text-slate-600 text-xs font-bold ml-1">${b.value}</span>
-              <span class="block text-[11px] text-slate-400">${b.note}</span>
+              <span class="font-semibold text-slate-800 dark:text-slate-200 text-xs">${b.name}:</span>
+              <span class="text-slate-700 dark:text-slate-100 text-xs font-bold ml-1">${b.value}</span>
+              <span class="block text-[11px] text-slate-400 dark:text-slate-500">${b.note}</span>
             </div>
             <span class="text-[11px] font-bold px-2 py-0.5 rounded border ${badgeStyle}">${b.status}</span>
           </div>
@@ -1103,9 +1321,9 @@
         for (const [mName, mRes] of Object.entries(data.multi_model_comparison)) {
           const isD = mRes.prediction === 'Diabetic';
           cList.innerHTML += `
-            <div class="flex justify-between items-center py-1 border-b border-slate-100 last:border-0">
-              <span class="text-slate-600">${mName}</span>
-              <span class="font-semibold ${isD ? 'text-rose-600' : 'text-emerald-600'}">
+            <div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800/80 last:border-0">
+              <span class="text-slate-600 dark:text-slate-300 font-medium">${mName}</span>
+              <span class="font-bold ${isD ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}">
                 ${mRes.prediction} (${mRes.probability_percent})
               </span>
             </div>
@@ -1138,13 +1356,13 @@
         const testAuc = typeof m['Test ROC-AUC'] === 'number' ? m['Test ROC-AUC'].toFixed(3) : m['Test ROC-AUC'];
 
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 ${isEnsemble ? 'bg-sky-50/60 font-semibold' : ''}">
-            <td class="py-2.5 px-3 ${isEnsemble ? 'text-sky-800' : 'text-slate-800'}">${m.Model}</td>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition ${isEnsemble ? 'bg-sky-50/60 dark:bg-sky-950/40 font-semibold' : ''}">
+            <td class="py-2.5 px-3 ${isEnsemble ? 'text-sky-800 dark:text-sky-300' : 'text-slate-800 dark:text-slate-200'}">${m.Model}</td>
             <td class="py-2.5 px-2">${m['CV Accuracy']}</td>
             <td class="py-2.5 px-2 font-bold">${testAcc}%</td>
             <td class="py-2.5 px-2">${testRec}%</td>
             <td class="py-2.5 px-2">${testF1}</td>
-            <td class="py-2.5 px-2 text-sky-600 font-bold">${testAuc}</td>
+            <td class="py-2.5 px-2 text-sky-600 dark:text-sky-400 font-bold">${testAuc}</td>
           </tr>
         `;
       });
@@ -1153,6 +1371,10 @@
       const labels = metrics.slice(0, 6).map(m => m.Model.replace(' (Proposed)', ''));
       const accs = metrics.slice(0, 6).map(m => (typeof m['Test Accuracy'] === 'number' ? (m['Test Accuracy'] * 100).toFixed(1) : parseFloat(m['Test Accuracy'])));
       const aucs = metrics.slice(0, 6).map(m => (typeof m['Test ROC-AUC'] === 'number' ? (m['Test ROC-AUC'] * 100).toFixed(1) : (parseFloat(m['Test ROC-AUC']) * 100).toFixed(1)));
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(226, 232, 240, 0.6)';
 
       const ctx = document.getElementById('benchmarkChart').getContext('2d');
       if (benchmarkChartInstance) benchmarkChartInstance.destroy();
@@ -1179,10 +1401,22 @@
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            y: { min: 60, max: 100 }
+            x: {
+              ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: 'bold' } },
+              grid: { color: gridColor }
+            },
+            y: {
+              min: 60,
+              max: 100,
+              ticks: { color: textColor, font: { family: 'Plus Jakarta Sans' } },
+              grid: { color: gridColor }
+            }
           },
           plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+              position: 'bottom',
+              labels: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: 'bold' } }
+            }
           }
         }
       });
@@ -1228,17 +1462,17 @@
       results.forEach((r, idx) => {
         const isD = r.Prediction === 'Diabetic';
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-2.5 font-semibold text-slate-800">#PT-${1001 + idx}</td>
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+            <td class="p-2.5 font-semibold text-slate-800 dark:text-slate-200">#PT-${1001 + idx}</td>
             <td class="p-2.5">${r.Glucose}</td>
             <td class="p-2.5">${r.BMI}</td>
             <td class="p-2.5">${r.BloodPressure}</td>
             <td class="p-2.5">${r.Insulin}</td>
             <td class="p-2.5">${r.Age}</td>
-            <td class="p-2.5 font-bold ${isD ? 'text-rose-600' : 'text-emerald-600'}">${r.Prediction}</td>
+            <td class="p-2.5 font-bold ${isD ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}">${r.Prediction}</td>
             <td class="p-2.5">${r.Probability}</td>
             <td class="p-2.5">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.Risk === 'High' ? 'bg-rose-100 text-rose-700' : (r.Risk === 'Moderate' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700')}">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.Risk === 'High' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800' : (r.Risk === 'Moderate' ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800')}">
                 ${r.Risk} Risk
               </span>
             </td>
@@ -1249,6 +1483,7 @@
 
     // Auto-initialize on page load
     window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
       loadBenchmarks();
       loadPreset('healthy');
       initAnimatedBackground();
@@ -1284,6 +1519,7 @@
 
       function render() {
         ctx.clearRect(0, 0, width, height);
+        const isDark = document.documentElement.classList.contains('dark');
 
         // Connecting lines between nodes
         for (let i = 0; i < particles.length; i++) {
@@ -1293,7 +1529,9 @@
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 125) {
               ctx.beginPath();
-              ctx.strokeStyle = `rgba(14, 165, 233, ${0.16 * (1 - dist / 125)})`;
+              ctx.strokeStyle = isDark 
+                ? `rgba(56, 189, 248, ${0.18 * (1 - dist / 125)})`
+                : `rgba(14, 165, 233, ${0.16 * (1 - dist / 125)})`;
               ctx.lineWidth = 0.75;
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
