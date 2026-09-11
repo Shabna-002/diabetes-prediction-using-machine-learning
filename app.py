@@ -1,6 +1,6 @@
 """
 Streamlit Web Application: Diabetes Prediction & Clinical Decision Support System
-Integrates real-time patient assessment, batch screening, exploratory data analysis (EDA),
+Integrates real-time patient assessment, multi-patient screening, exploratory data analysis (EDA),
 and multi-model benchmarking based on the IEEE Access ensemble methodology.
 """
 
@@ -135,7 +135,7 @@ st.markdown('<div class="sub-header">Automated screening and risk stratification
 # Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🩺 Patient Risk Assessment",
-    "📁 Batch Patient Screening",
+    "📁 Multi-Patient Screening",
     "📊 Model Benchmarks & Metrics",
     "🔬 Exploratory Data Analysis (EDA)",
     "📑 Methodology & Documentation"
@@ -308,10 +308,10 @@ with tab1:
 
 
 # ==========================================
-# TAB 2: BATCH PATIENT SCREENING
+# TAB 2: MULTI-PATIENT SCREENING
 # ==========================================
 with tab2:
-    st.markdown("### Batch Patient Screening from CSV")
+    st.markdown("### Multi-Patient Clinical Screening from CSV")
     st.write("Upload a CSV file containing patient parameters to screen multiple patients simultaneously.")
 
     # Provide download for sample CSV template
@@ -367,9 +367,9 @@ with tab2:
                 # Export Results
                 csv_export = res_df.to_csv(index=False).encode('utf-8')
                 st.download_button(
-                    "📥 Download Complete Batch Predictions (CSV)",
+                    "📥 Download Complete Patient Screening Predictions (CSV)",
                     csv_export,
-                    "batch_diabetes_predictions.csv",
+                    "patient_diabetes_predictions.csv",
                     "text/csv",
                     type="primary"
                 )
