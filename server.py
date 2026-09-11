@@ -83,12 +83,21 @@ def evaluate_clinical_biomarkers(data):
     else:
         evaluations.append({"name": "2-Hour Serum Insulin", "value": f"{insulin} uU/mL", "status": "Hyperinsulinemia", "badge": "danger", "note": "Elevated insulin indicates insulin resistance"})
 
-    # Age & DPF
+    # Diabetes Pedigree Function
     dpf = data.get('DiabetesPedigreeFunction', 0)
     if dpf >= 0.6:
         evaluations.append({"name": "Diabetes Pedigree Score", "value": f"{dpf:.2f}", "status": "High Genetic Risk", "badge": "warning", "note": "Substantial hereditary family risk factor"})
     else:
         evaluations.append({"name": "Diabetes Pedigree Score", "value": f"{dpf:.2f}", "status": "Normal / Moderate", "badge": "success", "note": "Moderate to low hereditary score"})
+
+    # Patient Age
+    age = data.get('Age', 0)
+    if age < 35:
+        evaluations.append({"name": "Patient Age Factor", "value": f"{int(age)} years", "status": "Optimal / Low Risk", "badge": "success", "note": "Younger adult baseline metabolic profile (<35 years)"})
+    elif age < 45:
+        evaluations.append({"name": "Patient Age Factor", "value": f"{int(age)} years", "status": "Moderate Risk", "badge": "warning", "note": "Progressive age-related insulin resistance window (35-44 years)"})
+    else:
+        evaluations.append({"name": "Patient Age Factor", "value": f"{int(age)} years", "status": "Elevated Risk", "badge": "danger", "note": "Standard clinical guideline screening recommended (>=45 years)"})
 
     return evaluations
 

@@ -286,45 +286,64 @@
               </div>
             </div>
 
-            <!-- Two Column Row: Age & Pregnancies -->
+            <!-- Patient Age (Primary Diagnostic Feature) -->
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-sm">
+                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-calendar-days text-teal-600"></i> Patient Age (Clinical Risk Feature)
+                  <span class="text-xs font-normal text-slate-400">(years)</span>
+                </label>
+                <input type="number" id="num_Age" min="18" max="100" step="1" value="38" 
+                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+              </div>
+              <input type="range" id="range_Age" min="18" max="100" step="1" value="38" class="w-full">
+              <div class="flex justify-between text-[11px] text-slate-400">
+                <span>Younger Adult: &lt;35 yrs</span>
+                <span>Mid-Adult Risk: 35-44 yrs</span>
+                <span>Guideline Screening: &ge;45 yrs</span>
+              </div>
+            </div>
+
+            <!-- Two Column Row: Pregnancies & Skin Thickness -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div class="space-y-1">
                 <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700">Patient Age (years)</label>
-                  <input type="number" id="num_Age" min="18" max="100" step="1" value="38" 
-                    class="w-16 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800">
-                </div>
-                <input type="range" id="range_Age" min="18" max="100" step="1" value="38" class="w-full">
-              </div>
-
-              <div class="space-y-1">
-                <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700">Pregnancies (Count)</label>
+                  <label class="font-semibold text-slate-700 flex items-center gap-1">
+                    <i class="fa-solid fa-person-breastfeeding text-pink-500"></i> Pregnancies
+                  </label>
                   <input type="number" id="num_Pregnancies" min="0" max="20" step="1" value="2" 
                     class="w-16 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800">
                 </div>
                 <input type="range" id="range_Pregnancies" min="0" max="20" step="1" value="2" class="w-full">
               </div>
-            </div>
 
-            <!-- Two Column Row: Skin Thickness & Pedigree Function -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div class="space-y-1">
                 <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700">Skinfold Thickness (mm)</label>
+                  <label class="font-semibold text-slate-700 flex items-center gap-1">
+                    <i class="fa-solid fa-ruler-vertical text-purple-500"></i> Skinfold (mm)
+                  </label>
                   <input type="number" id="num_SkinThickness" min="5" max="80" step="1" value="25" 
                     class="w-16 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800">
                 </div>
                 <input type="range" id="range_SkinThickness" min="5" max="80" step="1" value="25" class="w-full">
               </div>
+            </div>
 
-              <div class="space-y-1">
-                <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700">Diabetes Pedigree (DPF)</label>
-                  <input type="number" id="num_DiabetesPedigreeFunction" min="0.05" max="2.50" step="0.01" value="0.42" 
-                    class="w-16 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800">
-                </div>
-                <input type="range" id="range_DiabetesPedigreeFunction" min="0.05" max="2.50" step="0.01" value="0.42" class="w-full">
+            <!-- Diabetes Pedigree Function -->
+            <div class="space-y-1 pt-2">
+              <div class="flex justify-between items-center text-sm">
+                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-dna text-emerald-600"></i> Diabetes Pedigree Function (Genetic History)
+                  <span class="text-xs font-normal text-slate-400">[0.05 - 2.50]</span>
+                </label>
+                <input type="number" id="num_DiabetesPedigreeFunction" min="0.05" max="2.50" step="0.01" value="0.42" 
+                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+              </div>
+              <input type="range" id="range_DiabetesPedigreeFunction" min="0.05" max="2.50" step="0.01" value="0.42" class="w-full">
+              <div class="flex justify-between text-[11px] text-slate-400">
+                <span>Low Family Risk: &lt;0.4</span>
+                <span>Moderate: 0.4 - 0.6</span>
+                <span>High Hereditary: &ge;0.6</span>
               </div>
             </div>
 
@@ -609,6 +628,11 @@
       const dpf = p.DiabetesPedigreeFunction;
       if (dpf >= 0.6) evaluations.push({ name: "Diabetes Pedigree Score", value: `${dpf.toFixed(2)}`, status: "High Genetic Risk", badge: "warning", note: "Substantial hereditary family risk factor" });
       else evaluations.push({ name: "Diabetes Pedigree Score", value: `${dpf.toFixed(2)}`, status: "Normal / Low", badge: "success", note: "Moderate to low hereditary score" });
+
+      const age = p.Age;
+      if (age < 35) evaluations.push({ name: "Patient Age Factor", value: `${age} years`, status: "Optimal / Low Risk", badge: "success", note: "Younger adult baseline metabolic profile (<35 years)" });
+      else if (age < 45) evaluations.push({ name: "Patient Age Factor", value: `${age} years`, status: "Moderate Risk", badge: "warning", note: "Progressive age-related insulin resistance window (35-44 years)" });
+      else evaluations.push({ name: "Patient Age Factor", value: `${age} years`, status: "Elevated Risk", badge: "danger", note: "Standard clinical guideline screening recommended (>=45 years)" });
 
       return evaluations;
     }
