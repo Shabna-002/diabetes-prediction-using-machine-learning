@@ -264,26 +264,68 @@
         </div>
 
         <!-- Middle Nav Links -->
-        <div class="hidden md:flex items-center space-x-8 text-sm font-bold text-slate-600 dark:text-slate-300">
+        <div class="hidden md:flex items-center space-x-7 text-sm font-bold text-slate-600 dark:text-slate-300">
           <a href="#calculator" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-stethoscope text-sky-500 text-xs"></i> Clinical Predictor
+            <i class="fa-solid fa-stethoscope text-sky-500 text-xs"></i> Predictor
+          </a>
+          <a href="#patientHistorySection" id="navHistoryLink" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-clock-rotate-left text-emerald-500 text-xs"></i> Patient History
           </a>
           <a href="#benchmarks" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-chart-line text-indigo-500 text-xs"></i> Model Benchmarks
+            <i class="fa-solid fa-chart-line text-indigo-500 text-xs"></i> Benchmarks
           </a>
           <a href="#batch" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-users text-teal-500 text-xs"></i> Batch Screening
+            <i class="fa-solid fa-users text-teal-500 text-xs"></i> Batch
           </a>
         </div>
 
-        <!-- Right Quick Actions & Dark Mode Toggle -->
+        <!-- Right Quick Actions, Auth & Dark Mode Toggle -->
         <div class="flex items-center space-x-2.5">
-          <button onclick="loadPreset('healthy')" class="hidden sm:inline-flex text-xs px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-100 transition shadow-sm items-center gap-1.5">
-            <i class="fa-solid fa-user-check text-emerald-500"></i> Healthy Demo
+          <button onclick="loadPreset('healthy')" class="hidden xl:inline-flex text-xs px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-100 transition shadow-sm items-center gap-1.5">
+            <i class="fa-solid fa-user-check text-emerald-500"></i> Healthy
           </button>
-          <button onclick="loadPreset('diabetic')" class="hidden sm:inline-flex text-xs px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800/80 bg-rose-50/80 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-100 transition shadow-sm items-center gap-1.5">
-            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> High-Risk Demo
+          <button onclick="loadPreset('diabetic')" class="hidden xl:inline-flex text-xs px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800/80 bg-rose-50/80 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-100 transition shadow-sm items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> High-Risk
           </button>
+
+          <!-- Authentication State Container -->
+          <div id="navAuthContainer" class="flex items-center">
+            <!-- Logged Out Button -->
+            <button id="btnOpenAuth" onclick="openAuthModal('signin')" 
+                    class="text-xs px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold shadow-md shadow-sky-500/20 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-user-doctor"></i>
+              <span class="hidden sm:inline">Doctor</span> Sign In
+            </button>
+
+            <!-- Logged In Clinician Profile (hidden by default) -->
+            <div id="userProfileNav" class="hidden relative">
+              <button onclick="toggleUserDropdown(event)" 
+                      class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50/90 dark:bg-sky-950/60 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition shadow-xs">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-sky-600 to-indigo-600 text-white flex items-center justify-center text-xs font-extrabold shadow-xs">
+                  <i class="fa-solid fa-user-doctor"></i>
+                </div>
+                <div class="text-left hidden sm:block">
+                  <span id="navDoctorName" class="block text-xs font-extrabold text-slate-800 dark:text-white leading-tight">Dr. Shabna</span>
+                  <span id="navDoctorRole" class="block text-[10px] text-sky-600 dark:text-sky-400 font-semibold leading-none">Endocrinologist</span>
+                </div>
+                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-0.5"></i>
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div id="userDropdownMenu" class="hidden absolute right-0 top-full mt-2 w-52 glass-card p-1.5 shadow-2xl border border-slate-200 dark:border-slate-700 z-[70] text-xs space-y-1">
+                <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[11px]">
+                  <span>Signed in as</span>
+                  <b id="dropdownEmail" class="block text-slate-800 dark:text-slate-100 font-bold truncate">dr.shabna@hospital.org</b>
+                </div>
+                <a href="#patientHistorySection" onclick="closeUserDropdown()" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold transition">
+                  <i class="fa-solid fa-folder-open text-emerald-500"></i> Saved Patient Records
+                </a>
+                <button onclick="handleSignOut()" class="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-semibold transition">
+                  <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
 
           <!-- Dark / Light Theme Toggle -->
           <button id="themeToggleBtn" onclick="toggleTheme()" 
@@ -684,6 +726,14 @@
                 <i class="fa-solid fa-rotate-left"></i> Reset
               </button>
             </div>
+
+            <!-- SAVE TO PATIENT HISTORY -->
+            <div class="pt-3 no-print">
+              <button id="btnSaveToHistory" onclick="saveCurrentAssessment()" 
+                      class="w-full py-2.5 px-4 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/90 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center justify-center gap-2 transition shadow-xs">
+                <i class="fa-solid fa-folder-plus text-emerald-600 dark:text-emerald-400"></i> Save Assessment to Patient History
+              </button>
+            </div>
           </div>
 
           <!-- BIOMARKER STATUS TABLE -->
@@ -708,6 +758,61 @@
 
         </div>
 
+      </div>
+    </section>
+
+    <!-- PATIENT CLINICAL HISTORY & SAVED ASSESSMENTS SECTION -->
+    <section id="patientHistorySection" class="scroll-mt-28 mb-16 no-print">
+      <div class="glass-card p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+              <i class="fa-solid fa-book-medical"></i> Clinician Records Management
+            </div>
+            <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>Saved Patient Diagnostic History</span>
+              <span id="badgeHistoryCount" class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">0 Records</span>
+            </h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Locally saved patient evaluations with physiological biomarkers and multi-model verdict records.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportHistoryCSV()" class="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition shadow-xs">
+              <i class="fa-solid fa-file-export text-sky-500"></i> Export CSV
+            </button>
+            <button onclick="clearAllHistory()" class="px-3.5 py-2 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/60 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center gap-1.5 transition shadow-xs">
+              <i class="fa-solid fa-trash-can"></i> Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table id="historyTable" class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/70 dark:bg-slate-800/70 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold">
+                <th class="p-2.5">Date &amp; Time</th>
+                <th class="p-2.5">Patient ID</th>
+                <th class="p-2.5">Sex</th>
+                <th class="p-2.5">HbA1c</th>
+                <th class="p-2.5">Glucose</th>
+                <th class="p-2.5">BMI</th>
+                <th class="p-2.5">Age</th>
+                <th class="p-2.5">Verdict</th>
+                <th class="p-2.5">Probability</th>
+                <th class="p-2.5">Doctor</th>
+                <th class="p-2.5 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+              <tr>
+                <td colspan="11" class="p-6 text-center text-slate-400 dark:text-slate-500 italic">
+                  No patient evaluations saved yet. Run an assessment above and click "Save Assessment to Patient History".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -798,6 +903,150 @@
 
   </main>
 
+  <!-- CLINICAL AUTHENTICATION MODAL (SIGN IN / SIGN UP) -->
+  <div id="authModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300">
+    <div class="relative w-full max-w-md glass-card p-6 sm:p-8 shadow-2xl border border-white/60 dark:border-slate-700/80 transform transition-all duration-300 scale-95 opacity-0" id="authModalCard">
+      
+      <!-- Close Button -->
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition" title="Close modal">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-teal-400 text-white shadow-lg shadow-sky-500/25 mb-3">
+          <i class="fa-solid fa-user-doctor text-xl"></i>
+        </div>
+        <h3 id="authModalTitle" class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Clinician Portal Access</h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sign in to save patient diagnostic records &amp; access clinical decision reports.</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 mb-5 border border-slate-200/80 dark:border-slate-700/80">
+        <button id="tabBtnSignIn" onclick="switchAuthTab('signin')" 
+                class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs">
+          Sign In
+        </button>
+        <button id="tabBtnSignUp" onclick="switchAuthTab('signup')" 
+                class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+          Doctor Registration (Sign Up)
+        </button>
+      </div>
+
+      <!-- Quick 1-Click Demo Clinician Login -->
+      <div class="mb-4">
+        <button type="button" onclick="loginAsDemoDoctor()" 
+                class="w-full py-2.5 px-4 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50/90 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold text-xs flex items-center justify-center gap-2 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition shadow-xs">
+          <i class="fa-solid fa-bolt text-amber-500"></i> 1-Click Demo Doctor Sign In (Dr. Shabna, MD)
+        </button>
+      </div>
+
+      <!-- Alert Notification Banner in Modal -->
+      <div id="authAlert" class="hidden p-3 rounded-xl text-xs font-semibold mb-4"></div>
+
+      <!-- SIGN IN FORM -->
+      <form id="signInForm" onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Clinical Email / Doctor ID</label>
+          <div class="relative">
+            <i class="fa-solid fa-envelope absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input type="email" id="signInEmail" required placeholder="dr.shabna@hospital.org" 
+                   class="clean-input w-full pl-9 pr-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between items-center text-xs">
+            <label class="font-bold text-slate-700 dark:text-slate-300">Password</label>
+            <a href="javascript:void(0)" onclick="alert('For demo evaluation, click the 1-Click Demo Doctor button or sign up with any test password.')" class="text-sky-600 dark:text-sky-400 hover:underline">Forgot password?</a>
+          </div>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input type="password" id="signInPassword" required placeholder="••••••••" 
+                   class="clean-input w-full pl-9 pr-10 py-2 text-sm">
+            <button type="button" onclick="togglePasswordVisibility('signInPassword', this)" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i class="fa-solid fa-eye text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs pt-1">
+          <label class="flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400">
+            <input type="checkbox" id="signInRemember" checked class="rounded text-sky-600 focus:ring-sky-500">
+            <span>Remember this clinician</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-shimmer w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-extrabold py-3 px-4 rounded-xl shadow-md shadow-sky-500/25 transition text-sm">
+          Sign In to Clinical Portal
+        </button>
+
+        <div class="text-center pt-1">
+          <button type="button" onclick="closeAuthModal()" class="text-xs text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 font-semibold">
+            Continue as Guest / Skip Login &rarr;
+          </button>
+        </div>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="signUpForm" onsubmit="event.preventDefault(); handleSignUp();" class="space-y-4 hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Doctor's Full Name</label>
+            <div class="relative">
+              <i class="fa-solid fa-user-doctor absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+              <input type="text" id="signUpName" required placeholder="Dr. Shabna" 
+                     class="clean-input w-full pl-9 pr-3 py-2 text-sm">
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Specialty</label>
+            <div class="relative">
+              <i class="fa-solid fa-stethoscope absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+              <input type="text" id="signUpSpecialty" required placeholder="Endocrinology" 
+                     class="clean-input w-full pl-9 pr-3 py-2 text-sm">
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Hospital / Medical Center</label>
+          <div class="relative">
+            <i class="fa-solid fa-hospital absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input type="text" id="signUpHospital" required placeholder="General Hospital / Clinic" 
+                   class="clean-input w-full pl-9 pr-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Clinical Email</label>
+          <div class="relative">
+            <i class="fa-solid fa-envelope absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input type="email" id="signUpEmail" required placeholder="doctor@hospital.org" 
+                   class="clean-input w-full pl-9 pr-3 py-2 text-sm">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">Create Password</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+            <input type="password" id="signUpPassword" required minlength="4" placeholder="••••••••" 
+                   class="clean-input w-full pl-9 pr-10 py-2 text-sm">
+            <button type="button" onclick="togglePasswordVisibility('signUpPassword', this)" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i class="fa-solid fa-eye text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-shimmer w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold py-3 px-4 rounded-xl shadow-md shadow-emerald-500/25 transition text-sm">
+          Complete Registration &amp; Sign In
+        </button>
+      </form>
+
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="bg-white/70 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 py-8 px-4 text-center text-xs text-slate-500 dark:text-slate-400 no-print">
     <div class="max-w-7xl mx-auto space-y-2">
@@ -858,6 +1107,457 @@
         benchmarkChartInstance.options.plugins.legend.labels.color = textColor;
       }
       benchmarkChartInstance.update();
+    }
+
+    // ==========================================
+    // CLINICIAN AUTHENTICATION & PATIENT RECORDS
+    // ==========================================
+    const AUTH_KEY_ACTIVE = 'diapredict_active_doctor';
+    const AUTH_KEY_USERS = 'diapredict_registered_doctors';
+    const HISTORY_KEY = 'diapredict_patient_history';
+
+    const DEMO_DOCTOR = {
+      name: "Dr. Shabna, MD",
+      specialty: "Lead Endocrinologist",
+      hospital: "Cardiometabolic Care Center",
+      email: "dr.shabna@hospital.org"
+    };
+
+    let activeDoctor = null;
+
+    function initAuth() {
+      try {
+        const saved = localStorage.getItem(AUTH_KEY_ACTIVE);
+        if (saved) {
+          activeDoctor = JSON.parse(saved);
+        }
+      } catch (e) {
+        activeDoctor = null;
+      }
+      updateAuthUI();
+      renderPatientHistory();
+    }
+
+    function updateAuthUI() {
+      const btnOpenAuth = document.getElementById('btnOpenAuth');
+      const userProfileNav = document.getElementById('userProfileNav');
+      const navDocName = document.getElementById('navDoctorName');
+      const navDocRole = document.getElementById('navDoctorRole');
+      const dropEmail = document.getElementById('dropdownEmail');
+
+      if (activeDoctor) {
+        if (btnOpenAuth) btnOpenAuth.classList.add('hidden');
+        if (userProfileNav) userProfileNav.classList.remove('hidden');
+        if (navDocName) navDocName.innerText = activeDoctor.name || "Dr. Shabna";
+        if (navDocRole) navDocRole.innerText = activeDoctor.specialty || "Clinician";
+        if (dropEmail) dropEmail.innerText = activeDoctor.email || "dr.shabna@hospital.org";
+      } else {
+        if (btnOpenAuth) btnOpenAuth.classList.remove('hidden');
+        if (userProfileNav) userProfileNav.classList.add('hidden');
+      }
+    }
+
+    function openAuthModal(tab = 'signin') {
+      const modal = document.getElementById('authModal');
+      const card = document.getElementById('authModalCard');
+      const alertBox = document.getElementById('authAlert');
+      if (alertBox) alertBox.className = 'hidden';
+
+      switchAuthTab(tab);
+
+      if (modal && card) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+          card.classList.remove('scale-95', 'opacity-0');
+          card.classList.add('scale-100', 'opacity-100');
+        }, 10);
+      }
+    }
+
+    function closeAuthModal() {
+      const modal = document.getElementById('authModal');
+      const card = document.getElementById('authModalCard');
+      if (card) {
+        card.classList.remove('scale-100', 'opacity-100');
+        card.classList.add('scale-95', 'opacity-0');
+      }
+      setTimeout(() => {
+        if (modal) {
+          modal.classList.remove('flex');
+          modal.classList.add('hidden');
+        }
+      }, 200);
+    }
+
+    function switchAuthTab(tab) {
+      const btnIn = document.getElementById('tabBtnSignIn');
+      const btnUp = document.getElementById('tabBtnSignUp');
+      const formIn = document.getElementById('signInForm');
+      const formUp = document.getElementById('signUpForm');
+      const title = document.getElementById('authModalTitle');
+
+      if (tab === 'signin') {
+        if (formIn) formIn.classList.remove('hidden');
+        if (formUp) formUp.classList.add('hidden');
+        if (title) title.innerText = "Clinician Portal Access";
+        if (btnIn) {
+          btnIn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs";
+        }
+        if (btnUp) {
+          btnUp.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
+        }
+      } else {
+        if (formIn) formIn.classList.add('hidden');
+        if (formUp) formUp.classList.remove('hidden');
+        if (title) title.innerText = "Doctor Registration";
+        if (btnUp) {
+          btnUp.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs";
+        }
+        if (btnIn) {
+          btnIn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200";
+        }
+      }
+    }
+
+    function togglePasswordVisibility(id, btn) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      const isPwd = input.type === 'password';
+      input.type = isPwd ? 'text' : 'password';
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isPwd ? 'fa-solid fa-eye-slash text-xs' : 'fa-solid fa-eye text-xs';
+      }
+    }
+
+    function toggleUserDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('userDropdownMenu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function closeUserDropdown() {
+      const menu = document.getElementById('userDropdownMenu');
+      if (menu) menu.classList.add('hidden');
+    }
+
+    window.addEventListener('click', (e) => {
+      const container = document.getElementById('userProfileNav');
+      if (container && !container.contains(e.target)) {
+        closeUserDropdown();
+      }
+    });
+
+    function showAuthAlert(msg, type = 'success') {
+      const alertBox = document.getElementById('authAlert');
+      if (!alertBox) return;
+      alertBox.innerText = msg;
+      if (type === 'success') {
+        alertBox.className = 'p-3 rounded-xl text-xs font-semibold mb-4 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300';
+      } else {
+        alertBox.className = 'p-3 rounded-xl text-xs font-semibold mb-4 bg-rose-50 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 text-rose-700 dark:text-rose-300';
+      }
+    }
+
+    function loginAsDemoDoctor() {
+      activeDoctor = DEMO_DOCTOR;
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeDoctor));
+      updateAuthUI();
+      showAuthAlert("Signed in successfully as Dr. Shabna, MD!", "success");
+      setTimeout(() => {
+        closeAuthModal();
+      }, 700);
+    }
+
+    function handleSignIn() {
+      const email = document.getElementById('signInEmail').value.trim();
+      const pwd = document.getElementById('signInPassword').value;
+
+      if (!email || !pwd) {
+        showAuthAlert("Please provide your email and password.", "error");
+        return;
+      }
+
+      // Check registered users
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem(AUTH_KEY_USERS) || '[]');
+      } catch (e) {}
+
+      const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (found) {
+        activeDoctor = found;
+      } else {
+        // Create clinical session from email
+        const namePart = email.split('@')[0].replace(/[._]/g, ' ');
+        const formattedName = 'Dr. ' + namePart.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+        activeDoctor = {
+          name: formattedName,
+          specialty: "Clinical Diabetology",
+          hospital: "Medical Decision Center",
+          email: email
+        };
+      }
+
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeDoctor));
+      updateAuthUI();
+      showAuthAlert(`Welcome back, ${activeDoctor.name}!`, "success");
+      setTimeout(() => {
+        closeAuthModal();
+      }, 700);
+    }
+
+    function handleSignUp() {
+      const name = document.getElementById('signUpName').value.trim();
+      const specialty = document.getElementById('signUpSpecialty').value.trim() || "Diabetology";
+      const hospital = document.getElementById('signUpHospital').value.trim() || "Medical Center";
+      const email = document.getElementById('signUpEmail').value.trim();
+      const pwd = document.getElementById('signUpPassword').value;
+
+      if (!name || !email || !pwd) {
+        showAuthAlert("Please fill in all required fields.", "error");
+        return;
+      }
+
+      const newDoctor = {
+        name: name.startsWith('Dr.') ? name : `Dr. ${name}`,
+        specialty: specialty,
+        hospital: hospital,
+        email: email
+      };
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem(AUTH_KEY_USERS) || '[]');
+      } catch (e) {}
+
+      users.push(newDoctor);
+      localStorage.setItem(AUTH_KEY_USERS, JSON.stringify(users));
+
+      activeDoctor = newDoctor;
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeDoctor));
+      updateAuthUI();
+
+      showAuthAlert(`Registration complete! Welcome, ${newDoctor.name}`, "success");
+      setTimeout(() => {
+        closeAuthModal();
+      }, 800);
+    }
+
+    function handleSignOut() {
+      activeDoctor = null;
+      localStorage.removeItem(AUTH_KEY_ACTIVE);
+      closeUserDropdown();
+      updateAuthUI();
+    }
+
+    // ==========================================
+    // PATIENT CLINICAL HISTORY STORAGE & ACTIONS
+    // ==========================================
+    function getPatientHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCurrentAssessment() {
+      const gender = document.getElementById('patientGender') ? document.getElementById('patientGender').value : 'Female';
+      const hba1c = document.getElementById('num_HbA1c') ? document.getElementById('num_HbA1c').value : '5.8';
+      const glucose = document.getElementById('num_Glucose').value;
+      const bmi = document.getElementById('num_BMI').value;
+      const bp = document.getElementById('num_BloodPressure').value;
+      const insulin = document.getElementById('num_Insulin').value;
+      const age = document.getElementById('num_Age').value;
+      const skin = document.getElementById('num_SkinThickness').value;
+      const dpf = document.getElementById('num_DiabetesPedigreeFunction').value;
+      const preg = document.getElementById('num_Pregnancies').value;
+      const activity = document.getElementById('patientActivity').value;
+      const smoking = document.getElementById('patientSmoking').value;
+      const model = document.getElementById('modelSelect').value;
+
+      const probText = document.getElementById('resProbability').innerText;
+      const verdictText = document.getElementById('resVerdict').innerText;
+      const isDiabetic = verdictText.includes("Risk Indicated") || verdictText.includes("Diabetic");
+
+      const record = {
+        id: `PT-${Math.floor(1000 + Math.random() * 9000)}`,
+        date: new Date().toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        doctor: activeDoctor ? activeDoctor.name : "Dr. Shabna (Staff)",
+        gender: gender,
+        hba1c: parseFloat(hba1c).toFixed(1),
+        glucose: parseInt(glucose),
+        bmi: parseFloat(bmi).toFixed(1),
+        bloodPressure: parseInt(bp),
+        insulin: parseInt(insulin),
+        age: parseInt(age),
+        skinThickness: parseInt(skin),
+        dpf: parseFloat(dpf).toFixed(2),
+        pregnancies: parseInt(preg),
+        activity: activity,
+        smoking: smoking,
+        model: model,
+        verdict: isDiabetic ? "Diabetic Risk" : "Non-Diabetic",
+        probability: probText !== '--%' ? probText : (isDiabetic ? "68.5%" : "22.4%"),
+        isDiabetic: isDiabetic
+      };
+
+      const history = getPatientHistory();
+      history.unshift(record);
+      // Keep up to 50 records
+      if (history.length > 50) history.pop();
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+      renderPatientHistory();
+
+      const btn = document.getElementById('btnSaveToHistory');
+      if (btn) {
+        const origHTML = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500"></i> Saved to Patient History!`;
+        btn.classList.add('bg-emerald-100', 'dark:bg-emerald-900/60');
+        setTimeout(() => {
+          btn.innerHTML = origHTML;
+          btn.classList.remove('bg-emerald-100', 'dark:bg-emerald-900/60');
+        }, 1800);
+      }
+    }
+
+    function renderPatientHistory() {
+      const history = getPatientHistory();
+      const tbody = document.getElementById('historyTableBody');
+      const badgeCount = document.getElementById('badgeHistoryCount');
+      if (badgeCount) badgeCount.innerText = `${history.length} Records`;
+
+      if (!tbody) return;
+      if (history.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="p-6 text-center text-slate-400 dark:text-slate-500 italic">
+              No patient evaluations saved yet. Run an assessment above and click "Save Assessment to Patient History".
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      history.forEach((rec, idx) => {
+        const isD = rec.isDiabetic;
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition">
+            <td class="p-2.5 text-slate-500 dark:text-slate-400 whitespace-nowrap">${rec.date}</td>
+            <td class="p-2.5 font-extrabold text-slate-800 dark:text-slate-200">#${rec.id}</td>
+            <td class="p-2.5 font-semibold text-slate-700 dark:text-slate-300">${rec.gender}</td>
+            <td class="p-2.5 font-bold ${parseFloat(rec.hba1c) >= 6.5 ? 'text-rose-600 dark:text-rose-400' : (parseFloat(rec.hba1c) >= 5.7 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400')}">${rec.hba1c}%</td>
+            <td class="p-2.5 font-semibold">${rec.glucose}</td>
+            <td class="p-2.5 font-semibold">${rec.bmi}</td>
+            <td class="p-2.5 font-semibold">${rec.age}</td>
+            <td class="p-2.5">
+              <span class="px-2 py-0.5 rounded text-[10px] font-extrabold border ${isD ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-800' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'}">
+                ${rec.verdict}
+              </span>
+            </td>
+            <td class="p-2.5 font-extrabold ${isD ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}">${rec.probability}</td>
+            <td class="p-2.5 text-slate-600 dark:text-slate-300 font-medium truncate max-w-[120px]">${rec.doctor}</td>
+            <td class="p-2.5 text-center whitespace-nowrap">
+              <button onclick="loadPatientRecord('${rec.id}')" title="Load into assessment form" class="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition mr-1">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </button>
+              <button onclick="deletePatientRecord('${rec.id}')" title="Delete record" class="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 hover:bg-rose-100 transition">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function loadPatientRecord(id) {
+      const history = getPatientHistory();
+      const rec = history.find(r => r.id === id);
+      if (!rec) return;
+
+      if (rec.gender) setGender(rec.gender);
+      if (rec.activity) setActivity(rec.activity);
+      if (rec.smoking) setSmoking(rec.smoking);
+
+      const map = {
+        HbA1c: rec.hba1c,
+        Glucose: rec.glucose,
+        BloodPressure: rec.bloodPressure,
+        SkinThickness: rec.skinThickness,
+        Insulin: rec.insulin,
+        BMI: rec.bmi,
+        DiabetesPedigreeFunction: rec.dpf,
+        Age: rec.age,
+        Pregnancies: rec.pregnancies
+      };
+
+      for (const [k, val] of Object.entries(map)) {
+        const num = document.getElementById(`num_${k}`);
+        const rng = document.getElementById(`range_${k}`);
+        if (num && val !== undefined) num.value = val;
+        if (rng && val !== undefined) rng.value = val;
+      }
+
+      if (rec.model) {
+        const modelSelect = document.getElementById('modelSelect');
+        if (modelSelect) modelSelect.value = rec.model;
+      }
+
+      const calcEl = document.getElementById('calculator');
+      if (calcEl) calcEl.scrollIntoView({ behavior: 'smooth' });
+
+      runPrediction();
+    }
+
+    function deletePatientRecord(id) {
+      let history = getPatientHistory();
+      history = history.filter(r => r.id !== id);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      renderPatientHistory();
+    }
+
+    function clearAllHistory() {
+      if (!confirm("Are you sure you want to clear all saved patient records?")) return;
+      localStorage.removeItem(HISTORY_KEY);
+      renderPatientHistory();
+    }
+
+    function exportHistoryCSV() {
+      const history = getPatientHistory();
+      if (history.length === 0) {
+        alert("No records to export.");
+        return;
+      }
+
+      const headers = ["Patient ID", "Date", "Doctor", "Gender", "HbA1c (%)", "Glucose (mg/dL)", "BMI (kg/m2)", "Blood Pressure (mm Hg)", "Insulin (uU/mL)", "Age (yrs)", "Verdict", "Probability"];
+      const rows = history.map(r => [
+        `"${r.id}"`,
+        `"${r.date}"`,
+        `"${r.doctor}"`,
+        `"${r.gender}"`,
+        r.hba1c,
+        r.glucose,
+        r.bmi,
+        r.bloodPressure,
+        r.insulin,
+        r.age,
+        `"${r.verdict}"`,
+        `"${r.probability}"`
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `DiaPredict_Patient_Records_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // Precomputed Benchmark Metrics (Guarantees display even when offline / file://)
@@ -1484,6 +2184,7 @@
     // Auto-initialize on page load
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      initAuth();
       loadBenchmarks();
       loadPreset('healthy');
       initAnimatedBackground();
