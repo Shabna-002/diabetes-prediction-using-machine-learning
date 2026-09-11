@@ -215,6 +215,24 @@
 
           <form id="predictionForm" onsubmit="event.preventDefault(); runPrediction();" class="space-y-5">
             
+            <!-- Patient Biological Sex / Gender -->
+            <div class="space-y-1.5 pb-2 border-b border-slate-100">
+              <label class="font-semibold text-slate-700 text-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-venus-mars text-indigo-600"></i> Patient Biological Sex / Gender
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="btnGenderFemale" onclick="setGender('Female')" 
+                        class="py-2.5 px-4 rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-700 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm">
+                  <i class="fa-solid fa-venus text-pink-500 text-sm"></i> Female (Gestational Screening)
+                </button>
+                <button type="button" id="btnGenderMale" onclick="setGender('Male')" 
+                        class="py-2.5 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 transition">
+                  <i class="fa-solid fa-mars text-blue-500 text-sm"></i> Male (Visceral Profile)
+                </button>
+              </div>
+              <input type="hidden" id="patientGender" value="Female">
+            </div>
+
             <!-- HbA1c Level (Gold-Standard Glycemic Marker) -->
             <div class="space-y-1">
               <div class="flex justify-between items-center text-sm">
@@ -324,9 +342,9 @@
 
             <!-- Two Column Row: Pregnancies & Skin Thickness -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div class="space-y-1">
+              <div class="space-y-1" id="pregnanciesContainer">
                 <div class="flex justify-between items-center text-sm">
-                  <label class="font-semibold text-slate-700 flex items-center gap-1">
+                  <label class="font-semibold text-slate-700 flex items-center gap-1" id="lblPregnancies">
                     <i class="fa-solid fa-person-breastfeeding text-pink-500"></i> Pregnancies
                   </label>
                   <input type="number" id="num_Pregnancies" min="0" max="20" step="1" value="2" 
@@ -620,16 +638,48 @@
       if (rngA) rngA.value = a1c;
     }
 
-    // Preset Profiles with Gold-Standard HbA1c
+    function setGender(g) {
+      const input = document.getElementById('patientGender');
+      if (input) input.value = g;
+      const btnFemale = document.getElementById('btnGenderFemale');
+      const btnMale = document.getElementById('btnGenderMale');
+      const pregContainer = document.getElementById('pregnanciesContainer');
+      const lblPreg = document.getElementById('lblPregnancies');
+      const numPreg = document.getElementById('num_Pregnancies');
+      const rngPreg = document.getElementById('range_Pregnancies');
+
+      if (g === 'Male') {
+        if (btnMale) btnMale.className = "py-2.5 px-4 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-700 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm";
+        if (btnFemale) btnFemale.className = "py-2.5 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 transition";
+        if (numPreg) numPreg.value = 0;
+        if (rngPreg) rngPreg.value = 0;
+        if (pregContainer) {
+          pregContainer.style.opacity = '0.4';
+          pregContainer.style.pointerEvents = 'none';
+        }
+        if (lblPreg) lblPreg.innerHTML = '<i class="fa-solid fa-person-breastfeeding text-slate-400"></i> Pregnancies (0 - N/A for Male)';
+      } else {
+        if (btnFemale) btnFemale.className = "py-2.5 px-4 rounded-xl border-2 border-sky-600 bg-sky-50 text-sky-700 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm";
+        if (btnMale) btnMale.className = "py-2.5 px-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 font-semibold text-xs flex items-center justify-center gap-2 transition";
+        if (pregContainer) {
+          pregContainer.style.opacity = '1';
+          pregContainer.style.pointerEvents = 'auto';
+        }
+        if (lblPreg) lblPreg.innerHTML = '<i class="fa-solid fa-person-breastfeeding text-pink-500"></i> Pregnancies';
+      }
+    }
+
+    // Preset Profiles with Gold-Standard HbA1c & Gender
     const presets = {
-      healthy: { Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
-      prediabetic: { Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
-      diabetic: { Pregnancies: 5, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
+      healthy: { Gender: 'Female', Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
+      prediabetic: { Gender: 'Female', Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
+      diabetic: { Gender: 'Male', Pregnancies: 0, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
     };
 
     function loadPreset(key) {
       const p = presets[key];
       if (!p) return;
+      if (p.Gender) setGender(p.Gender);
       allInputFields.forEach(f => {
         const val = p[f];
         const rangeEl = document.getElementById(`range_${f}`);
@@ -646,6 +696,14 @@
 
     function evaluateBiomarkersClient(p) {
       const evaluations = [];
+
+      // Biological Sex / Gender Evaluation
+      const gender = p.Gender || (document.getElementById('patientGender') ? document.getElementById('patientGender').value : 'Female');
+      if (gender === 'Male') {
+        evaluations.push({ name: "Biological Sex / Gender", value: "Male", status: "Visceral Profile", badge: "info", note: "Elevated visceral adiposity index at lower BMI thresholds" });
+      } else {
+        evaluations.push({ name: "Biological Sex / Gender", value: "Female", status: "Gestational Profile", badge: "info", note: "Evaluates pregnancy & hormonal metabolic history" });
+      }
 
       // HbA1c Glycemic Evaluation
       const hba1c = p.HbA1c || Math.min(15.0, Math.max(4.0, Math.round(((p.Glucose + 46.7) / 28.7) * 10) / 10));
@@ -734,9 +792,15 @@
     // Run Real-Time ML Prediction
     async function runPrediction() {
       const patient = {};
+      const genderEl = document.getElementById('patientGender');
+      const gender = genderEl ? genderEl.value : 'Female';
+      patient.Gender = gender;
       features.forEach(f => {
         patient[f] = parseFloat(document.getElementById(`num_${f}`).value);
       });
+      if (gender === 'Male') {
+        patient.Pregnancies = 0;
+      }
       const hba1cEl = document.getElementById('num_HbA1c');
       if (hba1cEl) patient.HbA1c = parseFloat(hba1cEl.value);
       const modelName = document.getElementById('modelSelect').value;

@@ -45,6 +45,13 @@ def evaluate_clinical_biomarkers(data):
     """Evaluates each biomarker against clinical reference ranges."""
     evaluations = []
     
+    # Biological Sex / Gender
+    gender = str(data.get('Gender', 'Female')).strip().capitalize()
+    if gender == 'Male':
+        evaluations.append({"name": "Biological Sex / Gender", "value": "Male", "status": "Visceral Profile", "badge": "info", "note": "Elevated visceral adiposity index at lower BMI thresholds"})
+    else:
+        evaluations.append({"name": "Biological Sex / Gender", "value": "Female", "status": "Gestational Profile", "badge": "info", "note": "Evaluates pregnancy & hormonal metabolic history"})
+
     # HbA1c Level (Glycated Hemoglobin)
     hba1c = data.get('HbA1c', None)
     if hba1c is None or float(hba1c) <= 0:
@@ -202,8 +209,10 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
         return {"metrics": METRICS_DF.to_dict(orient="records")}
 
     def perform_prediction(self, payload):
+        gender = str(payload.get('Gender', 'Female')).strip().capitalize()
+        pregnancies = 0.0 if gender == 'Male' else float(payload.get('Pregnancies', 1))
         patient_dict = {
-            'Pregnancies': float(payload.get('Pregnancies', 1)),
+            'Pregnancies': pregnancies,
             'Glucose': float(payload.get('Glucose', 120)),
             'BloodPressure': float(payload.get('BloodPressure', 70)),
             'SkinThickness': float(payload.get('SkinThickness', 20)),
@@ -241,6 +250,7 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
             risk_class = "high"
             color = "#EF4444"
         eval_dict = dict(patient_dict)
+        eval_dict['Gender'] = gender
         if 'HbA1c' in payload and float(payload.get('HbA1c', 0)) > 0:
             eval_dict['HbA1c'] = float(payload.get('HbA1c'))
         biomarkers = evaluate_clinical_biomarkers(eval_dict)
