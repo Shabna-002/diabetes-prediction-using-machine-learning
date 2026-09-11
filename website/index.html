@@ -272,6 +272,39 @@
               <input type="hidden" id="patientActivity" value="Moderate">
             </div>
 
+            <!-- Smoking & Tobacco Exposure Status -->
+            <div class="space-y-1.5 pb-2 border-b border-slate-100">
+              <div class="flex justify-between items-center text-sm">
+                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-smoking text-amber-600"></i> Smoking & Tobacco Exposure
+                </label>
+                <span id="txtSmokingDescription" class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Never Smoked (Lowest Risk)
+                </span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" id="btnSmokeNever" onclick="setSmoking('Never')"
+                  class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-ban-smoking text-emerald-600 text-base"></i>
+                  <span class="font-bold text-xs">Never Smoked</span>
+                  <span class="text-[10px] text-emerald-600 font-medium">Non-Smoker</span>
+                </button>
+                <button type="button" id="btnSmokeFormer" onclick="setSmoking('Former')"
+                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  <i class="fa-solid fa-clock-rotate-left text-amber-500 text-base"></i>
+                  <span class="font-bold text-xs">Former Smoker</span>
+                  <span class="text-[10px] text-slate-400">Quit / Recovery</span>
+                </button>
+                <button type="button" id="btnSmokeCurrent" onclick="setSmoking('Current')"
+                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  <i class="fa-solid fa-smoking text-rose-500 text-base"></i>
+                  <span class="font-bold text-xs">Current Smoker</span>
+                  <span class="text-[10px] text-slate-400">Active Nicotine</span>
+                </button>
+              </div>
+              <input type="hidden" id="patientSmoking" value="Never">
+            </div>
+
             <!-- HbA1c Level (Gold-Standard Glycemic Marker) -->
             <div class="space-y-1">
               <div class="flex justify-between items-center text-sm">
@@ -757,11 +790,54 @@
       });
     }
 
-    // Preset Profiles with Gold-Standard HbA1c, Gender & Activity
+    const smokingConfigs = {
+      'Never': {
+        btnId: 'btnSmokeNever',
+        desc: 'Never Smoked (Lowest Risk)',
+        tagClass: 'text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      },
+      'Former': {
+        btnId: 'btnSmokeFormer',
+        desc: 'Former Smoker (Quit / Recovery)',
+        tagClass: 'text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      },
+      'Current': {
+        btnId: 'btnSmokeCurrent',
+        desc: 'Current Smoker (+30-40% T2D Risk)',
+        tagClass: 'text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      }
+    };
+
+    function setSmoking(status) {
+      if (!smokingConfigs[status]) status = 'Never';
+      const input = document.getElementById('patientSmoking');
+      if (input) input.value = status;
+
+      const descEl = document.getElementById('txtSmokingDescription');
+      if (descEl) {
+        descEl.innerText = smokingConfigs[status].desc;
+        descEl.className = smokingConfigs[status].tagClass;
+      }
+
+      ['Never', 'Former', 'Current'].forEach(k => {
+        const btn = document.getElementById(smokingConfigs[k].btnId);
+        if (!btn) return;
+        if (k === status) {
+          btn.className = smokingConfigs[k].activeBtnClass;
+        } else {
+          btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1';
+        }
+      });
+    }
+
+    // Preset Profiles with Gold-Standard HbA1c, Gender, Activity & Smoking
     const presets = {
-      healthy: { Gender: 'Female', Activity: 'Moderate', Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
-      prediabetic: { Gender: 'Female', Activity: 'Light', Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
-      diabetic: { Gender: 'Male', Activity: 'Sedentary', Pregnancies: 0, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
+      healthy: { Gender: 'Female', Activity: 'Moderate', Smoking: 'Never', Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
+      prediabetic: { Gender: 'Female', Activity: 'Light', Smoking: 'Former', Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
+      diabetic: { Gender: 'Male', Activity: 'Sedentary', Smoking: 'Current', Pregnancies: 0, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
     };
 
     function loadPreset(key) {
@@ -769,6 +845,7 @@
       if (!p) return;
       if (p.Gender) setGender(p.Gender);
       if (p.Activity) setActivity(p.Activity);
+      if (p.Smoking) setSmoking(p.Smoking);
       allInputFields.forEach(f => {
         const val = p[f];
         const rangeEl = document.getElementById(`range_${f}`);
@@ -804,6 +881,16 @@
         evaluations.push({ name: "Physical Activity & Exercise", value: "Active (>=300 min/wk)", status: "Cardiovascular Protective", badge: "success", note: "High metabolic clearance rate and robust glycemic regulation" });
       } else {
         evaluations.push({ name: "Physical Activity & Exercise", value: "Moderate (150-299 min/wk)", status: "Meets ADA Target", badge: "success", note: "Meets WHO/ADA guideline (150+ min/wk); improves insulin sensitivity by up to 25%" });
+      }
+
+      // Smoking Status Evaluation
+      const smk = p.SmokingStatus || (document.getElementById('patientSmoking') ? document.getElementById('patientSmoking').value : 'Never');
+      if (smk === 'Current') {
+        evaluations.push({ name: "Smoking & Tobacco Status", value: "Current Smoker", status: "Active Nicotine Risk", badge: "danger", note: "30-40% higher risk of type 2 diabetes; elevates insulin resistance & arterial inflammation" });
+      } else if (smk === 'Former') {
+        evaluations.push({ name: "Smoking & Tobacco Status", value: "Former Smoker", status: "Cessation Recovery", badge: "warning", note: "Past smoker in metabolic recovery; vascular & insulin sensitivity progressively improving" });
+      } else {
+        evaluations.push({ name: "Smoking & Tobacco Status", value: "Never Smoked", status: "Optimal Profile", badge: "success", note: "Zero nicotine exposure; optimal endothelial & microvascular baseline" });
       }
 
       // HbA1c Glycemic Evaluation
@@ -880,6 +967,13 @@
           : "Significant risk indicators detected. Immediate consultation with an endocrinologist for comprehensive diagnostic testing is strongly advised.";
       }
 
+      const smk = p.SmokingStatus || (document.getElementById('patientSmoking') ? document.getElementById('patientSmoking').value : 'Never');
+      if (smk === 'Current') {
+        rec += " Tobacco cessation is strongly advised to lower systemic insulin resistance and cardiovascular strain.";
+      } else if (smk === 'Former') {
+        rec += " Maintain tobacco abstinence to support long-term metabolic and vascular health.";
+      }
+
       return {
         prediction: predCode === 1 ? "Diabetic" : "Non-Diabetic",
         prediction_code: predCode,
@@ -908,6 +1002,8 @@
       patient.Gender = gender;
       const actEl = document.getElementById('patientActivity');
       patient.PhysicalActivity = actEl ? actEl.value : 'Moderate';
+      const smokeEl = document.getElementById('patientSmoking');
+      patient.SmokingStatus = smokeEl ? smokeEl.value : 'Never';
       features.forEach(f => {
         patient[f] = parseFloat(document.getElementById(`num_${f}`).value);
       });

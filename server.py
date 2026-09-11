@@ -87,6 +87,33 @@ def evaluate_clinical_biomarkers(data):
             "note": "Meets WHO/ADA guideline (150+ min/wk); improves insulin sensitivity by up to 25%"
         })
 
+    # Smoking & Tobacco Exposure Status
+    smoking = str(data.get('SmokingStatus', 'Never')).strip().capitalize()
+    if smoking == 'Current':
+        evaluations.append({
+            "name": "Smoking & Tobacco Status",
+            "value": "Current Smoker",
+            "status": "Active Nicotine Risk",
+            "badge": "danger",
+            "note": "30-40% higher risk of type 2 diabetes; elevates insulin resistance & arterial inflammation"
+        })
+    elif smoking == 'Former':
+        evaluations.append({
+            "name": "Smoking & Tobacco Status",
+            "value": "Former Smoker",
+            "status": "Cessation Recovery",
+            "badge": "warning",
+            "note": "Past smoker in metabolic recovery; vascular & insulin sensitivity progressively improving"
+        })
+    else:
+        evaluations.append({
+            "name": "Smoking & Tobacco Status",
+            "value": "Never Smoked",
+            "status": "Optimal Profile",
+            "badge": "success",
+            "note": "Zero nicotine exposure; optimal endothelial & microvascular baseline"
+        })
+
     # HbA1c Level (Glycated Hemoglobin)
     hba1c = data.get('HbA1c', None)
     if hba1c is None or float(hba1c) <= 0:
@@ -271,6 +298,7 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
         pred_prob = float(model.predict_proba(X_proc)[0, 1])
 
         activity = str(payload.get('PhysicalActivity', 'Moderate')).strip().capitalize()
+        smoking = str(payload.get('SmokingStatus', 'Never')).strip().capitalize()
 
         if pred_prob < 0.35:
             risk_tier = "Low Risk"
@@ -296,9 +324,16 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
                 recommendation = "Significant risk indicators detected with sedentary routine. Immediate medical consultation and physician-supervised physical activity program strongly advised."
             else:
                 recommendation = "Significant risk indicators detected. Immediate consultation with an endocrinologist for comprehensive diagnostic testing is strongly advised."
+
+        if smoking == 'Current':
+            recommendation += " Tobacco cessation is strongly advised to lower systemic insulin resistance and cardiovascular strain."
+        elif smoking == 'Former':
+            recommendation += " Maintain tobacco abstinence to support long-term metabolic and vascular health."
+
         eval_dict = dict(patient_dict)
         eval_dict['Gender'] = gender
         eval_dict['PhysicalActivity'] = activity
+        eval_dict['SmokingStatus'] = smoking
         if 'HbA1c' in payload and float(payload.get('HbA1c', 0)) > 0:
             eval_dict['HbA1c'] = float(payload.get('HbA1c'))
         biomarkers = evaluate_clinical_biomarkers(eval_dict)
