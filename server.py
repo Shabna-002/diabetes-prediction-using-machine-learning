@@ -52,6 +52,41 @@ def evaluate_clinical_biomarkers(data):
     else:
         evaluations.append({"name": "Biological Sex / Gender", "value": "Female", "status": "Gestational Profile", "badge": "info", "note": "Evaluates pregnancy & hormonal metabolic history"})
 
+    # Physical Activity & Exercise Level
+    activity = str(data.get('PhysicalActivity', 'Moderate')).strip().capitalize()
+    if activity == 'Sedentary':
+        evaluations.append({
+            "name": "Physical Activity & Exercise",
+            "value": "Sedentary (<30 min/wk)",
+            "status": "Sedentary Lifestyle",
+            "badge": "danger",
+            "note": "Elevates insulin resistance risk; target >=150 min/wk moderate aerobic exercise"
+        })
+    elif activity == 'Light':
+        evaluations.append({
+            "name": "Physical Activity & Exercise",
+            "value": "Light (30-149 min/wk)",
+            "status": "Sub-optimal Activity",
+            "badge": "warning",
+            "note": "Below ADA guideline; recommended to increase to 150+ min moderate activity/wk"
+        })
+    elif activity == 'Active':
+        evaluations.append({
+            "name": "Physical Activity & Exercise",
+            "value": "Active (>=300 min/wk)",
+            "status": "Cardiovascular Protective",
+            "badge": "success",
+            "note": "High metabolic clearance rate and robust glycemic regulation"
+        })
+    else:
+        evaluations.append({
+            "name": "Physical Activity & Exercise",
+            "value": "Moderate (150-299 min/wk)",
+            "status": "Meets ADA Target",
+            "badge": "success",
+            "note": "Meets WHO/ADA guideline (150+ min/wk); improves insulin sensitivity by up to 25%"
+        })
+
     # HbA1c Level (Glycated Hemoglobin)
     hba1c = data.get('HbA1c', None)
     if hba1c is None or float(hba1c) <= 0:
@@ -235,22 +270,35 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
         pred_code = int(model.predict(X_proc)[0])
         pred_prob = float(model.predict_proba(X_proc)[0, 1])
 
+        activity = str(payload.get('PhysicalActivity', 'Moderate')).strip().capitalize()
+
         if pred_prob < 0.35:
             risk_tier = "Low Risk"
             risk_class = "low"
             color = "#10B981"
-            recommendation = "Maintain balanced nutrition, regular physical activity, and routine annual health checkups."
+            if activity in ['Active', 'Moderate']:
+                recommendation = "Maintain regular physical activity, balanced nutrition, and routine annual health checkups."
+            else:
+                recommendation = "Overall low risk. Increasing weekly exercise to >=150 mins will further optimize long-term metabolic health."
         elif pred_prob < 0.65:
             risk_tier = "Moderate Risk"
             risk_class = "moderate"
             color = "#F59E0B"
-            recommendation = "Borderline glucose / metabolic markers detected. Dietary modification and medical consultation recommended."
+            if activity == 'Sedentary':
+                recommendation = "Borderline glucose markers with sedentary lifestyle. Initiating a 150+ min/week exercise routine can reduce progression risk by up to 58%."
+            else:
+                recommendation = "Borderline metabolic markers detected. Dietary modification, regular aerobic exercise, and medical consultation recommended."
         else:
             risk_tier = "High Risk"
             risk_class = "high"
             color = "#EF4444"
+            if activity == 'Sedentary':
+                recommendation = "Significant risk indicators detected with sedentary routine. Immediate medical consultation and physician-supervised physical activity program strongly advised."
+            else:
+                recommendation = "Significant risk indicators detected. Immediate consultation with an endocrinologist for comprehensive diagnostic testing is strongly advised."
         eval_dict = dict(patient_dict)
         eval_dict['Gender'] = gender
+        eval_dict['PhysicalActivity'] = activity
         if 'HbA1c' in payload and float(payload.get('HbA1c', 0)) > 0:
             eval_dict['HbA1c'] = float(payload.get('HbA1c'))
         biomarkers = evaluate_clinical_biomarkers(eval_dict)

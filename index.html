@@ -233,6 +233,45 @@
               <input type="hidden" id="patientGender" value="Female">
             </div>
 
+            <!-- Physical Activity & Exercise Level -->
+            <div class="space-y-1.5 pb-2 border-b border-slate-100">
+              <div class="flex justify-between items-center text-sm">
+                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-person-running text-emerald-600"></i> Physical Activity & Exercise Level
+                </label>
+                <span id="txtActivityDescription" class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Moderate (150-299 min/wk)
+                </span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button type="button" id="btnActSedentary" onclick="setActivity('Sedentary')"
+                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  <i class="fa-solid fa-couch text-rose-500 text-base"></i>
+                  <span class="font-bold text-xs">Sedentary</span>
+                  <span class="text-[10px] text-slate-400">&lt;30 min/wk</span>
+                </button>
+                <button type="button" id="btnActLight" onclick="setActivity('Light')"
+                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  <i class="fa-solid fa-person-walking text-amber-500 text-base"></i>
+                  <span class="font-bold text-xs">Light</span>
+                  <span class="text-[10px] text-slate-400">30-149 min/wk</span>
+                </button>
+                <button type="button" id="btnActModerate" onclick="setActivity('Moderate')"
+                  class="p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm">
+                  <i class="fa-solid fa-person-running text-emerald-600 text-base"></i>
+                  <span class="font-bold text-xs">Moderate</span>
+                  <span class="text-[10px] text-emerald-600 font-medium">150-299 min/wk</span>
+                </button>
+                <button type="button" id="btnActActive" onclick="setActivity('Active')"
+                  class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1">
+                  <i class="fa-solid fa-dumbbell text-sky-500 text-base"></i>
+                  <span class="font-bold text-xs">Active</span>
+                  <span class="text-[10px] text-slate-400">300+ min/wk</span>
+                </button>
+              </div>
+              <input type="hidden" id="patientActivity" value="Moderate">
+            </div>
+
             <!-- HbA1c Level (Gold-Standard Glycemic Marker) -->
             <div class="space-y-1">
               <div class="flex justify-between items-center text-sm">
@@ -669,17 +708,67 @@
       }
     }
 
-    // Preset Profiles with Gold-Standard HbA1c & Gender
+    const activityConfigs = {
+      'Sedentary': {
+        btnId: 'btnActSedentary',
+        desc: 'Sedentary (<30 min/wk)',
+        tagClass: 'text-xs font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      },
+      'Light': {
+        btnId: 'btnActLight',
+        desc: 'Light (30-149 min/wk)',
+        tagClass: 'text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      },
+      'Moderate': {
+        btnId: 'btnActModerate',
+        desc: 'Moderate (150-299 min/wk)',
+        tagClass: 'text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      },
+      'Active': {
+        btnId: 'btnActActive',
+        desc: 'Active (300+ min/wk)',
+        tagClass: 'text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200',
+        activeBtnClass: 'p-2.5 rounded-xl border-2 border-sky-500 bg-sky-50 text-sky-800 text-center transition flex flex-col items-center gap-1 shadow-sm'
+      }
+    };
+
+    function setActivity(lvl) {
+      if (!activityConfigs[lvl]) lvl = 'Moderate';
+      const input = document.getElementById('patientActivity');
+      if (input) input.value = lvl;
+
+      const descEl = document.getElementById('txtActivityDescription');
+      if (descEl) {
+        descEl.innerText = activityConfigs[lvl].desc;
+        descEl.className = activityConfigs[lvl].tagClass;
+      }
+
+      ['Sedentary', 'Light', 'Moderate', 'Active'].forEach(k => {
+        const btn = document.getElementById(activityConfigs[k].btnId);
+        if (!btn) return;
+        if (k === lvl) {
+          btn.className = activityConfigs[k].activeBtnClass;
+        } else {
+          btn.className = 'p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-center transition flex flex-col items-center gap-1';
+        }
+      });
+    }
+
+    // Preset Profiles with Gold-Standard HbA1c, Gender & Activity
     const presets = {
-      healthy: { Gender: 'Female', Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
-      prediabetic: { Gender: 'Female', Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
-      diabetic: { Gender: 'Male', Pregnancies: 0, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
+      healthy: { Gender: 'Female', Activity: 'Moderate', Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
+      prediabetic: { Gender: 'Female', Activity: 'Light', Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
+      diabetic: { Gender: 'Male', Activity: 'Sedentary', Pregnancies: 0, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
     };
 
     function loadPreset(key) {
       const p = presets[key];
       if (!p) return;
       if (p.Gender) setGender(p.Gender);
+      if (p.Activity) setActivity(p.Activity);
       allInputFields.forEach(f => {
         const val = p[f];
         const rangeEl = document.getElementById(`range_${f}`);
@@ -703,6 +792,18 @@
         evaluations.push({ name: "Biological Sex / Gender", value: "Male", status: "Visceral Profile", badge: "info", note: "Elevated visceral adiposity index at lower BMI thresholds" });
       } else {
         evaluations.push({ name: "Biological Sex / Gender", value: "Female", status: "Gestational Profile", badge: "info", note: "Evaluates pregnancy & hormonal metabolic history" });
+      }
+
+      // Physical Activity & Exercise Evaluation
+      const act = p.PhysicalActivity || (document.getElementById('patientActivity') ? document.getElementById('patientActivity').value : 'Moderate');
+      if (act === 'Sedentary') {
+        evaluations.push({ name: "Physical Activity & Exercise", value: "Sedentary (<30 min/wk)", status: "Sedentary Lifestyle", badge: "danger", note: "Elevates insulin resistance risk; target >=150 min/wk moderate aerobic exercise" });
+      } else if (act === 'Light') {
+        evaluations.push({ name: "Physical Activity & Exercise", value: "Light (30-149 min/wk)", status: "Sub-optimal Activity", badge: "warning", note: "Below ADA guideline; recommended to increase to 150+ min moderate activity/wk" });
+      } else if (act === 'Active') {
+        evaluations.push({ name: "Physical Activity & Exercise", value: "Active (>=300 min/wk)", status: "Cardiovascular Protective", badge: "success", note: "High metabolic clearance rate and robust glycemic regulation" });
+      } else {
+        evaluations.push({ name: "Physical Activity & Exercise", value: "Moderate (150-299 min/wk)", status: "Meets ADA Target", badge: "success", note: "Meets WHO/ADA guideline (150+ min/wk); improves insulin sensitivity by up to 25%" });
       }
 
       // HbA1c Glycemic Evaluation
@@ -763,11 +864,21 @@
       const riskClass = prob < 0.35 ? "low" : (prob < 0.65 ? "moderate" : "high");
       const color = prob < 0.35 ? "#10B981" : (prob < 0.65 ? "#F59E0B" : "#EF4444");
 
-      const rec = prob < 0.35
-        ? "Maintain balanced nutrition, regular physical activity, and routine annual checkups."
-        : (prob < 0.65
-          ? "Borderline metabolic markers detected. Dietary modification and medical consultation recommended."
-          : "Significant risk indicators detected. Immediate consultation with an endocrinologist for HbA1c testing is strongly advised.");
+      const act = p.PhysicalActivity || (document.getElementById('patientActivity') ? document.getElementById('patientActivity').value : 'Moderate');
+      let rec = "";
+      if (prob < 0.35) {
+        rec = ['Active', 'Moderate'].includes(act)
+          ? "Maintain balanced nutrition, regular physical activity, and routine annual checkups."
+          : "Overall low risk. Increasing weekly exercise to >=150 mins will further optimize long-term metabolic health.";
+      } else if (prob < 0.65) {
+        rec = act === 'Sedentary'
+          ? "Borderline glucose markers with sedentary lifestyle. Initiating a 150+ min/week exercise routine can reduce progression risk by up to 58%."
+          : "Borderline metabolic markers detected. Dietary modification, regular aerobic exercise, and medical consultation recommended.";
+      } else {
+        rec = act === 'Sedentary'
+          ? "Significant risk indicators detected with sedentary routine. Immediate medical consultation and physician-supervised physical activity program strongly advised."
+          : "Significant risk indicators detected. Immediate consultation with an endocrinologist for comprehensive diagnostic testing is strongly advised.";
+      }
 
       return {
         prediction: predCode === 1 ? "Diabetic" : "Non-Diabetic",
@@ -795,6 +906,8 @@
       const genderEl = document.getElementById('patientGender');
       const gender = genderEl ? genderEl.value : 'Female';
       patient.Gender = gender;
+      const actEl = document.getElementById('patientActivity');
+      patient.PhysicalActivity = actEl ? actEl.value : 'Moderate';
       features.forEach(f => {
         patient[f] = parseFloat(document.getElementById(`num_${f}`).value);
       });
