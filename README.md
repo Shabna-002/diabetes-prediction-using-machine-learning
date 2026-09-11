@@ -1,116 +1,123 @@
-# Diabetes Prediction Using Machine Learning & Ensembling
+﻿# Diabetes Prediction Using Machine Learning & Ensembling
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.7+-orange.svg)](https://scikit-learn.org/)
-[![Streamlit App](https://img.shields.io/badge/streamlit-1.63+-red.svg)](https://streamlit.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Tests Passing](https://img.shields.io/badge/tests-10%20passed-brightgreen.svg)]()
+[![Live Demo](https://img.shields.io/badge/live%20demo-GitHub%20Pages-success.svg)](https://shabna-002.github.io/diabetes-prediction-using-machine-learning/)
+[![Streamlit App](https://img.shields.io/badge/streamlit-1.30+-red.svg)](https://streamlit.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An end-to-end clinical decision-support and Machine Learning system for predicting diabetes risk using diagnostic and demographic parameters from the Pima Indians Diabetes dataset.
-
----
-
-
-## 📌 Project Architecture & Workflow
-
-```
-                   +---------------------------+
-                   | Pima Indians Dataset      |
-                   | (768 Patients, 8 Features)|
-                   +-------------+-------------+
-                                 |
-                                 v
-                   +---------------------------+
-                   | Preprocessing Pipeline    |
-                   | - Biological Zeros -> NaN |
-                   | - Median Imputation       |
-                   | - IQR Outlier Treatment   |
-                   | - Z-Score Standardization |
-                   +-------------+-------------+
-                                 |
-                                 v
-                   +---------------------------+
-                   | Stratified Split (80/20)  |
-                   | & 5-Fold Stratified CV    |
-                   +-------------+-------------+
-                                 |
-          +----------------------+-----------------------+
-          |                      |                       |
-          v                      v                       v
-  +---------------+      +---------------+       +---------------+
-  | Base Models   |      | Meta-Learner  |       | IEEE Proposed |
-  | - LogReg      |      | Stacking      |       | Soft Voting   |
-  | - SVM (RBF)   |      | Classifier    |       | Ensemble with |
-  | - DecTree     |      +---------------+       | ROC-AUC       |
-  | - RandForest  |                              | Weighting     |
-  | - KNN, AdaBst |                              +---------------+
-  | - GradBoost   |                                      |
-  | - Naive Bayes |                                      |
-  +-------+-------+                                      |
-          +----------------------+-----------------------+
-                                 |
-                                 v
-                   +---------------------------+
-                   | Evaluation & Benchmarking |
-                   | - Accuracy, Precision     |
-                   | - Recall, F1-Score        |
-                   | - Specificity, ROC-AUC    |
-                   | - Confusion Matrices      |
-                   +-------------+-------------+
-                                 |
-          +----------------------+-----------------------+
-          |                                              |
-          v                                              v
-+--------------------+                        +--------------------+
-| Interactive UI     |                        | Command-Line CLI   |
-| Streamlit Web App  |                        | predict.py         |
-| (app.py)           |                        |                    |
-+--------------------+                        +--------------------+
-```
+An end-to-end clinical decision-support system and Machine Learning research platform for predicting Type 2 Diabetes risk. Integrates 10 machine learning architectures, a ROC-AUC weighted soft voting ensemble, and real-time clinical biomarker stratification (HbA1c, Biological Sex / Gender, Physical Activity, Smoking Status, and Age).
 
 ---
 
-## 🏥 Clinical Diagnostic Features
+## 🌐 Live Access & Deployment Links
 
-| Feature Name | Clinical Description | Reference Range |
+| Resource | Access Link | Description |
 | :--- | :--- | :--- |
-| **Pregnancies** | Number of times pregnant | 0 - 17 |
-| **Glucose** | 2-hour plasma glucose from oral glucose tolerance test | Normal: <100 mg/dL, Pre-diabetic: 100-125, Diabetic: ≥126 |
-| **BloodPressure** | Diastolic blood pressure | Normal: <80 mm Hg, Hypertension: ≥80 mm Hg |
-| **SkinThickness** | Triceps skin fold thickness | Subcutaneous body fat measure (mm) |
-| **Insulin** | 2-Hour serum insulin level | Normal fasting: 15 - 150 μU/mL |
-| **BMI** | Body mass index ($kg/m^2$) | Normal: 18.5 - 24.9, Overweight: 25 - 29.9, Obese: ≥30 |
-| **DiabetesPedigreeFunction** | Family history genetic risk score | Continuous score [0.05 - 2.5] |
-| **Age** | Age in years | 21 - 81 years |
-| **Outcome** | Class variable (Ground Truth) | 0: Non-Diabetic, 1: Diabetic |
+| 🔗 **Live Web Portal** | **[GitHub Pages Deployment](https://shabna-002.github.io/diabetes-prediction-using-machine-learning/)** | Client-side real-time interactive clinical decision portal |
+| 📂 **GitHub Repository** | **[GitHub Source Code](https://github.com/Shabna-002/diabetes-prediction-using-machine-learning)** | Complete version-controlled source code repository |
+| 💻 **Local Portal** | `http://localhost:5000` | Zero-dependency Python standard library HTTP/REST portal |
+| 📊 **Streamlit Dashboard**| `http://localhost:8501` | Multi-tab exploratory analytics and batch prediction suite |
 
 ---
 
-## 🔬 Mathematical Methodology
+## 📌 Standard Architecture & Workflow
 
-### 1. Handling Physiological Missing Values
-In living individuals, glucose, blood pressure, skin thickness, insulin, and BMI cannot biologically be zero. Zeroes in these fields indicate missing data and are imputed using median values (Paper Eq. 3):
-$$Q(x) = \begin{cases} \text{median}(x), & \text{if } x = 0 \text{ or null} \\ x, & \text{otherwise} \end{cases}$$
+```
+                   +---------------------------------------+
+                   |       Pima Indians Diabetes Data      |
+                   |       (768 Records, 8 Primary Feats)  |
+                   +-------------------+-------------------+
+                                       |
+                                       v
+                   +---------------------------------------+
+                   |        Preprocessing Pipeline         |
+                   |  - Biological Zeros -> NaN Imputation |
+                   |  - Median Imputer (Fit on Train)      |
+                   |  - IQR Outlier Bounding [Q1-1.5, Q3+1.5]|
+                   |  - Z-Score Standardization (N(0, 1))  |
+                   +-------------------+-------------------+
+                                       |
+                                       v
+                   +---------------------------------------+
+                   |       Stratified 80/20 Train-Test     |
+                   |       & 5-Fold Cross-Validation       |
+                   +-------------------+-------------------+
+                                       |
+          +----------------------------+---------------------------+
+          |                            |                           |
+          v                            v                           v
+  +---------------+            +---------------+           +---------------+
+  | Base Models   |            | Meta-Learner  |           | Proposed Soft |
+  | - LogReg      |            | Stacking      |           | Voting Model  |
+  | - SVM (RBF)   |            | Classifier    |           | (ROC-AUC      |
+  | - DecTree     |            +---------------+           | Weighted)     |
+  | - RandForest  |                                        +---------------+
+  | - KNN, AdaBst |                                                |
+  | - GradBoost   |                                                |
+  | - Naive Bayes |                                                |
+  +-------+-------+                                                |
+          +----------------------------+---------------------------+
+                                       |
+                                       v
+                   +---------------------------------------+
+                   |       Evaluation & Benchmarking       |
+                   |  - Accuracy, Precision, Recall, F1    |
+                   |  - Specificity, ROC-AUC (Held-out)    |
+                   |  - Confusion Matrices & ROC Curves    |
+                   +-------------------+-------------------+
+                                       |
+          +----------------------------+---------------------------+
+          |                            |                           |
+          v                            v                           v
++--------------------+       +--------------------+      +--------------------+
+| Responsive Portal  |       | Streamlit App      |      | CLI Inference      |
+| index.html         |       | app.py             |      | predict.py         |
+| (REST / Offline)   |       | (Port 8501)        |      | (Terminal Engine)  |
++--------------------+       +--------------------+      +--------------------+
+```
 
-### 2. Outlier Rejection via Interquartile Range (IQR)
-Continuous features are bounded to mitigate the influence of extreme anomalies (Paper Eq. 2):
-$$\text{IQR} = Q_3 - Q_1$$
-$$\text{Bounds} = [Q_1 - 1.5 \times \text{IQR}, \; Q_3 + 1.5 \times \text{IQR}]$$
+---
 
-### 3. Feature Standardization
-Features are transformed to standard normal distribution with zero mean and unit variance ($Z$-score normalization, Paper Eq. 4):
-$$Z = \frac{x - \mu}{\sigma}$$
+## 🏥 Clinical Diagnostic Features & Lifestyle Biomarkers
 
-### 4. Weighted Soft Voting Ensembling
-Individual base classifiers generate posterior confidence probabilities $P_{ij}$ for each class $i \in \{0, 1\}$. The proposed ensemble aggregates predictions weighted by each classifier's cross-validated ROC-AUC ($W_j$) (Paper Eq. 6):
-$$P^{en}_i = \frac{\sum_{j=1}^{m} (W_j \times P_{ij})}{\sum_{i=1}^{C} \sum_{j=1}^{m} (W_j \times P_{ij})}$$
+### 1. Primary Machine Learning Features (Pima Dataset)
+| Feature Name | Clinical Description | Reference Normal Range |
+| :--- | :--- | :--- |
+| **Pregnancies** | Number of gestational pregnancies | 0 - 17 (Auto-zeroed for Male) |
+| **Glucose** | 2-hour plasma glucose concentration (OGTT) | Normal: <100 mg/dL, Pre-diabetic: 100-125, Diabetic: ≥126 |
+| **BloodPressure** | Diastolic blood pressure (mm Hg) | Normal: <80 mm Hg, Elevated: ≥80 mm Hg |
+| **SkinThickness** | Triceps skinfold thickness (mm) | Subcutaneous adipose tissue indicator |
+| **Insulin** | 2-Hour serum insulin level (μU/mL) | Normal fasting: 16 - 166 μU/mL |
+| **BMI** | Body Mass Index ($kg/m^2$) | Normal: 18.5 - 24.9, Overweight: 25 - 29.9, Obese: ≥30 |
+| **DiabetesPedigreeFunction** | Genetic history risk pedigree score | Continuous genetic score [0.05 - 2.50] |
+| **Age** | Chronological patient age (years) | Young: <35, Mid-Adult: 35-44, Guideline Screening: ≥45 |
+| **Outcome** | Clinical diagnosis ground truth | 0: Non-Diabetic, 1: Diabetic |
+
+### 2. Clinical Biomarkers & Lifestyle Factors
+- **HbA1c Glycated Hemoglobin (%)**: Gold-standard 3-month glycemic marker bi-directionally synchronized via the ADA formula:
+  $$\text{eAG (mg/dL)} = 28.7 \times \text{HbA1c} - 46.7$$
+- **Patient Biological Sex / Gender**:
+  - **Female (Gestational Screening)**: Activates pregnancy history evaluation.
+  - **Male (Visceral Profile)**: Enforces `Pregnancies = 0` and evaluates visceral adiposity risk.
+- **Physical Activity & Exercise Level**:
+  - **Sedentary (`<30 min/wk`)**: Elevated metabolic and insulin resistance risk.
+  - **Light (`30-149 min/wk`)**: Sub-optimal activity; below ADA guideline.
+  - **Moderate (`150-299 min/wk`)**: Meets WHO/ADA recommended threshold.
+  - **Active (`300+ min/wk`)**: Cardiovascular protective with heightened metabolic clearance.
+- **Smoking & Tobacco Exposure Status**:
+  - **Never Smoked**: Baseline endothelial and metabolic health.
+  - **Former Smoker**: Tobacco cessation phase with progressive vascular recovery.
+  - **Current Smoker**: 30–40% elevated T2D risk with active arterial inflammation.
 
 ---
 
 ## 📊 Benchmark Model Performance
 
-Tested on a held-out stratified test partition ($N=154$):
+Evaluated on held-out stratified test data ($N=154$):
 
-| Classifier Architecture | CV Accuracy | CV ROC-AUC | Test Accuracy | Test Precision | Test Recall | Test Specificity | Test F1-Score | Test ROC-AUC |
+| Classifier Architecture | 5-Fold CV Acc | CV ROC-AUC | Test Accuracy | Test Precision | Test Recall | Test Specificity | Test F1-Score | Test ROC-AUC |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **AdaBoost** | 76.39% | 0.827 | **75.32%** | **69.05%** | 53.70% | **87.00%** | **0.6042** | **0.8262** |
 | **Gradient Boosting** | 74.59% | 0.812 | 74.68% | 67.44% | 53.70% | 86.00% | 0.5979 | 0.8185 |
@@ -125,134 +132,180 @@ Tested on a held-out stratified test partition ($N=154$):
 
 ---
 
-## 🚀 Getting Started & Execution Guide
+## 📁 Standardized Project Structure
 
-### Prerequisites
-Make sure Python 3.10+ is available on your system.
-
-### 1. Install Dependencies
-```bash
-py -3.10 -m pip install numpy pandas scikit-learn matplotlib seaborn joblib streamlit pypdf
+```
+diabetes-prediction-ml/
+├── .gitignore                         # Standard Python, OS & temporary file ignores
+├── LICENSE                            # MIT Open Source License
+├── pyproject.toml                     # Standard PEP 517/518 build configuration
+├── requirements.txt                   # Pinned dependency specifications
+├── README.md                          # Standard comprehensive documentation
+├── index.html                         # Root web application (GitHub Pages live entrypoint)
+├── server.py                          # Dedicated Python standard library HTTP & REST API server
+├── app.py                             # Streamlit Clinical Intelligence Dashboard
+├── main.py                            # Unified end-to-end training and evaluation pipeline
+├── predict.py                         # CLI patient risk inference script
+├── diabetes.csv                       # Standardized Pima Indians Diabetes dataset
+├── run_app.bat                        # Windows one-click launcher for Streamlit
+├── run_website.bat                    # Windows one-click launcher for Web Portal
+├── run_pipeline.bat                   # Windows one-click pipeline execution
+├── data/
+│   ├── raw/
+│   │   └── diabetes.csv               # Raw dataset archive
+│   └── processed/
+│       ├── train_preprocessed.csv     # Preprocessed training dataset
+│       └── test_preprocessed.csv      # Preprocessed testing dataset
+├── docs/
+│   ├── AML_Project_Abstract.pdf       # Academic project abstract
+│   ├── IEEE_Reference_Paper.pdf       # Reference research publication
+│   ├── PROJECT_REPORT.md              # University-standard academic project report
+│   └── VIVA_QUESTIONS_AND_ANSWERS.md  # Comprehensive defense viva Q&A guide
+├── models/
+│   ├── trained_models.joblib          # Serialized dictionary of all 10 trained models
+│   ├── processed_datasets.joblib      # Partitioned train/test arrays
+│   ├── imputer.joblib                 # Serialized median imputer
+│   ├── scaler.joblib                  # Serialized standard scaler
+│   ├── iqr_bounds.joblib              # Serialized IQR boundary values
+│   └── model_metrics.json             # Cross-validation and test benchmark metrics
+├── notebooks/
+│   └── Diabetes_Prediction_Pipeline.ipynb # Jupyter / Google Colab interactive notebook
+├── reports/
+│   ├── metrics_summary.csv            # Tabular performance matrix
+│   └── figures/
+│       ├── roc_curves.png             # Multi-model ROC curves
+│       ├── confusion_matrices.png     # 3x3 confusion matrix grid
+│       ├── model_comparison.png       # Benchmark comparison chart
+│       ├── feature_importance.png     # Feature importance rankings
+│       └── correlation_heatmap.png    # Clinical feature correlation matrix
+├── src/
+│   ├── __init__.py                    # Package initializer
+│   ├── config.py                      # Global hyperparameters, random seeds, paths
+│   ├── data_preprocessing.py          # Data imputation, IQR bounds, scaling pipeline
+│   ├── model_training.py              # Stratified 5-fold CV, model fitting, ensembling
+│   └── evaluate_and_visualize.py      # Metric computation, ROC & confusion matrix plots
+├── tests/
+│   ├── __init__.py                    # Test suite initializer
+│   ├── test_preprocessing.py          # Unit tests for preprocessing pipeline
+│   ├── test_prediction.py             # Unit tests for ML model inference
+│   └── test_clinical_evaluation.py    # Unit tests for lifestyle & biomarker evaluations
+└── website/
+    └── index.html                     # Web portal source template
 ```
 
-### 2. Train Models and Run Benchmark
-```bash
-py -3.10 src/model_training.py
-```
-This script runs 5-Fold Stratified Cross-Validation on all models, calculates individual ROC-AUC scores, builds the Weighted Soft Voting Ensemble and Stacking models, and serializes artifacts to `models/`.
+---
 
-### 3. Generate Publication Figures
-```bash
-py -3.10 src/evaluate_and_visualize.py
-```
-Outputs saved in `reports/figures/`:
-- `roc_curves.png`: Multi-model ROC comparison
-- `confusion_matrices.png`: Confusion matrices grid
-- `model_comparison.png`: Performance bar chart
-- `feature_importance.png`: Clinical driver rankings
-- `correlation_heatmap.png`: Feature correlation matrix
+## 🚀 Execution & Quickstart Guide
 
-### 4A. Standalone Clinical Web Portal (HTML5 / Tailwind / REST API)
-Launch the lightweight zero-dependency web application:
+### 1. Environment Setup
+Clone the repository and install required packages:
 ```bash
-py -3.10 server.py
-```
-*(Or double-click `run_website.bat`)*
-- Open your browser at `http://localhost:5000`.
-- **Interactive Risk Gauge**: Real-time diabetes risk probability computed via ML API.
-- **Synchronized Sliders & Presets**: Easily test Healthy, Pre-Diabetic, and High-Risk diabetic profiles.
-- **Multi-Model Consensus**: Live predictions from SVM, Logistic Regression, Decision Tree, Random Forest, and the Weighted Ensemble.
-- **Biomarker Stratification**: Automatic classification of Glucose, BMI, BP, and Insulin vs clinical reference thresholds.
-- **Printable Medical Assessment**: Print or save diagnostic summaries as PDF directly from the browser.
-- **Batch Screening Demo**: Multi-patient evaluation table.
-
-### 4B. Interactive Streamlit Clinical Dashboard
-Launch the Streamlit interface:
-```bash
-py -3.10 -m streamlit run app.py
-```
-*(Or double-click `run_app.bat`)*
-- Open your browser at `http://localhost:8501`.
-- **Tab 1**: Patient Risk Assessment calculator with quick presets.
-- **Tab 2**: Batch patient screening from CSV.
-- **Tab 3**: Model benchmarks and graphical analytics.
-- **Tab 4**: Interactive exploratory data analysis (EDA).
-- **Tab 5**: Research paper mathematical formulation.
-
-### 5. Command-Line Inference (CLI)
-Test individual patients directly from the terminal:
-```bash
-# Run demonstration test cases (Healthy vs High-Risk):
-py -3.10 predict.py
-
-# Custom patient assessment:
-py -3.10 predict.py --glucose 165 --bmi 34.2 --age 49 --pregnancies 4 --blood_pressure 82
+git clone https://github.com/Shabna-002/diabetes-prediction-using-machine-learning.git
+cd diabetes-prediction-using-machine-learning
+py -3.10 -m pip install -r requirements.txt
 ```
 
-### 6. Automated Unit Testing
-Run the test suite to verify data preprocessing, pipeline transformations, and model predictions:
+### 2. Run Automated Unit Tests (10/10 Passed)
+Execute the automated test suite verifying preprocessing, model inference, and clinical evaluations:
 ```bash
 py -3.10 -m unittest discover -s tests -p "test_*.py" -v
 ```
 
----
-
-## 📁 Standard Repository Structure
-
+### 3. Launch Standalone Web Portal (Zero External Dependencies)
+```bash
+py -3.10 server.py
 ```
-diabetes-prediction-ml/
-├── .gitignore                         # Standard Python gitignore (ignores pycache, build, checkpoints)
-├── pyproject.toml                     # Modern standard Python project configuration
-├── requirements.txt                   # Pinned Python package dependencies
-├── README.md                          # Project overview and execution guide
-├── run_app.bat                        # One-click Windows launch for Web UI
-├── run_pipeline.bat                   # One-click Windows execution for ML pipeline
-├── app.py                             # Interactive Streamlit Web Application
-├── main.py                            # Unified master pipeline runner
-├── predict.py                         # CLI inference engine for patient scoring
-├── diabetes.csv                       # Pima Indians Diabetes dataset
-├── data/
-│   ├── raw/
-│   │   └── diabetes.csv               # Raw dataset copy
-│   └── processed/
-│       ├── train_preprocessed.csv     # Scaled, imputed training set
-│       └── test_preprocessed.csv      # Scaled, imputed testing set
-├── docs/
-│   ├── AML_Project_Abstract.pdf       # Student academic project abstract
-│   ├── IEEE_Reference_Paper.pdf       # IEEE Access 2020 foundation research paper
-│   ├── PROJECT_REPORT.md              # University-standard academic project report
-│   └── VIVA_QUESTIONS_AND_ANSWERS.md  # Comprehensive Viva Voce / defense Q&A guide
-├── models/
-│   ├── trained_models.joblib          # Serialized ML model dictionary
-│   ├── processed_datasets.joblib      # Partitioned arrays
-│   ├── imputer.joblib                 # Fitted median imputer
-│   ├── scaler.joblib                  # Fitted StandardScaler
-│   ├── iqr_bounds.joblib              # Fitted IQR boundaries
-│   └── model_metrics.json             # Cross-validation & test metrics
-├── notebooks/
-│   └── Diabetes_Prediction_Pipeline.ipynb # Complete academic Jupyter Notebook (Colab ready)
-├── reports/
-│   ├── metrics_summary.csv            # Official comparative evaluation table
-│   └── figures/
-│       ├── roc_curves.png             # Multi-model ROC curves
-│       ├── confusion_matrices.png     # 3x3 Confusion matrices grid
-│       ├── model_comparison.png       # Cross-model performance bar chart
-│       ├── feature_importance.png     # Random Forest feature importance
-│       └── correlation_heatmap.png    # Clinical feature correlation matrix
-├── src/
-│   ├── __init__.py                    # Package initialization
-│   ├── config.py                      # Centralized configuration & hyperparameter constants
-│   ├── data_preprocessing.py          # Biological zero treatment, IQR clipping, scaling
-│   ├── model_training.py              # 5-Fold Stratified CV, Model Training & Ensembles
-│   └── evaluate_and_visualize.py      # Evaluation metrics, ROC & confusion matrix plots
-└── tests/
-    ├── __init__.py                    # Test package initialization
-    ├── test_preprocessing.py          # Automated unit tests for data cleaning & scaling
-    └── test_prediction.py             # Automated unit tests for inference & models
+*(Or double-click `run_website.bat`)*  
+Access the web portal at **`http://localhost:5000`** in any modern web browser.
+
+### 4. Launch Streamlit Analytics Dashboard
+```bash
+py -3.10 -m streamlit run app.py
+```
+*(Or double-click `run_app.bat`)*  
+Access the Streamlit dashboard at **`http://localhost:8501`**.
+
+### 5. Command-Line Patient Scoring (CLI)
+```bash
+# Evaluate sample preset patients:
+py -3.10 predict.py
+
+# Evaluate a custom patient record:
+py -3.10 predict.py --glucose 145 --bmi 31.5 --age 46 --blood_pressure 80
 ```
 
 ---
 
-## 📚 References
-1. **Hasan, M. K., Alam, M. A., Das, D., Hossain, E., & Hasan, M.** (2020). *Diabetes Prediction Using Ensembling of Different Machine Learning Classifiers*. IEEE Access, 8, 76516-76531.
-2. **Smith, J. W., Everhart, J. E., Dickson, W. C., Knowler, W. C., & Johannes, R. S.** (1988). *Using the ADAP learning algorithm to forecast the onset of diabetes mellitus*. Proceedings of the Annual Symposium on Computer Application in Medical Care.
+## 📡 REST API Reference
+
+The server exposes standard JSON REST endpoints:
+
+### `POST /api/predict`
+Calculates real-time patient diabetes probability and clinical biomarker evaluation.
+
+**Request Payload:**
+```json
+{
+  "Gender": "Male",
+  "PhysicalActivity": "Moderate",
+  "SmokingStatus": "Never",
+  "Pregnancies": 0,
+  "Glucose": 120,
+  "BloodPressure": 70,
+  "SkinThickness": 20,
+  "Insulin": 80,
+  "BMI": 25.0,
+  "DiabetesPedigreeFunction": 0.45,
+  "Age": 33,
+  "HbA1c": 5.8,
+  "model_name": "Weighted Soft Voting Ensemble (Proposed)"
+}
+```
+
+**Response Payload (HTTP 200):**
+```json
+{
+  "prediction": "Non-Diabetic",
+  "prediction_code": 0,
+  "probability": 0.185,
+  "probability_percent": "18.5%",
+  "risk_tier": "Low Risk",
+  "risk_class": "low",
+  "color": "#10B981",
+  "recommendation": "Maintain regular physical activity, balanced nutrition, and routine annual health checkups.",
+  "model_used": "Weighted Soft Voting Ensemble (Proposed)",
+  "biomarkers": [
+    { "name": "Biological Sex / Gender", "value": "Male", "status": "Visceral Profile" },
+    { "name": "Physical Activity & Exercise", "value": "Moderate (150-299 min/wk)", "status": "Meets ADA Target" },
+    { "name": "Smoking & Tobacco Status", "value": "Never Smoked", "status": "Optimal Profile" },
+    { "name": "Glycated Hemoglobin (HbA1c)", "value": "5.8%", "status": "Pre-diabetic" },
+    { "name": "Fasting Plasma Glucose", "value": "120.0 mg/dL", "status": "Pre-diabetic" }
+  ],
+  "multi_model_comparison": {
+    "Logistic Regression": { "prediction": "Non-Diabetic", "probability_percent": "14.2%" },
+    "Decision Tree": { "prediction": "Non-Diabetic", "probability_percent": "20.0%" },
+    "Random Forest": { "prediction": "Non-Diabetic", "probability_percent": "18.1%" },
+    "Support Vector Machine": { "prediction": "Non-Diabetic", "probability_percent": "19.3%" },
+    "Weighted Soft Voting Ensemble (Proposed)": { "prediction": "Non-Diabetic", "probability_percent": "18.5%" }
+  }
+}
+```
+
+### Other Endpoints:
+- `GET /api/models`: Returns list of all trained models and their cross-validation accuracies.
+- `GET /api/metrics`: Returns full 5-fold cross-validation and test benchmark metrics matrix.
+- `POST /api/batch`: Evaluates an array of patient records in a single call.
+
+---
+
+## 📜 Academic References
+
+1. **Hasan, M. K., Alam, M. A., Das, D., Hossain, E., & Hasan, M.** (2020). *Diabetes Prediction Using Ensembling of Different Machine Learning Classifiers*. **IEEE Access**, 8, 76516-76531.
+2. **American Diabetes Association (ADA)**. (2024). *Standards of Medical Care in Diabetes—2024*. Diabetes Care, 47(Suppl. 1), S1-S343.
+3. **Smith, J. W., Everhart, J. E., Dickson, W. C., Knowler, W. C., & Johannes, R. S.** (1988). *Using the ADAP learning algorithm to forecast the onset of diabetes mellitus*. Proceedings of the Annual Symposium on Computer Application in Medical Care.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
