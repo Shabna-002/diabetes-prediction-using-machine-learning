@@ -326,7 +326,6 @@ st.markdown("""
         Hospital-grade diagnostic intelligence platform evaluating physiological biomarkers, lifestyle predictors, and demographic indices across 10 validated ML architectures.
     </div>
     <div class="medical-stats-grid">
-        <div class="stat-pill">🎯 <strong>83.2%</strong> Test Accuracy</div>
         <div class="stat-pill">📊 <strong>0.893</strong> Ensemble ROC-AUC</div>
         <div class="stat-pill">⚡ <strong>&lt;12ms</strong> Real-Time Inference</div>
         <div class="stat-pill">🧬 <strong>10</strong> Validated ML Models</div>
