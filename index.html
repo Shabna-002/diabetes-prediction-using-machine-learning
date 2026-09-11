@@ -324,6 +324,46 @@
           <i class="fa-solid fa-chart-pie text-indigo-500"></i> Model Benchmarks
         </a>
       </div>
+
+      <!-- Quick Medical Statistics Strip -->
+      <div class="pt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-left max-w-4xl mx-auto">
+        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Accuracy</span>
+            <span class="text-base font-extrabold text-slate-800 dark:text-white">83.2% AUC</span>
+          </div>
+        </div>
+        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-gauge-high"></i>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Inference</span>
+            <span class="text-base font-extrabold text-slate-800 dark:text-white">&lt;12ms Real-Time</span>
+          </div>
+        </div>
+        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Architectures</span>
+            <span class="text-base font-extrabold text-slate-800 dark:text-white">10 ML Models</span>
+          </div>
+        </div>
+        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
+          <div class="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Methodology</span>
+            <span class="text-base font-extrabold text-slate-800 dark:text-white">IEEE Ensembled</span>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -629,10 +669,12 @@
             <!-- ATTRACTIVE PREDICT DIABETES BUTTON -->
             <div class="pt-4">
               <button type="submit" id="btnPredict" 
-                      class="btn-shimmer w-full bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500 hover:from-sky-600 hover:via-indigo-700 hover:to-teal-600 text-white font-extrabold py-4 px-6 rounded-2xl shadow-xl shadow-sky-500/25 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-2.5 text-base tracking-wide uppercase">
-                <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-lg"></i>
-                <span>Compute Clinical Risk Assessment</span>
-                <i class="fa-solid fa-arrow-right text-sm opacity-80"></i>
+                      class="btn-shimmer group relative w-full bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500 hover:from-sky-600 hover:via-indigo-700 hover:to-teal-600 text-white font-extrabold py-4 px-6 rounded-2xl shadow-xl shadow-sky-500/30 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-3 text-base tracking-wider uppercase">
+                <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shadow-inner group-hover:rotate-12 transition-transform">
+                  <i class="fa-solid fa-heart-pulse text-amber-300 text-base animate-pulse"></i>
+                </div>
+                <span>Predict Diabetes Risk</span>
+                <i class="fa-solid fa-arrow-right text-sm opacity-80 group-hover:translate-x-1 transition-transform"></i>
               </button>
             </div>
           </form>
@@ -667,6 +709,29 @@
                 </div>
               </div>
               <p id="resModelUsed" class="text-xs text-slate-400 dark:text-slate-500 mt-2 font-medium">Model: Weighted Soft Voting Ensemble</p>
+            </div>
+
+            <!-- PROBABILITY RISK SPECTRUM PROGRESS INDICATOR -->
+            <div class="space-y-1.5 mb-6 px-1">
+              <div class="flex justify-between items-center text-[11px] font-bold">
+                <span class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <i class="fa-solid fa-shield-heart text-xs"></i> Low (&lt;35%)
+                </span>
+                <span class="text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <i class="fa-solid fa-triangle-exclamation text-xs"></i> Moderate (35-65%)
+                </span>
+                <span class="text-rose-600 dark:text-rose-400 flex items-center gap-1">
+                  <i class="fa-solid fa-circle-exclamation text-xs"></i> High (&gt;65%)
+                </span>
+              </div>
+              <div class="relative w-full h-3 bg-slate-200/80 dark:bg-slate-700/80 rounded-full overflow-hidden p-0.5 shadow-inner">
+                <div id="riskLinearBar" class="h-full rounded-full transition-all duration-700 ease-out bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-600 shadow-sm" style="width: 0%;"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-semibold px-0.5">
+                <span>0% Safe Baseline</span>
+                <span id="txtLinearProb" class="font-bold text-sky-600 dark:text-sky-400">Calculated Probability: --%</span>
+                <span>100% Critical</span>
+              </div>
             </div>
 
             <!-- CLINICAL RECOMMENDATION BOX -->
@@ -1570,6 +1635,31 @@
       const offset = totalCircumference * (1 - probValue);
       gauge.style.strokeDashoffset = offset;
       gauge.style.stroke = data.color;
+
+      // Update Linear Risk Spectrum Progress Indicator
+      const linearBar = document.getElementById('riskLinearBar');
+      if (linearBar) {
+        linearBar.style.width = `${Math.min(100, Math.max(2, probValue * 100))}%`;
+      }
+      const txtLinear = document.getElementById('txtLinearProb');
+      if (txtLinear) {
+        txtLinear.innerText = `Calculated Risk: ${(probValue * 100).toFixed(1)}% (${data.risk_tier})`;
+      }
+
+      // Dynamic Result Card Border Glow
+      const resCard = document.getElementById('resultCard');
+      if (resCard) {
+        if (isDiabetic) {
+          resCard.style.borderColor = 'rgba(239, 68, 68, 0.45)';
+          resCard.style.boxShadow = '0 25px 50px -12px rgba(239, 68, 68, 0.18)';
+        } else if (data.risk_class === 'moderate') {
+          resCard.style.borderColor = 'rgba(245, 158, 11, 0.45)';
+          resCard.style.boxShadow = '0 25px 50px -12px rgba(245, 158, 11, 0.18)';
+        } else {
+          resCard.style.borderColor = 'rgba(16, 185, 129, 0.45)';
+          resCard.style.boxShadow = '0 25px 50px -12px rgba(16, 185, 129, 0.18)';
+        }
+      }
 
       // Biomarkers Table
       const bList = document.getElementById('biomarkerList');
