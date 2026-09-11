@@ -215,6 +215,24 @@
 
           <form id="predictionForm" onsubmit="event.preventDefault(); runPrediction();" class="space-y-5">
             
+            <!-- HbA1c Level (Gold-Standard Glycemic Marker) -->
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-sm">
+                <label class="font-semibold text-slate-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-vial-circle-check text-rose-600"></i> HbA1c Glycated Hemoglobin
+                  <span class="text-xs font-normal text-slate-400">(%)</span>
+                </label>
+                <input type="number" id="num_HbA1c" min="4.0" max="15.0" step="0.1" value="5.8" 
+                  class="w-20 px-2 py-1 text-right text-sm border border-slate-300 rounded font-semibold text-slate-800 focus:ring-1 focus:ring-sky-500">
+              </div>
+              <input type="range" id="range_HbA1c" min="4.0" max="15.0" step="0.1" value="5.8" class="w-full">
+              <div class="flex justify-between text-[11px] text-slate-400">
+                <span>Normal: &lt;5.7%</span>
+                <span>Pre-diabetic: 5.7 - 6.4%</span>
+                <span>Diabetic: &ge;6.5%</span>
+              </div>
+            </div>
+
             <!-- Glucose -->
             <div class="space-y-1">
               <div class="flex justify-between items-center text-sm">
@@ -566,35 +584,58 @@
     };
 
     // Synchronize Range Sliders and Numeric Inputs
-    features.forEach(f => {
+    const allInputFields = ['HbA1c', ...features];
+    allInputFields.forEach(f => {
       const rangeEl = document.getElementById(`range_${f}`);
       const numEl = document.getElementById(`num_${f}`);
       if (rangeEl && numEl) {
         rangeEl.addEventListener('input', () => {
           numEl.value = rangeEl.value;
+          if (f === 'HbA1c') syncFromHbA1c(parseFloat(rangeEl.value));
+          if (f === 'Glucose') syncFromGlucose(parseFloat(rangeEl.value));
         });
         numEl.addEventListener('input', () => {
           rangeEl.value = numEl.value;
+          if (f === 'HbA1c') syncFromHbA1c(parseFloat(numEl.value));
+          if (f === 'Glucose') syncFromGlucose(parseFloat(numEl.value));
         });
       }
     });
 
-    // Preset Profiles
+    function syncFromHbA1c(a1c) {
+      if (isNaN(a1c)) return;
+      const eag = Math.min(260, Math.max(40, Math.round(28.7 * a1c - 46.7)));
+      const numG = document.getElementById('num_Glucose');
+      const rngG = document.getElementById('range_Glucose');
+      if (numG) numG.value = eag;
+      if (rngG) rngG.value = eag;
+    }
+
+    function syncFromGlucose(g) {
+      if (isNaN(g)) return;
+      const a1c = Math.min(15.0, Math.max(4.0, Math.round(((g + 46.7) / 28.7) * 10) / 10));
+      const numA = document.getElementById('num_HbA1c');
+      const rngA = document.getElementById('range_HbA1c');
+      if (numA) numA.value = a1c;
+      if (rngA) rngA.value = a1c;
+    }
+
+    // Preset Profiles with Gold-Standard HbA1c
     const presets = {
-      healthy: { Pregnancies: 1, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
-      prediabetic: { Pregnancies: 2, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
-      diabetic: { Pregnancies: 5, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
+      healthy: { Pregnancies: 1, HbA1c: 5.2, Glucose: 88, BloodPressure: 68, SkinThickness: 20, Insulin: 75, BMI: 22.4, DiabetesPedigreeFunction: 0.22, Age: 25 },
+      prediabetic: { Pregnancies: 2, HbA1c: 6.0, Glucose: 118, BloodPressure: 76, SkinThickness: 28, Insulin: 120, BMI: 28.2, DiabetesPedigreeFunction: 0.45, Age: 36 },
+      diabetic: { Pregnancies: 5, HbA1c: 7.8, Glucose: 168, BloodPressure: 86, SkinThickness: 35, Insulin: 220, BMI: 37.2, DiabetesPedigreeFunction: 0.85, Age: 52 }
     };
 
     function loadPreset(key) {
       const p = presets[key];
       if (!p) return;
-      features.forEach(f => {
+      allInputFields.forEach(f => {
         const val = p[f];
         const rangeEl = document.getElementById(`range_${f}`);
         const numEl = document.getElementById(`num_${f}`);
-        if (rangeEl) rangeEl.value = val;
-        if (numEl) numEl.value = val;
+        if (rangeEl && val !== undefined) rangeEl.value = val;
+        if (numEl && val !== undefined) numEl.value = val;
       });
       runPrediction();
     }
@@ -605,6 +646,12 @@
 
     function evaluateBiomarkersClient(p) {
       const evaluations = [];
+
+      // HbA1c Glycemic Evaluation
+      const hba1c = p.HbA1c || Math.min(15.0, Math.max(4.0, Math.round(((p.Glucose + 46.7) / 28.7) * 10) / 10));
+      if (hba1c < 5.7) evaluations.push({ name: "Glycated Hemoglobin (HbA1c)", value: `${hba1c.toFixed(1)}%`, status: "Normal", badge: "success", note: "Optimal 3-month glycemic control (<5.7%)" });
+      else if (hba1c <= 6.4) evaluations.push({ name: "Glycated Hemoglobin (HbA1c)", value: `${hba1c.toFixed(1)}%`, status: "Pre-diabetic", badge: "warning", note: "Impaired glucose regulation / Pre-diabetes (5.7% - 6.4%)" });
+      else evaluations.push({ name: "Glycated Hemoglobin (HbA1c)", value: `${hba1c.toFixed(1)}%`, status: "Elevated (Diabetic)", badge: "danger", note: "Standard clinical diagnostic threshold exceeded (>=6.5%)" });
       const g = p.Glucose;
       if (g < 100) evaluations.push({ name: "Fasting Plasma Glucose", value: `${g} mg/dL`, status: "Normal", badge: "success", note: "Optimal glycemic level (<100 mg/dL)" });
       else if (g <= 125) evaluations.push({ name: "Fasting Plasma Glucose", value: `${g} mg/dL`, status: "Pre-diabetic", badge: "warning", note: "Impaired fasting glucose (100-125 mg/dL)" });
@@ -690,6 +737,8 @@
       features.forEach(f => {
         patient[f] = parseFloat(document.getElementById(`num_${f}`).value);
       });
+      const hba1cEl = document.getElementById('num_HbA1c');
+      if (hba1cEl) patient.HbA1c = parseFloat(hba1cEl.value);
       const modelName = document.getElementById('modelSelect').value;
       patient.model_name = modelName;
 

@@ -45,6 +45,21 @@ def evaluate_clinical_biomarkers(data):
     """Evaluates each biomarker against clinical reference ranges."""
     evaluations = []
     
+    # HbA1c Level (Glycated Hemoglobin)
+    hba1c = data.get('HbA1c', None)
+    if hba1c is None or float(hba1c) <= 0:
+        glucose_val = float(data.get('Glucose', 120))
+        hba1c = round((glucose_val + 46.7) / 28.7, 1)
+    else:
+        hba1c = round(float(hba1c), 1)
+
+    if hba1c < 5.7:
+        evaluations.append({"name": "Glycated Hemoglobin (HbA1c)", "value": f"{hba1c:.1f}%", "status": "Normal", "badge": "success", "note": "Optimal 3-month glycemic control (<5.7%)"})
+    elif hba1c <= 6.4:
+        evaluations.append({"name": "Glycated Hemoglobin (HbA1c)", "value": f"{hba1c:.1f}%", "status": "Pre-diabetic", "badge": "warning", "note": "Impaired glucose regulation / Pre-diabetes (5.7% - 6.4%)"})
+    else:
+        evaluations.append({"name": "Glycated Hemoglobin (HbA1c)", "value": f"{hba1c:.1f}%", "status": "Elevated (Diabetic)", "badge": "danger", "note": "Standard clinical diagnostic threshold exceeded (>=6.5%)"})
+
     # Glucose
     glucose = data.get('Glucose', 0)
     if glucose < 100:
@@ -225,9 +240,10 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
             risk_tier = "High Risk"
             risk_class = "high"
             color = "#EF4444"
-            recommendation = "Significant risk indicators detected. Immediate consultation with an endocrinologist for HbA1c and oral glucose tolerance testing is strongly advised."
-
-        biomarkers = evaluate_clinical_biomarkers(patient_dict)
+        eval_dict = dict(patient_dict)
+        if 'HbA1c' in payload and float(payload.get('HbA1c', 0)) > 0:
+            eval_dict['HbA1c'] = float(payload.get('HbA1c'))
+        biomarkers = evaluate_clinical_biomarkers(eval_dict)
 
         # Comparative predictions from other primary models
         multi_model_results = {}
