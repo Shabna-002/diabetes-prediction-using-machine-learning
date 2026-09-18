@@ -64,11 +64,6 @@
       background-size: 400% 400%;
       animation: gradientShift 22s ease infinite;
     }
-    .dark .bg-gradient-dark {
-      background: linear-gradient(-45deg, #030712, #0b1329, #081a29, #0f172a, #030712);
-      background-size: 400% 400%;
-      animation: gradientShift 22s ease infinite;
-    }
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -83,10 +78,6 @@
       pointer-events: none;
       animation: floatOrb 22s infinite alternate ease-in-out;
       transition: opacity 0.5s ease;
-    }
-    .dark .orb {
-      opacity: 0.22;
-      filter: blur(95px);
     }
     .orb-1 {
       width: 520px;
@@ -136,20 +127,11 @@
       border-radius: 1.5rem;
       transition: all 0.3s ease;
     }
-    .dark .glass-card {
-      background: rgba(15, 23, 42, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
-    }
     .glass-inner {
       background: rgba(248, 250, 252, 0.7);
       border: 1px solid rgba(226, 232, 240, 0.8);
       border-radius: 1rem;
       transition: all 0.2s ease;
-    }
-    .dark .glass-inner {
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid rgba(51, 65, 85, 0.6);
     }
     .clean-input {
       border-radius: 0.75rem;
@@ -157,11 +139,6 @@
       background: rgba(255, 255, 255, 0.95);
       color: #0f172a;
       transition: all 0.2s ease;
-    }
-    .dark .clean-input {
-      border: 1px solid #334155;
-      background: rgba(30, 41, 59, 0.95);
-      color: #f8fafc;
     }
     .clean-input:focus {
       outline: none;
@@ -176,9 +153,6 @@
       background: #e2e8f0;
       outline: none;
       transition: background 0.2s ease;
-    }
-    .dark input[type=range] {
-      background: #334155;
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -195,11 +169,6 @@
     input[type=range]::-webkit-slider-thumb:hover {
       transform: scale(1.15);
       background: #0369a1;
-    }
-    .dark input[type=range]::-webkit-slider-thumb {
-      background: #38bdf8;
-      border-color: #0f172a;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
     .gauge-circle {
       transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
@@ -229,7 +198,7 @@
     }
   </style>
 </head>
-<body class="bg-gradient-light dark:bg-gradient-dark text-slate-800 dark:text-slate-100 antialiased min-h-screen flex flex-col font-sans">
+<body class="bg-gradient-light text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 
   <!-- ANIMATED BACKGROUND ELEMENTS -->
   <div class="orb orb-1 no-print"></div>
@@ -289,12 +258,6 @@
           </button>
 
 
-          <!-- Dark / Light Theme Toggle -->
-          <button id="themeToggleBtn" onclick="toggleTheme()" 
-                  class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center justify-center shadow-sm"
-                  title="Toggle Dark / Light Theme">
-            <i id="themeIcon" class="fa-solid fa-moon text-base"></i>
-          </button>
         </div>
       </div>
     </div>
@@ -936,40 +899,27 @@
     const features = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'];
     let benchmarkChartInstance = null;
 
-    // Dark / Light Theme System with localStorage persistence
+    // Light Theme enforcement (removes dark mode and any saved preferences)
     function initTheme() {
-      const saved = localStorage.getItem('diapredict-theme');
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (saved === 'dark' || (!saved && prefersDark)) {
-        applyTheme('dark');
-      } else {
-        applyTheme('light');
-      }
+      localStorage.removeItem('diapredict-theme');
+      document.documentElement.classList.remove('dark');
+      updateChartTheme();
     }
 
     function toggleTheme() {
-      const isDark = document.documentElement.classList.contains('dark');
-      applyTheme(isDark ? 'light' : 'dark');
+      // Dark mode removed
     }
 
-    function applyTheme(theme) {
-      const icon = document.getElementById('themeIcon');
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('diapredict-theme', 'dark');
-        if (icon) icon.className = 'fa-solid fa-sun text-base text-amber-400';
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('diapredict-theme', 'light');
-        if (icon) icon.className = 'fa-solid fa-moon text-base text-slate-600';
-      }
-      updateChartTheme(theme === 'dark');
+    function applyTheme() {
+      document.documentElement.classList.remove('dark');
+      localStorage.removeItem('diapredict-theme');
+      updateChartTheme();
     }
 
-    function updateChartTheme(isDark) {
+    function updateChartTheme() {
       if (!benchmarkChartInstance) return;
-      const textColor = isDark ? '#94a3b8' : '#64748b';
-      const gridColor = isDark ? 'rgba(51, 65, 85, 0.4)' : 'rgba(226, 232, 240, 0.6)';
+      const textColor = '#64748b';
+      const gridColor = 'rgba(226, 232, 240, 0.6)';
       
       if (benchmarkChartInstance.options.scales.x) {
         benchmarkChartInstance.options.scales.x.ticks.color = textColor;
@@ -1879,7 +1829,6 @@
 
       function render() {
         ctx.clearRect(0, 0, width, height);
-        const isDark = document.documentElement.classList.contains('dark');
 
         // Connecting lines between nodes
         for (let i = 0; i < particles.length; i++) {
@@ -1889,9 +1838,7 @@
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist < 125) {
               ctx.beginPath();
-              ctx.strokeStyle = isDark 
-                ? `rgba(56, 189, 248, ${0.18 * (1 - dist / 125)})`
-                : `rgba(14, 165, 233, ${0.16 * (1 - dist / 125)})`;
+              ctx.strokeStyle = `rgba(14, 165, 233, ${0.16 * (1 - dist / 125)})`;
               ctx.lineWidth = 0.75;
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
