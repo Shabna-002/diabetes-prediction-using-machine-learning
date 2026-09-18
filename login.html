@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clinician Login | DiaPredict Clinical Portal</title>
+  <title>Login | DiaPredict Health Portal</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,7 +82,7 @@
     .glass-card {
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      background: rgba(255, 255, 255, 0.86);
+      background: rgba(255, 255, 255, 0.88);
       border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 25px 50px -12px rgba(2, 132, 199, 0.12), 0 0 1px 1px rgba(255, 255, 255, 0.6) inset;
       border-radius: 1.75rem;
@@ -126,106 +126,102 @@
 </head>
 <body class="text-slate-800 antialiased flex flex-col justify-between min-h-screen">
 
-  <!-- Ambient Background Orbs -->
+  <!-- Background Orbs -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
 
-  <!-- TOP NAVIGATION BAR -->
+  <!-- TOP NAVBAR -->
   <nav class="backdrop-blur-xl bg-white/70 border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-20 items-center">
         <!-- Logo -->
         <a href="index.html" class="flex items-center space-x-3.5 group">
           <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-teal-400 text-white flex items-center justify-center text-xl shadow-lg shadow-sky-500/25 group-hover:scale-105 transition">
-            <i class="fa-solid fa-heart-pulse animate-pulse"></i>
+            <i class="fa-solid fa-heart-pulse"></i>
           </div>
           <div>
             <div class="flex items-center gap-2">
               <span class="text-2xl font-extrabold tracking-tight text-slate-900">
                 Dia<span class="bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">Predict</span>
               </span>
-              <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded-md bg-sky-100 text-sky-700 border border-sky-200">
-                Clinical Portal
-              </span>
             </div>
             <span class="text-xs block text-slate-500 font-semibold tracking-tight">
-              Hospital Decision Support &amp; Machine Learning
+              Diabetes Prediction &amp; Health Screening
             </span>
           </div>
         </a>
 
-        <!-- Return to Predictor -->
+        <!-- Return to Home Link -->
         <a href="index.html" class="text-xs sm:text-sm font-bold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
           <i class="fa-solid fa-arrow-left"></i>
-          <span>Back to Predictor</span>
+          <span>Back to Home</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- MAIN LOGIN & AUTHENTICATION SECTION -->
+  <!-- MAIN LOGIN SECTION -->
   <main class="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative z-10">
     <div class="max-w-md w-full space-y-6">
 
-      <!-- Active Session Alert Box (shown if already logged in) -->
+      <!-- Active Session Box (if already logged in) -->
       <div id="alreadyLoggedInCard" class="hidden glass-card p-6 text-center space-y-4 shadow-xl border border-sky-200">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shadow-sm">
-          <i class="fa-solid fa-user-doctor"></i>
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl shadow-sm">
+          <i class="fa-solid fa-user-check"></i>
         </div>
         <div>
-          <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-            Active Clinical Session
+          <span class="text-xs font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
+            Currently Logged In
           </span>
-          <h2 id="activeSessionName" class="text-xl font-extrabold text-slate-900 mt-2">Dr. Shabna, MD</h2>
-          <p id="activeSessionRole" class="text-xs text-slate-500 font-medium">Chief Diabetologist &bull; Metabolic Center</p>
+          <h2 id="activeSessionName" class="text-xl font-extrabold text-slate-900 mt-2">Shabna</h2>
+          <p id="activeSessionEmail" class="text-xs text-slate-500 font-medium">shabna@example.com</p>
         </div>
         <div class="pt-2 flex flex-col gap-2.5">
           <a href="index.html" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md shadow-sky-500/20 transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-arrow-right"></i> Continue to Clinical Portal
+            <i class="fa-solid fa-arrow-right"></i> Go to Dashboard
           </a>
           <button onclick="handleSignOut()" class="w-full py-2.5 rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-rose-50 text-slate-600 hover:text-rose-600 font-bold text-xs transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-right-from-bracket"></i> Sign Out / Switch Doctor
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out / Switch Account
           </button>
         </div>
       </div>
 
-      <!-- Main Auth Card -->
+      <!-- Main Login Card -->
       <div id="authCard" class="glass-card p-8 sm:p-10 shadow-2xl">
         
-        <!-- Header badge & title -->
+        <!-- Header title -->
         <div class="text-center space-y-2 mb-7">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold shadow-xs">
-            <i class="fa-solid fa-shield-halved text-sky-600"></i>
-            <span>Clinician Access &amp; Decision Support</span>
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-sky-50 text-sky-600 border border-sky-200 flex items-center justify-center text-xl shadow-xs">
+            <i class="fa-solid fa-user"></i>
           </div>
           <h1 id="authCardTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Clinician Sign In
+            Welcome Back
           </h1>
           <p id="authCardSubtitle" class="text-xs sm:text-sm text-slate-500">
-            Access real-time patient risk evaluations and save multi-model screening reports.
+            Sign in to access your diabetes health screening predictions.
           </p>
         </div>
 
-        <!-- Auth Tabs -->
+        <!-- Tabs: Sign In / Create Account -->
         <div class="flex p-1 rounded-xl bg-slate-100 border border-slate-200 mb-6">
           <button id="tabBtnSignIn" onclick="switchAuthTab('signin')" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-right-to-bracket"></i> Sign In
           </button>
           <button id="tabBtnSignUp" onclick="switchAuthTab('signup')" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-user-plus"></i> New Doctor
+            <i class="fa-solid fa-user-plus"></i> Register
           </button>
         </div>
 
-        <!-- Feedback Alert -->
+        <!-- Alert Notification Box -->
         <div id="authAlert" class="hidden p-3 rounded-xl text-xs font-semibold mb-5 transition-all"></div>
 
         <!-- SIGN IN FORM -->
         <form id="formSignIn" onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-envelope text-sky-600"></i> Hospital Email Address
+              <i class="fa-solid fa-envelope text-sky-600"></i> Email Address
             </label>
-            <input type="email" id="signInEmail" required placeholder="dr.shabna@hospital.org" 
+            <input type="email" id="signInEmail" required placeholder="name@example.com" 
                    class="clean-input w-full px-3.5 py-2.5 text-sm">
           </div>
 
@@ -239,7 +235,7 @@
               </button>
             </div>
             <div class="relative">
-              <input type="password" id="signInPassword" required placeholder="••••••••••••" 
+              <input type="password" id="signInPassword" required placeholder="Enter password" 
                      class="clean-input w-full px-3.5 py-2.5 text-sm pr-10">
               <button type="button" onclick="togglePasswordVisibility('signInPassword', this)" 
                       class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition">
@@ -251,53 +247,36 @@
           <div class="flex items-center justify-between pt-1">
             <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 font-medium select-none">
               <input type="checkbox" id="rememberMe" checked class="rounded text-sky-600 focus:ring-sky-500 border-slate-300">
-              <span>Remember this workstation</span>
+              <span>Remember me</span>
             </label>
           </div>
 
           <button type="submit" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md shadow-sky-500/25 transition flex items-center justify-center gap-2 mt-2">
-            <i class="fa-solid fa-stethoscope"></i> Sign In to Portal
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In
           </button>
         </form>
 
-        <!-- SIGN UP / REGISTRATION FORM -->
+        <!-- REGISTER / SIGN UP FORM -->
         <form id="formSignUp" onsubmit="event.preventDefault(); handleSignUp();" class="hidden space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-user-doctor text-sky-600"></i> Clinician Full Name
+              <i class="fa-solid fa-user text-sky-600"></i> Full Name
             </label>
-            <input type="text" id="signUpName" required placeholder="Dr. Shabna, MD" 
-                   class="clean-input w-full px-3.5 py-2.5 text-sm">
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <i class="fa-solid fa-notes-medical text-sky-600"></i> Specialty
-              </label>
-              <input type="text" id="signUpSpecialty" placeholder="Diabetology / Endocrinology" 
-                     class="clean-input w-full px-3.5 py-2.5 text-sm">
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <i class="fa-solid fa-hospital text-sky-600"></i> Hospital Center
-              </label>
-              <input type="text" id="signUpHospital" placeholder="General Medical Center" 
-                     class="clean-input w-full px-3.5 py-2.5 text-sm">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-envelope text-sky-600"></i> Official Email Address
-            </label>
-            <input type="email" id="signUpEmail" required placeholder="doctor@clinicalcenter.org" 
+            <input type="text" id="signUpName" required placeholder="Your Name" 
                    class="clean-input w-full px-3.5 py-2.5 text-sm">
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-lock text-sky-600"></i> Set Secure Password
+              <i class="fa-solid fa-envelope text-sky-600"></i> Email Address
+            </label>
+            <input type="email" id="signUpEmail" required placeholder="you@example.com" 
+                   class="clean-input w-full px-3.5 py-2.5 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-lock text-sky-600"></i> Create Password
             </label>
             <div class="relative">
               <input type="password" id="signUpPassword" required placeholder="Min. 6 characters" 
@@ -310,7 +289,7 @@
           </div>
 
           <button type="submit" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-md shadow-emerald-500/25 transition flex items-center justify-center gap-2 mt-2">
-            <i class="fa-solid fa-id-card-clip"></i> Create Clinician Account
+            <i class="fa-solid fa-user-plus"></i> Create Account
           </button>
         </form>
 
@@ -318,21 +297,14 @@
         <div class="relative my-6 text-center">
           <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
           <span class="relative px-3 bg-white text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            Instant Test Access
+            Quick Access
           </span>
         </div>
 
-        <button type="button" onclick="loginAsDemoDoctor()" class="w-full py-3 px-4 rounded-xl border border-sky-300 bg-sky-50/90 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center justify-center gap-2 shadow-xs group">
+        <button type="button" onclick="loginAsDemoUser()" class="w-full py-3 px-4 rounded-xl border border-sky-300 bg-sky-50 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center justify-center gap-2 shadow-xs group">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>1-Click Demo Login as <strong class="text-sky-900 group-hover:underline">Dr. Shabna (Chief Endocrinologist)</strong></span>
+          <span>1-Click Demo Login as <strong class="text-sky-900 group-hover:underline">Shabna</strong></span>
         </button>
-
-        <!-- Security & Compliance Footer -->
-        <div class="mt-8 pt-6 border-t border-slate-200/80 flex flex-wrap justify-between items-center gap-2 text-[11px] text-slate-400">
-          <span class="flex items-center gap-1.5"><i class="fa-solid fa-lock text-emerald-500"></i> 256-Bit SSL Encrypted</span>
-          <span class="flex items-center gap-1.5"><i class="fa-solid fa-file-shield text-sky-500"></i> HIPAA &amp; ADA Compliant</span>
-          <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> Edge ML Ready</span>
-        </div>
 
       </div>
 
@@ -341,19 +313,18 @@
 
   <!-- FOOTER -->
   <footer class="py-6 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white/40">
-    <p>&copy; 2026 DiaPredict AI Clinical Decision Support System. Designed for Accredited Medical Personnel.</p>
+    <p>&copy; 2026 DiaPredict Machine Learning Prediction System.</p>
   </footer>
 
-  <!-- AUTH LOGIC SCRIPT -->
+  <!-- AUTH SCRIPT -->
   <script>
     const AUTH_KEY_ACTIVE = 'diapredict_auth_active';
     const AUTH_KEY_USERS = 'diapredict_auth_users';
 
-    const DEMO_DOCTOR = {
-      name: "Dr. Shabna, MD",
-      specialty: "Clinical Diabetology & Endocrinology",
-      hospital: "Metabolic Health Research Institute",
-      email: "dr.shabna@clinicalcenter.org"
+    const DEMO_USER = {
+      name: "Shabna",
+      role: "User",
+      email: "shabna@example.com"
     };
 
     function initAuthPage() {
@@ -365,7 +336,7 @@
           const card = document.getElementById('alreadyLoggedInCard');
           card.classList.remove('hidden');
           document.getElementById('activeSessionName').innerText = active.name;
-          document.getElementById('activeSessionRole').innerText = `${active.specialty || 'Clinician'} • ${active.hospital || 'Hospital Center'}`;
+          document.getElementById('activeSessionEmail').innerText = active.email || 'Active User';
           return;
         }
       } catch (e) {}
@@ -373,11 +344,11 @@
       // Pre-fill demo email
       const emailInput = document.getElementById('signInEmail');
       if (emailInput && !emailInput.value) {
-        emailInput.value = "dr.shabna@hospital.org";
+        emailInput.value = "shabna@example.com";
       }
       const pwdInput = document.getElementById('signInPassword');
       if (pwdInput && !pwdInput.value) {
-        pwdInput.value = "clinical2026";
+        pwdInput.value = "123456";
       }
     }
 
@@ -396,15 +367,15 @@
         formUp.classList.add('hidden');
         btnIn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1.5";
         btnUp.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5";
-        title.innerText = "Clinician Sign In";
-        subtitle.innerText = "Access real-time patient risk evaluations and save multi-model screening reports.";
+        title.innerText = "Welcome Back";
+        subtitle.innerText = "Sign in to access your diabetes health screening predictions.";
       } else {
         formIn.classList.add('hidden');
         formUp.classList.remove('hidden');
         btnUp.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1.5";
         btnIn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5";
-        title.innerText = "New Doctor Registration";
-        subtitle.innerText = "Register your medical profile to generate verified diagnostic screening history.";
+        title.innerText = "Create Account";
+        subtitle.innerText = "Register to save and track your prediction history.";
       }
     }
 
@@ -433,12 +404,12 @@
       }
     }
 
-    function loginAsDemoDoctor() {
-      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(DEMO_DOCTOR));
-      showAuthAlert("Signed in successfully as Dr. Shabna, MD! Redirecting to Clinical Portal...", "success");
+    function loginAsDemoUser() {
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(DEMO_USER));
+      showAuthAlert("Signed in successfully as Shabna! Redirecting to home...", "success");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 750);
+      }, 700);
     }
 
     function handleSignIn() {
@@ -446,7 +417,7 @@
       const pwd = document.getElementById('signInPassword').value;
 
       if (!email || !pwd) {
-        showAuthAlert("Please provide your email and password.", "error");
+        showAuthAlert("Please enter your email and password.", "error");
         return;
       }
 
@@ -456,43 +427,39 @@
       } catch (e) {}
 
       const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      let activeDoctor = null;
+      let activeUser = null;
       if (found) {
-        activeDoctor = found;
+        activeUser = found;
       } else {
         const namePart = email.split('@')[0].replace(/[._]/g, ' ');
-        const formattedName = 'Dr. ' + namePart.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-        activeDoctor = {
-          name: formattedName,
-          specialty: "Clinical Diabetology",
-          hospital: "Medical Decision Center",
+        const formattedName = namePart.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+        activeUser = {
+          name: formattedName || "User",
+          role: "Member",
           email: email
         };
       }
 
-      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeDoctor));
-      showAuthAlert(`Welcome back, ${activeDoctor.name}! Redirecting to Clinical Portal...`, "success");
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeUser));
+      showAuthAlert(`Welcome back, ${activeUser.name}! Redirecting...`, "success");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 750);
+      }, 700);
     }
 
     function handleSignUp() {
       const name = document.getElementById('signUpName').value.trim();
-      const specialty = document.getElementById('signUpSpecialty').value.trim() || "Clinical Diabetology";
-      const hospital = document.getElementById('signUpHospital').value.trim() || "Medical Decision Center";
       const email = document.getElementById('signUpEmail').value.trim();
       const pwd = document.getElementById('signUpPassword').value;
 
       if (!name || !email || !pwd) {
-        showAuthAlert("Please fill in all required fields.", "error");
+        showAuthAlert("Please fill in all fields.", "error");
         return;
       }
 
-      const newDoctor = {
-        name: name.startsWith('Dr.') ? name : `Dr. ${name}`,
-        specialty: specialty,
-        hospital: hospital,
+      const newUser = {
+        name: name,
+        role: "Member",
         email: email
       };
 
@@ -501,25 +468,25 @@
         users = JSON.parse(localStorage.getItem(AUTH_KEY_USERS) || '[]');
       } catch (e) {}
 
-      users.push(newDoctor);
+      users.push(newUser);
       localStorage.setItem(AUTH_KEY_USERS, JSON.stringify(users));
-      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(newDoctor));
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(newUser));
 
-      showAuthAlert(`Registration complete! Welcome, ${newDoctor.name}. Redirecting to Clinical Portal...`, "success");
+      showAuthAlert(`Account created successfully! Welcome, ${newUser.name}. Redirecting...`, "success");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 850);
+      }, 750);
     }
 
     function handleSignOut() {
       localStorage.removeItem(AUTH_KEY_ACTIVE);
       document.getElementById('alreadyLoggedInCard').classList.add('hidden');
       document.getElementById('authCard').classList.remove('hidden');
-      showAuthAlert("You have signed out successfully.", "success");
+      showAuthAlert("Signed out successfully.", "success");
     }
 
     function forgotPasswordNotice() {
-      showAuthAlert("For password recovery or workstation clearance, contact hospital IT or use 1-Click Demo Login.", "error");
+      showAuthAlert("Use the 1-Click Demo Login button for instant password-free access.", "error");
     }
 
     window.addEventListener('DOMContentLoaded', initAuthPage);
