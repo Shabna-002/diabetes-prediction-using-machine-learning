@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Algorithms Benchmark | Diabetes AI{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">MODEL BENCHMARK & EVALUATION</div>
+    <h1>Multi-Algorithm Performance Benchmark</h1>
+    <p>Comparative evaluation of the 4 machine learning models on a stratified test set (154 samples).</p>
+  </div>
+</div>
+
+{% if metrics and metrics.models %}
+<div class="stats">
+  <div class="stat">
+    <span>Evaluated Algorithms</span>
+    <strong>4 Models</strong>
+  </div>
+  <div class="stat">
+    <span>Total Dataset Records</span>
+    <strong>{{ metrics.dataset_info.total_samples }}</strong>
+  </div>
+  <div class="stat">
+    <span>Best Performing Model</span>
+    <strong style="color: #10b981;">{{ metrics.best_model }}</strong>
+  </div>
+</div>
+
+<div class="dashboard-card" style="margin-bottom: 2rem; border-left: 4px solid #10b981;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <span class="badge safe" style="font-size: 0.85rem; padding: 4px 10px;">Recommended Classifier</span>
+      <h2 style="margin: 0.5rem 0 0.25rem 0; font-size: 1.5rem;">{{ metrics.best_model }}</h2>
+      <p style="margin: 0; color: #94a3b8; font-size: 0.95rem;">Selected as the primary inference engine based on optimal balance of F1-Score and test Accuracy.</p>
+    </div>
+    <div>
+      <a class="btn primary" href="{{ url_for('predict') }}">Predict with {{ metrics.best_model }} →</a>
+    </div>
+  </div>
+</div>
+
+<div class="table-card" style="margin-bottom: 2.5rem;">
+  <h3 style="padding: 1.2rem 1.5rem 0.5rem 1.5rem; margin: 0; font-size: 1.15rem;">Comparative Performance Summary</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>Accuracy</th>
+        <th>Precision</th>
+        <th>Recall</th>
+        <th>F1-Score</th>
+        <th>Confusion Matrix [TN, FP / FN, TP]</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for name, m in metrics.models.items() %}
+      <tr {% if name == metrics.best_model %}style="background: rgba(16, 185, 129, 0.08); font-weight: 600;"{% endif %}>
+        <td><strong>{{ name }}</strong></td>
+        <td>{{ '%.2f'|format(m.accuracy * 100) }}%</td>
+        <td>{{ '%.4f'|format(m.precision) }}</td>
+        <td>{{ '%.4f'|format(m.recall) }}</td>
+        <td>{{ '%.4f'|format(m.f1_score) }}</td>
+        <td>
+          <span style="font-family: monospace; font-size: 0.9rem;">
+            TN: {{ m.confusion_matrix[0][0] }} | FP: {{ m.confusion_matrix[0][1] }}<br>
+            FN: {{ m.confusion_matrix[1][0] }} | TP: {{ m.confusion_matrix[1][1] }}
+          </span>
+        </td>
+        <td>
+          {% if name == metrics.best_model %}
+            <span class="badge safe">★ Best Model</span>
+          {% else %}
+            <span class="badge" style="background: rgba(148, 163, 184, 0.2); color: #cbd5e1;">Evaluated</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Algorithm Diagnostics & Confusion Matrices</h3>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  {% for name, m in metrics.models.items() %}
+  <div class="dashboard-card" style="margin: 0; border: 1px solid {% if name == metrics.best_model %}#10b981{% else %}rgba(255,255,255,0.08){% endif %};">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1.1rem;">{{ name }}</h3>
+      {% if name == metrics.best_model %}
+        <span class="badge safe" style="font-size: 0.75rem;">Top Performer</span>
+      {% endif %}
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.3rem;">
+        <span>Accuracy</span>
+        <b>{{ '%.2f'|format(m.accuracy * 100) }}%</b>
+      </div>
+      <div class="meter"><div style="width: {{ m.accuracy * 100 }}%"></div></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; text-align: center; margin-bottom: 1rem; background: rgba(0,0,0,0.25); padding: 0.75rem; border-radius: 8px;">
+      <div>
+        <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">Precision</div>
+        <b style="font-size: 0.95rem; color: #f8fafc;">{{ '%.2f'|format(m.precision * 100) }}%</b>
+      </div>
+      <div>
+        <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">Recall</div>
+        <b style="font-size: 0.95rem; color: #f8fafc;">{{ '%.2f'|format(m.recall * 100) }}%</b>
+      </div>
+      <div>
+        <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">F1-Score</div>
+        <b style="font-size: 0.95rem; color: #38bdf8;">{{ '%.2f'|format(m.f1_score * 100) }}%</b>
+      </div>
+    </div>
+
+    <div style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #94a3b8; font-weight: 600;">Confusion Matrix (Test Set):</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; font-size: 0.85rem;">
+      <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px; border-radius: 6px;">
+        <span style="font-size: 0.7rem; color: #6ee7b7; display: block;">True Neg (TN)</span>
+        <strong>{{ m.confusion_matrix[0][0] }}</strong>
+      </div>
+      <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px; border-radius: 6px;">
+        <span style="font-size: 0.7rem; color: #fca5a5; display: block;">False Pos (FP)</span>
+        <strong>{{ m.confusion_matrix[0][1] }}</strong>
+      </div>
+      <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px; border-radius: 6px;">
+        <span style="font-size: 0.7rem; color: #fca5a5; display: block;">False Neg (FN)</span>
+        <strong>{{ m.confusion_matrix[1][0] }}</strong>
+      </div>
+      <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px; border-radius: 6px;">
+        <span style="font-size: 0.7rem; color: #6ee7b7; display: block;">True Pos (TP)</span>
+        <strong>{{ m.confusion_matrix[1][1] }}</strong>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="dashboard-card">
+  <h3>Benchmark metrics not found</h3>
+  <p>Please execute <code>python train_model.py</code> to train all 4 models and generate the evaluation benchmark.</p>
+</div>
+{% endif %}
+
+<div class="actions" style="margin-top: 2rem;">
+  <a class="btn primary" href="{{ url_for('predict') }}">Go to Prediction Form →</a>
+  <a class="btn ghost" href="{{ url_for('dashboard') }}">View Prediction Dashboard</a>
+</div>
+{% endblock %}

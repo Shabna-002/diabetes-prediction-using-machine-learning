@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{if(i.value!==''&&Number(i.value)<0)i.value=0;}));});

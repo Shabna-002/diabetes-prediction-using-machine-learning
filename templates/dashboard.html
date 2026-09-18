@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">ANALYTICS & STORAGE</div>
+    <h1>Prediction Dashboard</h1>
+    <p>Summary of records stored in <strong>{{ db_type }}</strong> database.</p>
+  </div>
+</div>
+<div class="stats">
+  <div class="stat"><span>Total Predictions</span><strong>{{ total }}</strong></div>
+  <div class="stat"><span>Higher-Risk Outputs</span><strong style="color: #f87171;">{{ positive }}</strong></div>
+  <div class="stat"><span>Lower-Risk Outputs</span><strong style="color: #34d399;">{{ negative }}</strong></div>
+  <div class="stat"><span>Active Storage</span><strong style="font-size: 1.1rem; color: #38bdf8;">{{ db_type }}</strong></div>
+</div>
+<div class="dashboard-card">
+  <h3>Result distribution</h3>
+  <div class="bar-row">
+    <span>Higher-risk outputs ({{ '%.1f'|format((positive/total*100) if total else 0) }}%)</span>
+    <div class="bar"><i style="width: {{ (positive/total*100) if total else 0 }}%; background: #ef4444;"></i></div>
+    <b>{{ positive }}</b>
+  </div>
+  <div class="bar-row">
+    <span>Lower-risk outputs ({{ '%.1f'|format((negative/total*100) if total else 0) }}%)</span>
+    <div class="bar"><i style="width: {{ (negative/total*100) if total else 0 }}%; background: #10b981;"></i></div>
+    <b>{{ negative }}</b>
+  </div>
+</div>
+
+<div class="actions" style="margin-top: 1.5rem;">
+  <a class="btn primary" href="{{ url_for('predict') }}">New Prediction →</a>
+  <a class="btn ghost" href="{{ url_for('models') }}">View Model Benchmark</a>
+  <a class="btn ghost" href="{{ url_for('history') }}">View Full History</a>
+</div>
+{% endblock %}

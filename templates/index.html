@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Diabetes AI | Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">AI • MACHINE LEARNING • HEALTH ANALYTICS</div>
+    <h1>Intelligent <span>Diabetes Risk</span> Prediction</h1>
+    <p>Enter selected health measurements and use a trained machine-learning model to generate an educational risk prediction.</p>
+    <div class="actions">
+      <a class="btn primary" href="{{ url_for('predict') }}">Start Prediction →</a>
+      <a class="btn ghost" href="{{ url_for('dashboard') }}">View Dashboard</a>
+    </div>
+  </div>
+  <div class="hero-card">
+    <div class="pulse">✚</div>
+    <h3>ML Prediction Engine</h3>
+    <p>Preprocessing + Median Imputation + 4 Benchmarked Classifiers</p>
+    <div class="mini-stat"><b>4</b><span>ML Algorithms</span></div>
+    <div class="mini-stat"><b>8</b><span>Clinical Features</span></div>
+    <div class="mini-stat"><b>Top</b><span>{{ best_model }}</span></div>
+  </div>
+</section>
+<section class="cards">
+  <article>
+    <b>01</b>
+    <h3>Data Imputation & Scaling</h3>
+    <p>Handles biologically invalid zero values with median imputation and standardization.</p>
+  </article>
+  <article>
+    <b>02</b>
+    <h3>4-Model Evaluation</h3>
+    <p>Trained and compared Logistic Regression, Decision Tree, Random Forest, and SVM.</p>
+  </article>
+  <article>
+    <b>03</b>
+    <h3>Persistent Storage & Audit</h3>
+    <p>Predictions, risk probability, and classifier choices logged for reporting.</p>
+  </article>
+</section>
+<div class="disclaimer"><strong>Important:</strong> This application is an academic demonstration. It does not diagnose diabetes and should not replace clinical evaluation.</div>
+{% endblock %}

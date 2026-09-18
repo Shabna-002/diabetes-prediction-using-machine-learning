@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Login | Diabetes AI{% endblock %}
+{% block content %}
+<div style="max-width: 480px; margin: 2rem auto;">
+  <div class="page-head" style="text-align: center; margin-bottom: 1.5rem;">
+    <div class="eyebrow">USER AUTHENTICATION</div>
+    <h1 style="font-size: 2.2rem;">Sign In</h1>
+    <p>Access the machine learning clinical prediction platform.</p>
+  </div>
+
+  <div class="form-card" style="padding: 2.5rem 2rem;">
+    <form method="POST" action="{{ url_for('login') }}">
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600; font-size: 0.9rem;">
+          Username or Email
+        </label>
+        <input 
+          type="text" 
+          id="username"
+          name="username" 
+          placeholder="Enter username (e.g. admin)" 
+          required 
+          style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: #071525; border: 1px solid #28445f; color: #fff; font-size: 0.95rem;"
+        >
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-weight: 600; font-size: 0.9rem;">
+          Password
+        </label>
+        <input 
+          type="password" 
+          id="password"
+          name="password" 
+          placeholder="Enter password" 
+          required 
+          style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: #071525; border: 1px solid #28445f; color: #fff; font-size: 0.95rem;"
+        >
+      </div>
+
+      <button class="btn primary full" type="submit" style="margin-top: 0.5rem; font-size: 1rem;">
+        Sign In →
+      </button>
+    </form>
+
+    <div style="margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
+      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.75rem; text-align: center; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">
+        Quick Demo Credentials
+      </div>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <button 
+          type="button" 
+          onclick="fillDemo('admin', 'admin123')" 
+          class="btn ghost" 
+          style="font-size: 0.8rem; padding: 6px 14px; border-color: rgba(56,189,248,0.4);"
+        >
+          👤 Admin (admin / admin123)
+        </button>
+        <button 
+          type="button" 
+          onclick="fillDemo('doctor', 'doctor123')" 
+          class="btn ghost" 
+          style="font-size: 0.8rem; padding: 6px 14px; border-color: rgba(167,139,250,0.4);"
+        >
+          🩺 Clinician (doctor / doctor123)
+        </button>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #94a3b8;">
+      Don't have an account? 
+      <a href="{{ url_for('register') }}" style="color: #38bdf8; text-decoration: none; font-weight: 600;">
+        Register here
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fillDemo(u, p) {
+  document.getElementById('username').value = u;
+  document.getElementById('password').value = p;
+}
+</script>
+{% endblock %}

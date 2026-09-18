@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Diabetes AI | Prediction{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="eyebrow">PREDICTION MODULE</div>
+    <h1>Patient Risk Assessment</h1>
+    <p>Enter patient measurements and select the machine learning classifier.</p>
+  </div>
+</div>
+
+<form class="form-card" method="POST" action="{{ url_for('predict') }}">
+  <div style="margin-bottom: 1.5rem; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); padding: 1rem; border-radius: 10px;">
+    <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; color: #93c5fd;">
+      Machine Learning Classifier
+    </label>
+    <select name="model_choice" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; background: #0f172a; border: 1px solid #334155; color: #f8fafc; font-size: 0.95rem;">
+      <option value="best" selected>★ Best Model (Recommended: {{ best_name }})</option>
+      <option value="decision_tree">Decision Tree Classifier</option>
+      <option value="random_forest">Random Forest Classifier</option>
+      <option value="svm">Support Vector Machine (SVM)</option>
+      <option value="logistic_regression">Logistic Regression</option>
+    </select>
+    <small style="color: #94a3b8; display: block; margin-top: 0.4rem;">
+      You can select any of the 4 evaluated algorithms to test or compare their individual predictions.
+    </small>
+  </div>
+
+  <div class="form-grid">
+    <label>Patient name <input name="patient_name" placeholder="Optional e.g. John Doe"></label>
+    <label>Pregnancies <input type="number" name="pregnancies" min="0" step="1" placeholder="e.g. 2" required></label>
+    <label>Glucose (mg/dL) <input type="number" name="glucose" min="0" step="0.1" placeholder="e.g. 120" required></label>
+    <label>Blood Pressure (mm Hg) <input type="number" name="blood_pressure" min="0" step="0.1" placeholder="e.g. 70" required></label>
+    <label>Skin Thickness (mm) <input type="number" name="skin_thickness" min="0" step="0.1" placeholder="e.g. 20" required></label>
+    <label>Insulin (µU/mL) <input type="number" name="insulin" min="0" step="0.1" placeholder="e.g. 85" required></label>
+    <label>BMI (kg/m²) <input type="number" name="bmi" min="0" step="0.1" placeholder="e.g. 28.5" required></label>
+    <label>Diabetes Pedigree Function <input type="number" name="diabetes_pedigree" min="0" step="0.001" placeholder="e.g. 0.350" required></label>
+    <label>Age (years) <input type="number" name="age" min="1" step="1" placeholder="e.g. 35" required></label>
+  </div>
+
+  <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+    <button class="btn primary full" type="submit">Run AI Prediction →</button>
+  </div>
+</form>
+{% endblock %}
