@@ -1,0 +1,345 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diabetes AI — Clinical Machine Learning Prediction System</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .navlinks a.active { color: #38bdf8; font-weight: 700; border-bottom: 2px solid #38bdf8; padding-bottom: 4px; }
+    .quick-btn { background: #13263b; border: 1px solid #274563; color: #a9bad0; font-size: 12px; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .quick-btn:hover { background: #1f3a59; color: #fff; border-color: #38bdf8; }
+    .rec-box { text-align: left; background: #071525; border: 1px solid #1e3853; border-radius: 14px; padding: 20px; margin-top: 25px; }
+    .rec-box h4 { margin-top: 0; color: #38bdf8; font-size: 15px; }
+    .rec-box ul { padding-left: 20px; color: #9bb1c9; font-size: 13px; line-height: 1.8; margin-bottom: 0; }
+    .feature-tag { font-size: 11px; background: rgba(56,189,248,0.12); color: #38bdf8; padding: 2px 8px; border-radius: 6px; margin-left: 6px; }
+    .cloud-banner { background: linear-gradient(90deg, rgba(14,165,233,0.15), rgba(124,58,237,0.15)); border: 1px solid #204163; border-radius: 12px; padding: 12px 18px; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #bae6fd; }
+    .cloud-banner a { color: #fff; font-weight: 700; text-decoration: underline; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <nav class="navbar">
+    <a class="brand" href="#" onclick="switchTab('home-tab'); return false;">
+      <span>✚</span> Diabetes<span>AI</span>
+    </a>
+    <div class="navlinks">
+      <a href="#" class="nav-tab active" data-tab="home-tab">Home</a>
+      <a href="#" class="nav-tab" data-tab="predict-tab">Predict Live</a>
+      <a href="#" class="nav-tab" data-tab="models-tab">Algorithms Benchmark</a>
+      <a href="#" class="nav-tab" data-tab="history-tab">History (<span id="history-count">0</span>)</a>
+      <a href="#" class="nav-tab" data-tab="about-tab">Docs</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="cloud-banner">
+      <span>🚀 <strong>GitHub Pages Deployment</strong> — Machine Learning Pipeline running with 100% Scikit-Learn accuracy in your browser!</span>
+      <span style="font-size: 12px; color: #38bdf8;">🟢 Zero Latency</span>
+    </div>
+
+    <!-- HOME TAB -->
+    <section id="home-tab" class="tab-pane active">
+      <div class="hero">
+        <div>
+          <div class="eyebrow">CLINICAL DECISION SUPPORT SYSTEM</div>
+          <h1>Predict Diabetes Risk with <span>Machine Learning</span></h1>
+          <p>
+            An evidence-based diagnostic prediction engine built upon the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) Pima Indians Diabetes Dataset. Benchmarking 4 clinical algorithms to detect type-2 diabetes risk.
+          </p>
+          <div class="actions">
+            <button class="btn primary" onclick="switchTab('predict-tab')">Launch Prediction Tool</button>
+            <button class="btn ghost" onclick="switchTab('models-tab')">View ML Benchmark</button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="pulse">🩺</div>
+          <h3>Clinical ML Pipeline</h3>
+          <p>Trained on 768 patient records with 8 standardized biomarkers.</p>
+          <div class="mini-stat"><span>Best Performing Model</span> <b>Decision Tree</b></div>
+          <div class="mini-stat"><span>Test Set Accuracy</span> <b>76.62%</b></div>
+          <div class="mini-stat"><span>F1-Score</span> <b>0.6842</b></div>
+        </div>
+      </div>
+
+      <div class="cards" style="margin-top: 40px;">
+        <article>
+          <b>01 / ALGORITHMIC RIGOR</b>
+          <h3>4 Supervised Models</h3>
+          <p>Evaluates Decision Tree, Random Forest Ensemble, Support Vector Classifier (SVM), and Logistic Regression.</p>
+        </article>
+        <article>
+          <b>02 / PREPROCESSING</b>
+          <h3>Imputation & Scaling</h3>
+          <p>Biological zero handling via median imputation followed by standard feature normalization.</p>
+        </article>
+        <article>
+          <b>03 / CLINICAL ACTIONABILITY</b>
+          <h3>Risk Stratification</h3>
+          <p>Provides probability scores, risk classification, and tailored lifestyle / diagnostic recommendations.</p>
+        </article>
+      </div>
+
+      <div class="disclaimer">
+        ⚠️ <strong>Academic Medical Disclaimer:</strong> This web application is developed for educational and machine learning demonstration purposes. Predictions should not replace professional medical advice, clinical diagnostics, or personalized physician consultations.
+      </div>
+    </section>
+
+    <!-- PREDICT TAB -->
+    <section id="predict-tab" class="tab-pane">
+      <div class="page-head">
+        <div class="eyebrow">CLINICAL PREDICTION INFERENCE</div>
+        <h1>Patient Risk Assessment</h1>
+        <p>Enter patient biomarker values or load quick test cases to run real-time inference.</p>
+        <div style="margin-top: 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 13px; color: #8fa5bd;">Quick Test Profiles:</span>
+          <button type="button" class="quick-btn" onclick="fillSample('normal')">👤 Load Healthy Profile (Negative)</button>
+          <button type="button" class="quick-btn" onclick="fillSample('risk')">⚠️ Load High-Risk Profile (Positive)</button>
+        </div>
+      </div>
+
+      <form id="predict-form" class="form-card">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 18px;">
+          <div>
+            <label for="patient_name" style="color:#a9bad0; font-size:13px; font-weight:700;">Patient Identifier / Name (Optional)</label>
+            <input type="text" id="patient_name" placeholder="e.g. John Doe / Patient #1042" style="display:block; width:100%; margin-top:8px; background:#071525; border:1px solid #28445f; border-radius:11px; padding:13px; color:#fff; outline:none;">
+          </div>
+          <div>
+            <label for="model_choice" style="color:#a9bad0; font-size:13px; font-weight:700;">ML Model Selection</label>
+            <select id="model_choice" style="display:block; width:100%; margin-top:8px; background:#071525; border:1px solid #28445f; border-radius:11px; padding:13px; color:#38bdf8; font-weight:600; outline:none;">
+              <option value="decision_tree" selected>Decision Tree (Best: 76.62%)</option>
+              <option value="random_forest">Random Forest (100 Trees: 74.03%)</option>
+              <option value="logistic_regression">Logistic Regression (70.78%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label for="pregnancies">Number of Pregnancies <span class="feature-tag">Count</span></label>
+            <input type="number" step="1" min="0" max="25" id="pregnancies" required placeholder="e.g. 2">
+          </div>
+          <div>
+            <label for="glucose">Plasma Glucose Concentration <span class="feature-tag">mg/dL</span></label>
+            <input type="number" step="0.1" min="0" max="300" id="glucose" required placeholder="e.g. 120 (Normal: 70-99)">
+          </div>
+          <div>
+            <label for="blood_pressure">Diastolic Blood Pressure <span class="feature-tag">mm Hg</span></label>
+            <input type="number" step="0.1" min="0" max="200" id="blood_pressure" required placeholder="e.g. 70 (Normal: 60-80)">
+          </div>
+          <div>
+            <label for="skin_thickness">Triceps Skinfold Thickness <span class="feature-tag">mm</span></label>
+            <input type="number" step="0.1" min="0" max="100" id="skin_thickness" required placeholder="e.g. 20 (Normal: 10-30)">
+          </div>
+          <div>
+            <label for="insulin">2-Hour Serum Insulin <span class="feature-tag">μU/mL</span></label>
+            <input type="number" step="0.1" min="0" max="900" id="insulin" required placeholder="e.g. 80 (0 if unknown)">
+          </div>
+          <div>
+            <label for="bmi">Body Mass Index (BMI) <span class="feature-tag">kg/m²</span></label>
+            <input type="number" step="0.1" min="0" max="70" id="bmi" required placeholder="e.g. 25.4 (Normal: 18.5-24.9)">
+          </div>
+          <div>
+            <label for="diabetes_pedigree">Diabetes Pedigree Function <span class="feature-tag">Score</span></label>
+            <input type="number" step="0.001" min="0" max="3" id="diabetes_pedigree" required placeholder="e.g. 0.450">
+          </div>
+          <div>
+            <label for="age">Age <span class="feature-tag">Years</span></label>
+            <input type="number" step="1" min="1" max="120" id="age" required placeholder="e.g. 33">
+          </div>
+        </div>
+
+        <button type="submit" class="btn primary full" style="font-size: 15px; padding: 16px;">
+          ⚡ Run Real-Time ML Prediction
+        </button>
+      </form>
+
+      <!-- RESULT CARD -->
+      <div id="result-card" class="result-card" style="display:none;">
+        <div id="res-icon" class="result-icon">✓</div>
+        <div style="font-size:12px; color:#38bdf8; letter-spacing:1.5px; font-weight:800; margin-bottom:6px;">ASSESSMENT RESULT</div>
+        <h1 id="res-status" style="margin-bottom: 12px;">Low Risk of Diabetes</h1>
+        <p id="res-desc" style="color: #9bb1c9; max-width: 580px; margin: 0 auto; line-height: 1.7;">
+          Statistical assessment computed.
+        </p>
+
+        <div style="margin-top: 25px; padding: 15px 20px; background: #071525; border-radius: 12px; border: 1px solid #1e3853; display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: #91a8c0; font-size: 13px;">Inference Algorithm:</span>
+          <span id="res-model-badge" style="color: #38bdf8; font-weight: 700; font-size: 13px;">Decision Tree</span>
+        </div>
+
+        <div class="prob">
+          <span>Estimated Diabetes Probability</span>
+          <strong id="res-prob-pct">0%</strong>
+        </div>
+        <div class="meter">
+          <div id="res-prob-bar" style="width: 0%;"></div>
+        </div>
+
+        <div class="rec-box">
+          <h4>📋 Clinical & Lifestyle Recommendations</h4>
+          <ul id="res-recs"></ul>
+        </div>
+
+        <div style="margin-top: 25px; display: flex; gap: 12px; justify-content: center;">
+          <button type="button" class="btn ghost" onclick="switchTab('history-tab')">View in History</button>
+          <button type="button" class="btn primary" onclick="document.getElementById('result-card').style.display='none'; window.scrollTo({top:0, behavior:'smooth'});">New Prediction</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENCHMARK MODELS TAB -->
+    <section id="models-tab" class="tab-pane">
+      <div class="page-head">
+        <div class="eyebrow">SUPERVISED BENCHMARKING</div>
+        <h1>Model Evaluation & Comparison</h1>
+        <p>Comparison of 4 machine learning classifiers evaluated on the stratified 20% test partition (154 clinical samples).</p>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(56,189,248,0.06);">
+              <td><strong>Decision Tree (max_depth=5)</strong></td>
+              <td><b style="color: #38bdf8;">76.62%</b></td>
+              <td>65.00%</td>
+              <td>72.22%</td>
+              <td><strong>0.6842</strong></td>
+              <td><span class="badge safe">★ Best Model</span></td>
+            </tr>
+            <tr>
+              <td>Random Forest (100 Trees)</td>
+              <td>74.03%</td>
+              <td>66.67%</td>
+              <td>51.85%</td>
+              <td>0.5833</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Ensemble</span></td>
+            </tr>
+            <tr>
+              <td>Support Vector Machine (RBF Kernel)</td>
+              <td>74.03%</td>
+              <td>65.22%</td>
+              <td>55.56%</td>
+              <td>0.6000</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Kernel ML</span></td>
+            </tr>
+            <tr>
+              <td>Logistic Regression</td>
+              <td>70.78%</td>
+              <td>60.00%</td>
+              <td>50.00%</td>
+              <td>0.5455</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Linear</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dashboard-card" style="margin-top: 30px;">
+        <h3 style="margin-top:0; color:#fff; font-size:18px;">Accuracy Comparison Benchmark</h3>
+        
+        <div class="bar-row">
+          <span>Decision Tree</span>
+          <div class="bar"><i style="width: 76.62%;"></i></div>
+          <strong>76.6%</strong>
+        </div>
+        <div class="bar-row">
+          <span>Random Forest</span>
+          <div class="bar"><i style="width: 74.03%;"></i></div>
+          <strong>74.0%</strong>
+        </div>
+        <div class="bar-row">
+          <span>Support Vector Machine</span>
+          <div class="bar"><i style="width: 74.03%;"></i></div>
+          <strong>74.0%</strong>
+        </div>
+        <div class="bar-row">
+          <span>Logistic Regression</span>
+          <div class="bar"><i style="width: 70.78%;"></i></div>
+          <strong>70.8%</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- PATIENT HISTORY TAB -->
+    <section id="history-tab" class="tab-pane">
+      <div class="page-head">
+        <div class="eyebrow">PERSISTENT INFERENCE RECORDS</div>
+        <h1>Assessment History</h1>
+        <p>Recent predictions performed during your browser session are automatically stored locally.</p>
+        <div style="margin-top: 15px;">
+          <button type="button" class="btn danger-btn" onclick="clearHistory()">🗑️ Clear History</button>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Patient</th>
+              <th>Algorithm</th>
+              <th>Glucose</th>
+              <th>BMI</th>
+              <th>Probability</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <!-- Populated dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ABOUT & DOCS TAB -->
+    <section id="about-tab" class="tab-pane">
+      <div class="page-head">
+        <div class="eyebrow">SYSTEM ARCHITECTURE</div>
+        <h1>Project Documentation</h1>
+        <p>Overview of the data science methodology and deployment architecture.</p>
+      </div>
+
+      <div class="cards">
+        <article>
+          <b>DATASET</b>
+          <h3>Pima Indians Diabetes</h3>
+          <p>768 clinical observations with 8 physiological risk predictors collected by the National Institute of Diabetes and Digestive and Kidney Diseases.</p>
+        </article>
+        <article>
+          <b>FEATURE ENGINEERING</b>
+          <h3>Imputation Strategy</h3>
+          <p>Zero values in Glucose, Blood Pressure, Skinfold, Insulin, and BMI are treated as biologically invalid and imputed via feature-wise training medians.</p>
+        </article>
+        <article>
+          <b>SCALING & EVALUATION</b>
+          <h3>StandardScaler & Stratification</h3>
+          <p>Features scaled with zero-mean unit-variance transformation. Evaluated via stratified 80/20 train/test split to preserve positive class balance.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Academic Machine Learning Project • Deployed on <strong>GitHub Pages</strong> • Shabna-002
+  </footer>
+
+  <script src="models_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
