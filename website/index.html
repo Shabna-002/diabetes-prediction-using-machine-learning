@@ -8,6 +8,20 @@
   <meta http-equiv="Expires" content="0">
   <title>DiaPredict AI | Clinical Diabetes Decision Support System</title>
   
+  <!-- Clinical Authentication Guard: Require login before accessing portal -->
+  <script>
+    (function() {
+      try {
+        var active = localStorage.getItem('diapredict_auth_active');
+        if (!active) {
+          window.location.replace('login.html');
+        }
+      } catch (e) {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+  
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -266,20 +280,11 @@
               <span>Login</span>
             </a>
 
-            <!-- Logged In User Badge (hidden by default) -->
+            <!-- Logged In Actions (hidden by default) -->
             <div id="navUserBadge" class="hidden flex items-center gap-2">
-              <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-sky-200 bg-sky-50/90 text-xs shadow-xs">
-                <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-sky-600 to-indigo-600 text-white flex items-center justify-center text-[10px] font-extrabold">
-                  <i class="fa-solid fa-user"></i>
-                </div>
-                <div class="text-left hidden sm:block">
-                  <span id="navUserName" class="block font-extrabold text-slate-800 leading-tight">Shabna</span>
-                  <span id="navUserRole" class="block text-[10px] text-sky-600 font-semibold leading-none">Member</span>
-                </div>
-              </div>
-              <button onclick="logoutUser()" title="Sign Out" class="text-xs px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-rose-50 text-slate-500 hover:text-rose-600 font-bold transition flex items-center gap-1">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span class="hidden md:inline">Logout</span>
+              <button onclick="logoutUser()" title="Sign Out" class="text-xs px-3.5 py-2 rounded-xl border border-rose-200 hover:border-rose-400 bg-rose-50/80 hover:bg-rose-100 text-rose-700 font-bold transition flex items-center gap-1.5 shadow-2xs">
+                <i class="fa-solid fa-right-from-bracket text-rose-600"></i>
+                <span>Logout</span>
               </button>
             </div>
           </div>
@@ -311,37 +316,6 @@
         <a href="#benchmarks" class="bg-white/80 dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold px-6 py-3 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm">
           <i class="fa-solid fa-chart-pie text-indigo-500"></i> Model Benchmarks
         </a>
-      </div>
-
-      <!-- Quick Medical Statistics Strip -->
-      <div class="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left max-w-3xl mx-auto">
-        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
-            <i class="fa-solid fa-gauge-high"></i>
-          </div>
-          <div>
-            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Inference</span>
-            <span class="text-base font-extrabold text-slate-800 dark:text-white">&lt;12ms Real-Time</span>
-          </div>
-        </div>
-        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">
-            <i class="fa-solid fa-layer-group"></i>
-          </div>
-          <div>
-            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Architectures</span>
-            <span class="text-base font-extrabold text-slate-800 dark:text-white">10 ML Models</span>
-          </div>
-        </div>
-        <div class="glass-card p-3.5 flex items-center gap-3 border border-white/60 dark:border-slate-800">
-          <div class="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
-          <div>
-            <span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Methodology</span>
-            <span class="text-base font-extrabold text-slate-800 dark:text-white">IEEE Ensembled</span>
-          </div>
-        </div>
       </div>
     </div>
   </header>
@@ -972,7 +946,12 @@
       const userRoleEl = document.getElementById('navUserRole');
 
       try {
-        const activeUser = JSON.parse(localStorage.getItem(AUTH_KEY_ACTIVE));
+        const raw = localStorage.getItem(AUTH_KEY_ACTIVE);
+        if (!raw) {
+          window.location.replace('login.html');
+          return;
+        }
+        const activeUser = JSON.parse(raw);
         if (activeUser && activeUser.name) {
           if (loginBtn) loginBtn.classList.add('hidden');
           if (userBadge) {
@@ -980,26 +959,18 @@
             userBadge.classList.add('flex');
           }
           if (userNameEl) userNameEl.innerText = activeUser.name;
-          if (userRoleEl) userRoleEl.innerText = activeUser.role || "Member";
+          if (userRoleEl) userRoleEl.innerText = activeUser.role || "Clinician";
         } else {
-          if (loginBtn) loginBtn.classList.remove('hidden');
-          if (userBadge) {
-            userBadge.classList.add('hidden');
-            userBadge.classList.remove('flex');
-          }
+          window.location.replace('login.html');
         }
       } catch (e) {
-        if (loginBtn) loginBtn.classList.remove('hidden');
-        if (userBadge) {
-          userBadge.classList.add('hidden');
-          userBadge.classList.remove('flex');
-        }
+        window.location.replace('login.html');
       }
     }
 
     function logoutUser() {
       localStorage.removeItem(AUTH_KEY_ACTIVE);
-      checkAuthState();
+      window.location.replace('login.html');
     }
 
     // ==========================================
@@ -1033,7 +1004,7 @@
       const verdictText = document.getElementById('resVerdict').innerText;
       const isDiabetic = verdictText.includes("Risk Indicated") || verdictText.includes("Diabetic");
 
-      let userName = "Shabna";
+      let userName = "Doctor";
       try {
         const activeUser = JSON.parse(localStorage.getItem(AUTH_KEY_ACTIVE));
         if (activeUser && activeUser.name) userName = activeUser.name;

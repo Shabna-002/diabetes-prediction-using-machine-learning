@@ -135,7 +135,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-20 items-center">
         <!-- Logo -->
-        <a href="index.html" class="flex items-center space-x-3.5 group">
+        <div class="flex items-center space-x-3.5 group cursor-default">
           <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-teal-400 text-white flex items-center justify-center text-xl shadow-lg shadow-sky-500/25 group-hover:scale-105 transition">
             <i class="fa-solid fa-heart-pulse"></i>
           </div>
@@ -149,13 +149,14 @@
               Diabetes Prediction &amp; Health Screening
             </span>
           </div>
-        </a>
+        </div>
 
-        <!-- Return to Home Link -->
-        <a href="index.html" class="text-xs sm:text-sm font-bold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
-          <i class="fa-solid fa-arrow-left"></i>
-          <span>Back to Home</span>
-        </a>
+        <!-- Secure Access Badge -->
+        <div class="flex items-center gap-2 text-xs font-bold text-sky-700 bg-sky-50 border border-sky-200/90 px-3.5 py-2 rounded-xl shadow-xs">
+          <i class="fa-solid fa-shield-halved text-sky-600"></i>
+          <span class="hidden sm:inline">Secure Clinical Portal</span>
+          <span class="sm:hidden">Login</span>
+        </div>
       </div>
     </div>
   </nav>
@@ -173,8 +174,8 @@
           <span class="text-xs font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
             Currently Logged In
           </span>
-          <h2 id="activeSessionName" class="text-xl font-extrabold text-slate-900 mt-2">Shabna</h2>
-          <p id="activeSessionEmail" class="text-xs text-slate-500 font-medium">shabna@example.com</p>
+          <h2 id="activeSessionName" class="text-xl font-extrabold text-slate-900 mt-2">Active Clinician</h2>
+          <p id="activeSessionEmail" class="text-xs text-slate-500 font-medium">doctor@hospital.org</p>
         </div>
         <div class="pt-2 flex flex-col gap-2.5">
           <a href="index.html" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md shadow-sky-500/20 transition flex items-center justify-center gap-2">
@@ -215,13 +216,31 @@
         <!-- Alert Notification Box -->
         <div id="authAlert" class="hidden p-3 rounded-xl text-xs font-semibold mb-5 transition-all"></div>
 
+        <!-- Quick Demo Credentials Box -->
+        <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200/90 text-xs text-sky-950 flex items-center justify-between gap-3 mb-5 shadow-2xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-key text-xs"></i>
+            </div>
+            <div>
+              <div class="font-bold text-slate-900">Demo Login Details:</div>
+              <div class="text-[11px] text-slate-600 font-medium">
+                Email: <span class="font-bold text-sky-800">doctor@diapredict.org</span> &bull; Pass: <span class="font-bold text-sky-800">123456</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" onclick="fillDemoCredentials()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-bold text-xs shadow-xs transition shrink-0">
+            Auto-Fill
+          </button>
+        </div>
+
         <!-- SIGN IN FORM -->
         <form id="formSignIn" onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <i class="fa-solid fa-envelope text-sky-600"></i> Email Address
+              <i class="fa-solid fa-user-doctor text-sky-600"></i> Email Address or Username
             </label>
-            <input type="email" id="signInEmail" required placeholder="name@example.com" 
+            <input type="text" id="signInEmail" required placeholder="doctor@diapredict.org or username" 
                    class="clean-input w-full px-3.5 py-2.5 text-sm">
           </div>
 
@@ -303,7 +322,7 @@
 
         <button type="button" onclick="loginAsDemoUser()" class="w-full py-3 px-4 rounded-xl border border-sky-300 bg-sky-50 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center justify-center gap-2 shadow-xs group">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>1-Click Demo Login as <strong class="text-sky-900 group-hover:underline">Shabna</strong></span>
+          <span>1-Click Instant Demo Login</span>
         </button>
 
       </div>
@@ -322,10 +341,18 @@
     const AUTH_KEY_USERS = 'diapredict_auth_users';
 
     const DEMO_USER = {
-      name: "Shabna",
-      role: "User",
-      email: "shabna@example.com"
+      name: "Doctor",
+      role: "Clinician",
+      email: "doctor@hospital.org"
     };
+
+    function fillDemoCredentials() {
+      const emailInput = document.getElementById('signInEmail');
+      const pwdInput = document.getElementById('signInPassword');
+      if (emailInput) emailInput.value = "doctor@diapredict.org";
+      if (pwdInput) pwdInput.value = "123456";
+      showAuthAlert("Demo credentials filled: doctor@diapredict.org / 123456. Click 'Sign In' to enter.", "success");
+    }
 
     function initAuthPage() {
       // Check if already signed in
@@ -341,10 +368,10 @@
         }
       } catch (e) {}
 
-      // Pre-fill demo email
+      // Pre-fill demo credentials for immediate ease of use
       const emailInput = document.getElementById('signInEmail');
       if (emailInput && !emailInput.value) {
-        emailInput.value = "shabna@example.com";
+        emailInput.value = "doctor@diapredict.org";
       }
       const pwdInput = document.getElementById('signInPassword');
       if (pwdInput && !pwdInput.value) {
@@ -406,10 +433,10 @@
 
     function loginAsDemoUser() {
       localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(DEMO_USER));
-      showAuthAlert("Signed in successfully as Shabna! Redirecting to home...", "success");
+      showAuthAlert("Signed in successfully! Entering clinical portal...", "success");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 700);
+      }, 600);
     }
 
     function handleSignIn() {
@@ -417,7 +444,7 @@
       const pwd = document.getElementById('signInPassword').value;
 
       if (!email || !pwd) {
-        showAuthAlert("Please enter your email and password.", "error");
+        showAuthAlert("Please enter your email/username and password.", "error");
         return;
       }
 
@@ -426,25 +453,29 @@
         users = JSON.parse(localStorage.getItem(AUTH_KEY_USERS) || '[]');
       } catch (e) {}
 
-      const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      const found = users.find(u => 
+        (u.email && u.email.toLowerCase() === email.toLowerCase()) ||
+        (u.name && u.name.toLowerCase() === email.toLowerCase())
+      );
+
       let activeUser = null;
       if (found) {
         activeUser = found;
       } else {
-        const namePart = email.split('@')[0].replace(/[._]/g, ' ');
+        const namePart = email.includes('@') ? email.split('@')[0].replace(/[._]/g, ' ') : email;
         const formattedName = namePart.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
         activeUser = {
           name: formattedName || "User",
-          role: "Member",
-          email: email
+          role: "Clinician",
+          email: email.includes('@') ? email : `${email}@diapredict.org`
         };
       }
 
       localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeUser));
-      showAuthAlert(`Welcome back, ${activeUser.name}! Redirecting...`, "success");
+      showAuthAlert(`Welcome back, ${activeUser.name}! Entering portal...`, "success");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 700);
+      }, 600);
     }
 
     function handleSignUp() {
@@ -459,7 +490,7 @@
 
       const newUser = {
         name: name,
-        role: "Member",
+        role: "Clinician",
         email: email
       };
 
