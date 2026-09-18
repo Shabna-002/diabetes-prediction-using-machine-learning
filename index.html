@@ -250,14 +250,39 @@
 
         <!-- Right Quick Actions, Auth & Dark Mode Toggle -->
         <div class="flex items-center space-x-2.5">
-          <button onclick="loadPreset('healthy')" class="hidden xl:inline-flex text-xs px-3 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/80 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-100 transition shadow-sm items-center gap-1.5">
+          <button onclick="loadPreset('healthy')" class="hidden xl:inline-flex text-xs px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50/80 text-emerald-700 font-bold hover:bg-emerald-100 transition shadow-sm items-center gap-1.5">
             <i class="fa-solid fa-user-check text-emerald-500"></i> Healthy
           </button>
-          <button onclick="loadPreset('diabetic')" class="hidden xl:inline-flex text-xs px-3 py-1.5 rounded-xl border border-rose-300 dark:border-rose-800/80 bg-rose-50/80 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-100 transition shadow-sm items-center gap-1.5">
+          <button onclick="loadPreset('diabetic')" class="hidden xl:inline-flex text-xs px-3 py-1.5 rounded-xl border border-rose-300 bg-rose-50/80 text-rose-700 font-bold hover:bg-rose-100 transition shadow-sm items-center gap-1.5">
             <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> High-Risk
           </button>
 
+          <!-- Authentication Navigation Link / Doctor Profile -->
+          <div id="navAuthContainer" class="flex items-center">
+            <!-- Logged Out Button -->
+            <a id="navLoginBtn" href="login.html" 
+               class="text-xs px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold shadow-md shadow-sky-500/20 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-user-doctor"></i>
+              <span>Doctor Login</span>
+            </a>
 
+            <!-- Logged In Clinician Badge (hidden by default) -->
+            <div id="navUserBadge" class="hidden flex items-center gap-2">
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-sky-200 bg-sky-50/90 text-xs shadow-xs">
+                <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-sky-600 to-indigo-600 text-white flex items-center justify-center text-[10px] font-extrabold">
+                  <i class="fa-solid fa-user-doctor"></i>
+                </div>
+                <div class="text-left hidden sm:block">
+                  <span id="navDoctorName" class="block font-extrabold text-slate-800 leading-tight">Dr. Shabna</span>
+                  <span id="navDoctorRole" class="block text-[10px] text-sky-600 font-semibold leading-none">Endocrinologist</span>
+                </div>
+              </div>
+              <button onclick="logoutDoctor()" title="Sign Out" class="text-xs px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-rose-50 text-slate-500 hover:text-rose-600 font-bold transition flex items-center gap-1">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden md:inline">Logout</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -936,6 +961,48 @@
     }
 
     // ==========================================
+    // CLINICIAN / DOCTOR AUTHENTICATION STATE
+    // ==========================================
+    const AUTH_KEY_ACTIVE = 'diapredict_auth_active';
+
+    function checkAuthState() {
+      const loginBtn = document.getElementById('navLoginBtn');
+      const userBadge = document.getElementById('navUserBadge');
+      const doctorNameEl = document.getElementById('navDoctorName');
+      const doctorRoleEl = document.getElementById('navDoctorRole');
+
+      try {
+        const activeDoc = JSON.parse(localStorage.getItem(AUTH_KEY_ACTIVE));
+        if (activeDoc && activeDoc.name) {
+          if (loginBtn) loginBtn.classList.add('hidden');
+          if (userBadge) {
+            userBadge.classList.remove('hidden');
+            userBadge.classList.add('flex');
+          }
+          if (doctorNameEl) doctorNameEl.innerText = activeDoc.name;
+          if (doctorRoleEl) doctorRoleEl.innerText = activeDoc.specialty || "Clinician";
+        } else {
+          if (loginBtn) loginBtn.classList.remove('hidden');
+          if (userBadge) {
+            userBadge.classList.add('hidden');
+            userBadge.classList.remove('flex');
+          }
+        }
+      } catch (e) {
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (userBadge) {
+          userBadge.classList.add('hidden');
+          userBadge.classList.remove('flex');
+        }
+      }
+    }
+
+    function logoutDoctor() {
+      localStorage.removeItem(AUTH_KEY_ACTIVE);
+      checkAuthState();
+    }
+
+    // ==========================================
     // PATIENT CLINICAL HISTORY STORAGE & ACTIONS
     // ==========================================
     const HISTORY_KEY = 'diapredict_patient_history';
@@ -966,10 +1033,16 @@
       const verdictText = document.getElementById('resVerdict').innerText;
       const isDiabetic = verdictText.includes("Risk Indicated") || verdictText.includes("Diabetic");
 
+      let doctorName = "Dr. Shabna (Endocrinology)";
+      try {
+        const activeDoc = JSON.parse(localStorage.getItem(AUTH_KEY_ACTIVE));
+        if (activeDoc && activeDoc.name) doctorName = activeDoc.name;
+      } catch (e) {}
+
       const record = {
         id: `PT-${Math.floor(1000 + Math.random() * 9000)}`,
         date: new Date().toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-        doctor: "Dr. Shabna (Endocrinology)",
+        doctor: doctorName,
         gender: gender,
         hba1c: parseFloat(hba1c).toFixed(1),
         glucose: parseInt(glucose),
@@ -1793,6 +1866,7 @@
     // Auto-initialize on page load
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      checkAuthState();
       renderPatientHistory();
       loadBenchmarks();
       loadPreset('healthy');

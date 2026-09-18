@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinician Login | DiaPredict Clinical Portal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#082f49'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+      background: linear-gradient(-45deg, #f0f9ff, #f8fafc, #ecfdf5, #f5f3ff, #f0f9ff);
+      background-size: 400% 400%;
+      animation: gradientShift 22s ease infinite;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      z-index: -2;
+      pointer-events: none;
+      animation: floatOrb 22s infinite alternate ease-in-out;
+    }
+    .orb-1 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, #38bdf8, #0284c7);
+      top: -120px;
+      left: -100px;
+    }
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #34d399, #059669);
+      bottom: -100px;
+      right: -100px;
+      animation-duration: 28s;
+      animation-delay: -7s;
+    }
+    @keyframes floatOrb {
+      0% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(40px, 50px) scale(1.1); }
+      100% { transform: translate(-30px, -30px) scale(0.95); }
+    }
+    .glass-card {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 25px 50px -12px rgba(2, 132, 199, 0.12), 0 0 1px 1px rgba(255, 255, 255, 0.6) inset;
+      border-radius: 1.75rem;
+    }
+    .clean-input {
+      border-radius: 0.85rem;
+      border: 1px solid #cbd5e1;
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f172a;
+      transition: all 0.2s ease;
+    }
+    .clean-input:focus {
+      outline: none;
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+    }
+    .btn-shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-shimmer::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0) 20%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 80%
+      );
+      transform: rotate(30deg) translate(-100%, -100%);
+      transition: transform 0.8s ease;
+    }
+    .btn-shimmer:hover::after {
+      transform: rotate(30deg) translate(100%, 100%);
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased flex flex-col justify-between min-h-screen">
+
+  <!-- Ambient Background Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- TOP NAVIGATION BAR -->
+  <nav class="backdrop-blur-xl bg-white/70 border-b border-slate-200/80 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center space-x-3.5 group">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-teal-400 text-white flex items-center justify-center text-xl shadow-lg shadow-sky-500/25 group-hover:scale-105 transition">
+            <i class="fa-solid fa-heart-pulse animate-pulse"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl font-extrabold tracking-tight text-slate-900">
+                Dia<span class="bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">Predict</span>
+              </span>
+              <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider rounded-md bg-sky-100 text-sky-700 border border-sky-200">
+                Clinical Portal
+              </span>
+            </div>
+            <span class="text-xs block text-slate-500 font-semibold tracking-tight">
+              Hospital Decision Support &amp; Machine Learning
+            </span>
+          </div>
+        </a>
+
+        <!-- Return to Predictor -->
+        <a href="index.html" class="text-xs sm:text-sm font-bold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 px-4 py-2 rounded-xl transition flex items-center gap-2 shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Predictor</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LOGIN & AUTHENTICATION SECTION -->
+  <main class="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 relative z-10">
+    <div class="max-w-md w-full space-y-6">
+
+      <!-- Active Session Alert Box (shown if already logged in) -->
+      <div id="alreadyLoggedInCard" class="hidden glass-card p-6 text-center space-y-4 shadow-xl border border-sky-200">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shadow-sm">
+          <i class="fa-solid fa-user-doctor"></i>
+        </div>
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            Active Clinical Session
+          </span>
+          <h2 id="activeSessionName" class="text-xl font-extrabold text-slate-900 mt-2">Dr. Shabna, MD</h2>
+          <p id="activeSessionRole" class="text-xs text-slate-500 font-medium">Chief Diabetologist &bull; Metabolic Center</p>
+        </div>
+        <div class="pt-2 flex flex-col gap-2.5">
+          <a href="index.html" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md shadow-sky-500/20 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right"></i> Continue to Clinical Portal
+          </a>
+          <button onclick="handleSignOut()" class="w-full py-2.5 rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-rose-50 text-slate-600 hover:text-rose-600 font-bold text-xs transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out / Switch Doctor
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Auth Card -->
+      <div id="authCard" class="glass-card p-8 sm:p-10 shadow-2xl">
+        
+        <!-- Header badge & title -->
+        <div class="text-center space-y-2 mb-7">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold shadow-xs">
+            <i class="fa-solid fa-shield-halved text-sky-600"></i>
+            <span>Clinician Access &amp; Decision Support</span>
+          </div>
+          <h1 id="authCardTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Clinician Sign In
+          </h1>
+          <p id="authCardSubtitle" class="text-xs sm:text-sm text-slate-500">
+            Access real-time patient risk evaluations and save multi-model screening reports.
+          </p>
+        </div>
+
+        <!-- Auth Tabs -->
+        <div class="flex p-1 rounded-xl bg-slate-100 border border-slate-200 mb-6">
+          <button id="tabBtnSignIn" onclick="switchAuthTab('signin')" class="flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In
+          </button>
+          <button id="tabBtnSignUp" onclick="switchAuthTab('signup')" class="flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-user-plus"></i> New Doctor
+          </button>
+        </div>
+
+        <!-- Feedback Alert -->
+        <div id="authAlert" class="hidden p-3 rounded-xl text-xs font-semibold mb-5 transition-all"></div>
+
+        <!-- SIGN IN FORM -->
+        <form id="formSignIn" onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-envelope text-sky-600"></i> Hospital Email Address
+            </label>
+            <input type="email" id="signInEmail" required placeholder="dr.shabna@hospital.org" 
+                   class="clean-input w-full px-3.5 py-2.5 text-sm">
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-lock text-sky-600"></i> Password
+              </label>
+              <button type="button" onclick="forgotPasswordNotice()" class="text-[11px] font-semibold text-sky-600 hover:underline">
+                Forgot password?
+              </button>
+            </div>
+            <div class="relative">
+              <input type="password" id="signInPassword" required placeholder="••••••••••••" 
+                     class="clean-input w-full px-3.5 py-2.5 text-sm pr-10">
+              <button type="button" onclick="togglePasswordVisibility('signInPassword', this)" 
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-eye text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 font-medium select-none">
+              <input type="checkbox" id="rememberMe" checked class="rounded text-sky-600 focus:ring-sky-500 border-slate-300">
+              <span>Remember this workstation</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md shadow-sky-500/25 transition flex items-center justify-center gap-2 mt-2">
+            <i class="fa-solid fa-stethoscope"></i> Sign In to Portal
+          </button>
+        </form>
+
+        <!-- SIGN UP / REGISTRATION FORM -->
+        <form id="formSignUp" onsubmit="event.preventDefault(); handleSignUp();" class="hidden space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-user-doctor text-sky-600"></i> Clinician Full Name
+            </label>
+            <input type="text" id="signUpName" required placeholder="Dr. Shabna, MD" 
+                   class="clean-input w-full px-3.5 py-2.5 text-sm">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                <i class="fa-solid fa-notes-medical text-sky-600"></i> Specialty
+              </label>
+              <input type="text" id="signUpSpecialty" placeholder="Diabetology / Endocrinology" 
+                     class="clean-input w-full px-3.5 py-2.5 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                <i class="fa-solid fa-hospital text-sky-600"></i> Hospital Center
+              </label>
+              <input type="text" id="signUpHospital" placeholder="General Medical Center" 
+                     class="clean-input w-full px-3.5 py-2.5 text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-envelope text-sky-600"></i> Official Email Address
+            </label>
+            <input type="email" id="signUpEmail" required placeholder="doctor@clinicalcenter.org" 
+                   class="clean-input w-full px-3.5 py-2.5 text-sm">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
+              <i class="fa-solid fa-lock text-sky-600"></i> Set Secure Password
+            </label>
+            <div class="relative">
+              <input type="password" id="signUpPassword" required placeholder="Min. 6 characters" 
+                     class="clean-input w-full px-3.5 py-2.5 text-sm pr-10">
+              <button type="button" onclick="togglePasswordVisibility('signUpPassword', this)" 
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-eye text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-shimmer w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-md shadow-emerald-500/25 transition flex items-center justify-center gap-2 mt-2">
+            <i class="fa-solid fa-id-card-clip"></i> Create Clinician Account
+          </button>
+        </form>
+
+        <!-- QUICK 1-CLICK DEMO ACCESS BUTTON -->
+        <div class="relative my-6 text-center">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+          <span class="relative px-3 bg-white text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Instant Test Access
+          </span>
+        </div>
+
+        <button type="button" onclick="loginAsDemoDoctor()" class="w-full py-3 px-4 rounded-xl border border-sky-300 bg-sky-50/90 hover:bg-sky-100 text-sky-800 font-bold text-xs transition flex items-center justify-center gap-2 shadow-xs group">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>1-Click Demo Login as <strong class="text-sky-900 group-hover:underline">Dr. Shabna (Chief Endocrinologist)</strong></span>
+        </button>
+
+        <!-- Security & Compliance Footer -->
+        <div class="mt-8 pt-6 border-t border-slate-200/80 flex flex-wrap justify-between items-center gap-2 text-[11px] text-slate-400">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-lock text-emerald-500"></i> 256-Bit SSL Encrypted</span>
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-file-shield text-sky-500"></i> HIPAA &amp; ADA Compliant</span>
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> Edge ML Ready</span>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="py-6 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white/40">
+    <p>&copy; 2026 DiaPredict AI Clinical Decision Support System. Designed for Accredited Medical Personnel.</p>
+  </footer>
+
+  <!-- AUTH LOGIC SCRIPT -->
+  <script>
+    const AUTH_KEY_ACTIVE = 'diapredict_auth_active';
+    const AUTH_KEY_USERS = 'diapredict_auth_users';
+
+    const DEMO_DOCTOR = {
+      name: "Dr. Shabna, MD",
+      specialty: "Clinical Diabetology & Endocrinology",
+      hospital: "Metabolic Health Research Institute",
+      email: "dr.shabna@clinicalcenter.org"
+    };
+
+    function initAuthPage() {
+      // Check if already signed in
+      try {
+        const active = JSON.parse(localStorage.getItem(AUTH_KEY_ACTIVE));
+        if (active && active.name) {
+          document.getElementById('authCard').classList.add('hidden');
+          const card = document.getElementById('alreadyLoggedInCard');
+          card.classList.remove('hidden');
+          document.getElementById('activeSessionName').innerText = active.name;
+          document.getElementById('activeSessionRole').innerText = `${active.specialty || 'Clinician'} • ${active.hospital || 'Hospital Center'}`;
+          return;
+        }
+      } catch (e) {}
+
+      // Pre-fill demo email
+      const emailInput = document.getElementById('signInEmail');
+      if (emailInput && !emailInput.value) {
+        emailInput.value = "dr.shabna@hospital.org";
+      }
+      const pwdInput = document.getElementById('signInPassword');
+      if (pwdInput && !pwdInput.value) {
+        pwdInput.value = "clinical2026";
+      }
+    }
+
+    function switchAuthTab(tab) {
+      const formIn = document.getElementById('formSignIn');
+      const formUp = document.getElementById('formSignUp');
+      const btnIn = document.getElementById('tabBtnSignIn');
+      const btnUp = document.getElementById('tabBtnSignUp');
+      const title = document.getElementById('authCardTitle');
+      const subtitle = document.getElementById('authCardSubtitle');
+      const alertBox = document.getElementById('authAlert');
+      if (alertBox) alertBox.classList.add('hidden');
+
+      if (tab === 'signin') {
+        formIn.classList.remove('hidden');
+        formUp.classList.add('hidden');
+        btnIn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1.5";
+        btnUp.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5";
+        title.innerText = "Clinician Sign In";
+        subtitle.innerText = "Access real-time patient risk evaluations and save multi-model screening reports.";
+      } else {
+        formIn.classList.add('hidden');
+        formUp.classList.remove('hidden');
+        btnUp.className = "flex-1 py-2 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm flex items-center justify-center gap-1.5";
+        btnIn.className = "flex-1 py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800 flex items-center justify-center gap-1.5";
+        title.innerText = "New Doctor Registration";
+        subtitle.innerText = "Register your medical profile to generate verified diagnostic screening history.";
+      }
+    }
+
+    function togglePasswordVisibility(id, btn) {
+      const input = document.getElementById(id);
+      if (!input) return;
+      const isPwd = input.type === 'password';
+      input.type = isPwd ? 'text' : 'password';
+      const icon = btn.querySelector('i');
+      if (icon) {
+        icon.className = isPwd ? 'fa-solid fa-eye-slash text-xs' : 'fa-solid fa-eye text-xs';
+      }
+    }
+
+    function showAuthAlert(msg, type = 'success') {
+      const alertBox = document.getElementById('authAlert');
+      if (!alertBox) return;
+      alertBox.innerText = msg;
+      alertBox.classList.remove('hidden');
+      if (type === 'success') {
+        alertBox.className = 'p-3 rounded-xl text-xs font-semibold mb-5 bg-emerald-50 border border-emerald-300 text-emerald-700 flex items-center gap-2';
+        alertBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i> <span>${msg}</span>`;
+      } else {
+        alertBox.className = 'p-3 rounded-xl text-xs font-semibold mb-5 bg-rose-50 border border-rose-300 text-rose-700 flex items-center gap-2';
+        alertBox.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-500 text-sm"></i> <span>${msg}</span>`;
+      }
+    }
+
+    function loginAsDemoDoctor() {
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(DEMO_DOCTOR));
+      showAuthAlert("Signed in successfully as Dr. Shabna, MD! Redirecting to Clinical Portal...", "success");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 750);
+    }
+
+    function handleSignIn() {
+      const email = document.getElementById('signInEmail').value.trim();
+      const pwd = document.getElementById('signInPassword').value;
+
+      if (!email || !pwd) {
+        showAuthAlert("Please provide your email and password.", "error");
+        return;
+      }
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem(AUTH_KEY_USERS) || '[]');
+      } catch (e) {}
+
+      const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      let activeDoctor = null;
+      if (found) {
+        activeDoctor = found;
+      } else {
+        const namePart = email.split('@')[0].replace(/[._]/g, ' ');
+        const formattedName = 'Dr. ' + namePart.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+        activeDoctor = {
+          name: formattedName,
+          specialty: "Clinical Diabetology",
+          hospital: "Medical Decision Center",
+          email: email
+        };
+      }
+
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(activeDoctor));
+      showAuthAlert(`Welcome back, ${activeDoctor.name}! Redirecting to Clinical Portal...`, "success");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 750);
+    }
+
+    function handleSignUp() {
+      const name = document.getElementById('signUpName').value.trim();
+      const specialty = document.getElementById('signUpSpecialty').value.trim() || "Clinical Diabetology";
+      const hospital = document.getElementById('signUpHospital').value.trim() || "Medical Decision Center";
+      const email = document.getElementById('signUpEmail').value.trim();
+      const pwd = document.getElementById('signUpPassword').value;
+
+      if (!name || !email || !pwd) {
+        showAuthAlert("Please fill in all required fields.", "error");
+        return;
+      }
+
+      const newDoctor = {
+        name: name.startsWith('Dr.') ? name : `Dr. ${name}`,
+        specialty: specialty,
+        hospital: hospital,
+        email: email
+      };
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem(AUTH_KEY_USERS) || '[]');
+      } catch (e) {}
+
+      users.push(newDoctor);
+      localStorage.setItem(AUTH_KEY_USERS, JSON.stringify(users));
+      localStorage.setItem(AUTH_KEY_ACTIVE, JSON.stringify(newDoctor));
+
+      showAuthAlert(`Registration complete! Welcome, ${newDoctor.name}. Redirecting to Clinical Portal...`, "success");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 850);
+    }
+
+    function handleSignOut() {
+      localStorage.removeItem(AUTH_KEY_ACTIVE);
+      document.getElementById('alreadyLoggedInCard').classList.add('hidden');
+      document.getElementById('authCard').classList.remove('hidden');
+      showAuthAlert("You have signed out successfully.", "success");
+    }
+
+    function forgotPasswordNotice() {
+      showAuthAlert("For password recovery or workstation clearance, contact hospital IT or use 1-Click Demo Login.", "error");
+    }
+
+    window.addEventListener('DOMContentLoaded', initAuthPage);
+  </script>
+</body>
+</html>

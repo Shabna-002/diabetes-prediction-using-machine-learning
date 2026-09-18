@@ -200,6 +200,10 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
             self.send_json_response(self.get_models_list())
         elif path == "/api/metrics":
             self.send_json_response(self.get_metrics_data())
+        elif path == "/login":
+            self.send_response(302)
+            self.send_header("Location", "/login.html")
+            self.end_headers()
         else:
             super().do_GET()
 
