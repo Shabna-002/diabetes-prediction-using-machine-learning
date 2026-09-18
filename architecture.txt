@@ -1,0 +1,18 @@
+User Browser
+    |
+    v
+Flask Web Application
+    |
+    +--> Input Validation
+    |
+    +--> Saved ML Pipeline
+    |       +--> Median Imputation
+    |       +--> StandardScaler
+    |       +--> Logistic Regression
+    |
+    +--> Prediction Result
+    |
+    +--> MySQL predictions table
+            |
+            +--> History
+            +--> Dashboard
