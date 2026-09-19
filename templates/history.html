@@ -12,32 +12,42 @@
 <table>
 <thead>
   <tr>
-    <th>ID</th>
-    <th>Patient</th>
-    <th>Model Used</th>
+    <th>Date</th>
     <th>Glucose</th>
     <th>BMI</th>
-    <th>Age</th>
+    <th>Risk</th>
     <th>Result</th>
-    <th>Risk Prob</th>
-    <th>Date</th>
+    <th>Actions</th>
   </tr>
 </thead>
 <tbody>
 {% for r in rows %}
 <tr>
-  <td>{{ r.id }}</td>
-  <td>{{ r.patient_name or '—' }}</td>
-  <td><span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #93c5fd;">{{ r.model_used or 'Default Model' }}</span></td>
-  <td>{{ r.glucose }}</td>
-  <td>{{ r.bmi }}</td>
-  <td>{{ r.age }}</td>
-  <td><span class="badge {{ 'danger' if r.prediction else 'safe' }}">{{ 'Higher risk' if r.prediction else 'Lower risk' }}</span></td>
-  <td>{{ '%.2f'|format(r.probability*100) }}%</td>
-  <td>{{ r.created_at }}</td>
+  <td><strong>{{ r.created_at }}</strong><br><small style="color:#64748b;">{{ r.patient_name or ('PID-' ~ r.id) }}</small></td>
+  <td>{{ r.glucose }} mg/dL</td>
+  <td>{{ '%.1f'|format(r.bmi) }}</td>
+  <td><strong>{{ '%.0f'|format(r.probability*100) }}%</strong></td>
+  <td>
+    {% set risk_pct = r.probability * 100 %}
+    {% if risk_pct >= 65 or r.prediction == 1 %}
+      <span class="badge danger">High</span>
+    {% elif risk_pct >= 35 %}
+      <span class="badge warning">Medium</span>
+    {% else %}
+      <span class="badge safe">Low</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="action-btn-group">
+      <form method="POST" action="{{ url_for('delete_prediction', pred_id=r.id) }}" style="display:inline;" onsubmit="return confirm('Delete this record?')">
+        <button type="submit" class="btn-action delete">🗑️ Delete</button>
+      </form>
+      <button type="button" class="btn-action report" onclick="window.print()">📥 Report</button>
+    </div>
+  </td>
 </tr>
 {% else %}
-<tr><td colspan="9" style="text-align: center; padding: 2rem;">No predictions stored yet. <a href="{{ url_for('predict') }}">Run your first prediction</a>.</td></tr>
+<tr><td colspan="6" style="text-align: center; padding: 2rem;">No predictions stored yet. <a href="{{ url_for('predict') }}">Run your first prediction</a>.</td></tr>
 {% endfor %}
 </tbody>
 </table>

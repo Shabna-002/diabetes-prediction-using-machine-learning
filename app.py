@@ -317,6 +317,17 @@ def clear_history():
         flash("Prediction history cleared successfully.", "success")
     except Exception as exc:
         flash(f"Database error: {exc}", "error")
+    return redirect(url_for("history"))
+
+@app.route("/history/delete/<int:pred_id>", methods=["POST"])
+def delete_prediction(pred_id):
+    try:
+        db_execute("DELETE FROM predictions WHERE id = %s", "DELETE FROM predictions WHERE id = ?", (pred_id,))
+        flash("Prediction record deleted successfully.", "success")
+    except Exception as exc:
+        flash(f"Delete failed: {exc}", "error")
+    return redirect(url_for("history"))
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if session.get("user"):
