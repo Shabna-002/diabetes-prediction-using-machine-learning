@@ -1,4 +1,4 @@
-﻿// Diabetes AI - Client-side ML Inference & UI Engine
+﻿// DiaPredict - Client-side ML Inference & UI Engine
 (function() {
   const models = window.DIABETES_ML_MODELS;
   if (!models) {
@@ -288,5 +288,5 @@
   // Render initial history
   renderHistoryTable();
 
-  console.log("Diabetes AI Engine Initialized successfully.");
+  console.log("DiaPredict Engine Initialized successfully.");
 })();
