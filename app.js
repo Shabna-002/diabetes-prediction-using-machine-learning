@@ -257,12 +257,15 @@
         parseFloat(document.getElementById("age").value) || 0
       ];
 
-      // 1. Show Animated Loading State
+      // 1. Show Animated Loading State & Activate AI Holographic Scanner
       submitBtn.classList.add("btn-loading");
       submitBtn.innerHTML = `<span class="btn-spinner"></span> 🔄 Analyzing Health Data...`;
+      const scannerOverlay = document.getElementById("ai-scanner-overlay");
+      if (scannerOverlay) scannerOverlay.classList.add("active");
 
-      // 2. Realistic ML computation delay (~650ms)
+      // 2. Realistic ML computation delay (~700ms)
       setTimeout(() => {
+        if (scannerOverlay) scannerOverlay.classList.remove("active");
         const { imputed, scaled } = preprocess(rawVals);
 
         let res, modelLabel;
@@ -475,16 +478,19 @@
   }
 
   function animateCounter(elem, target) {
-    let current = 0;
-    const step = Math.ceil(target / 20) || 1;
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        current = target;
-        clearInterval(timer);
+    const duration = 1200;
+    const startTime = performance.now();
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const currentVal = Math.round(ease * target);
+      elem.textContent = `${currentVal}%`;
+      if (progress < 1) {
+        requestAnimationFrame(update);
       }
-      elem.textContent = `${current}%`;
-    }, 25);
+    }
+    requestAnimationFrame(update);
   }
 
   window.startNewPrediction = function() {

@@ -10,6 +10,16 @@
   <div class="bg-orb orb1"></div>
   <div class="bg-orb orb2"></div>
 
+  <!-- Floating Ambient Medical Icons -->
+  <div class="floating-icons-container">
+    <div class="floating-icon f-icon-1">🩺</div>
+    <div class="floating-icon f-icon-2">💊</div>
+    <div class="floating-icon f-icon-3">🧬</div>
+    <div class="floating-icon f-icon-4">🩸</div>
+    <div class="floating-icon f-icon-5">🧪</div>
+    <div class="floating-icon f-icon-6">✚</div>
+  </div>
+
   <!-- NAVIGATION BAR (8 Required Items) -->
   <nav class="navbar">
     <a class="brand" href="#" onclick="switchTab('home-tab'); return false;">
@@ -48,6 +58,18 @@
           <div class="pulse">🩺</div>
           <h3>Clinical ML Pipeline</h3>
           <p>Trained on 768 patient records with 8 standardized physiological biomarkers.</p>
+
+          <!-- ECG / Heartbeat Cardiac Animation -->
+          <div class="ecg-monitor-box">
+            <div class="ecg-header">
+              <span>CARDIAC & METABOLIC TELEMETRY</span>
+              <span style="color:#00f2fe; display:flex; align-items:center; gap:4px;">● LIVE 72 BPM</span>
+            </div>
+            <svg class="ecg-svg" viewBox="0 0 400 50">
+              <path class="ecg-path" d="M 0,25 L 70,25 L 85,25 L 95,8 L 105,42 L 115,20 L 125,28 L 135,25 L 210,25 L 225,25 L 235,8 L 245,42 L 255,20 L 265,28 L 275,25 L 350,25 L 365,25 L 375,8 L 385,42 L 400,25" />
+            </svg>
+          </div>
+
           <div class="mini-stat"><span>Top Model</span> <b>Decision Tree</b></div>
           <div class="mini-stat"><span>Test Accuracy</span> <b>76.62%</b></div>
           <div class="mini-stat"><span>F1-Score</span> <b>0.6842</b></div>
@@ -92,6 +114,12 @@
 
       <!-- Input Form -->
       <form id="predict-form" class="form-card">
+        <!-- AI Holographic Scanning Laser Overlay -->
+        <div id="ai-scanner-overlay" class="ai-scanner-overlay">
+          <div class="ai-scan-grid"></div>
+          <div class="ai-scan-laser"></div>
+        </div>
+
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 20px;">
           <div>
             <label for="patient_name" style="color:#a9bad0; font-size:13px; font-weight:700;">Patient Full Name / Identifier</label>
