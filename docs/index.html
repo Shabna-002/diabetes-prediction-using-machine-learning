@@ -370,14 +370,12 @@
         <table>
           <thead>
             <tr>
-              <th>Patient</th>
-              <th>Date & Time</th>
-              <th>Model</th>
+              <th>Date</th>
               <th>Glucose</th>
               <th>BMI</th>
-              <th>Age</th>
-              <th>Probability</th>
-              <th>Status</th>
+              <th>Risk</th>
+              <th>Result</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="history-tbody">
@@ -390,10 +388,89 @@
     <!-- 5. HEALTH ANALYTICS TAB -->
     <section id="analytics-tab" class="tab-pane">
       <div class="page-head">
-        <div class="eyebrow">EPIDEMIOLOGICAL INSIGHTS</div>
-        <h1>Health Analytics & Algorithm Benchmarks</h1>
-        <p>Population risk distributions, biomarker correlation thresholds, and 4-algorithm ML validation metrics.</p>
+        <div class="eyebrow">EPIDEMIOLOGICAL INSIGHTS & CLINICAL TRACKING</div>
+        <h1>Health Analytics & Biomarker Trends</h1>
+        <p>Interactive longitudinal trends for Glucose, BMI, Blood Pressure, and Prediction-Risk with monthly statistics.</p>
       </div>
+
+      <!-- Monthly Statistics -->
+      <div class="monthly-stats-grid">
+        <div class="monthly-stat-card">
+          <span>Monthly Assessments</span>
+          <strong id="stat-month-count">0</strong>
+        </div>
+        <div class="monthly-stat-card">
+          <span>Monthly Avg Glucose</span>
+          <strong id="stat-month-glucose" style="color: #38bdf8;">0 mg/dL</strong>
+        </div>
+        <div class="monthly-stat-card">
+          <span>Monthly Avg BMI</span>
+          <strong id="stat-month-bmi" style="color: #a78bfa;">0.0</strong>
+        </div>
+        <div class="monthly-stat-card">
+          <span>High Risk Detected</span>
+          <strong id="stat-month-risk-rate" style="color: #f87171;">0%</strong>
+        </div>
+      </div>
+
+      <!-- 4 Health Analytics Trend Charts -->
+      <div class="charts-grid">
+        <!-- 1. Glucose Trend -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-title">🩸 Glucose Trend</div>
+            <span class="chart-badge">Fasting mg/dL</span>
+          </div>
+          <div class="chart-svg-wrap">
+            <svg id="chart-glucose-svg" class="chart-svg" viewBox="0 0 450 160"></svg>
+          </div>
+        </div>
+
+        <!-- 2. BMI Trend -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-title">⚖️ BMI Trend</div>
+            <span class="chart-badge">kg/m²</span>
+          </div>
+          <div class="chart-svg-wrap">
+            <svg id="chart-bmi-svg" class="chart-svg" viewBox="0 0 450 160"></svg>
+          </div>
+        </div>
+
+        <!-- 3. Blood Pressure Trend -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-title">💓 Blood Pressure Trend</div>
+            <span class="chart-badge">Diastolic mm Hg</span>
+          </div>
+          <div class="chart-svg-wrap">
+            <svg id="chart-bp-svg" class="chart-svg" viewBox="0 0 450 160"></svg>
+          </div>
+        </div>
+
+        <!-- 4. Prediction-Risk Trend -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div class="chart-title">🎯 Prediction-Risk Trend</div>
+            <span class="chart-badge">Risk % Trajectory</span>
+          </div>
+          <div class="chart-svg-wrap">
+            <svg id="chart-risk-svg" class="chart-svg" viewBox="0 0 450 160"></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Previous Predictions Timeline -->
+      <div style="margin: 30px 0 35px;">
+        <div class="eyebrow">CHRONOLOGICAL ASSESSMENTS</div>
+        <h2 style="font-size: 20px; color: #fff; margin: 0 0 15px;">Previous Predictions Timeline</h2>
+        <div id="analytics-timeline-list" class="timeline-list">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <div class="eyebrow" style="margin-top: 30px;">MODEL BENCHMARKING</div>
+      <h2 style="font-size: 20px; color: #fff; margin: 0 0 15px;">Supervised Classifier Evaluation</h2>
 
       <!-- Algorithmic Benchmark Table -->
       <div class="table-card">
@@ -582,6 +659,25 @@
           Sign In
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- RECORD VIEW MODAL -->
+  <div id="record-view-modal" class="modal-overlay" onclick="handleRecordModalOverlayClick(event)">
+    <div class="modal-box" style="max-width: 560px;">
+      <button class="modal-close" onclick="closeRecordModal()">✕</button>
+      <div class="eyebrow" id="view-modal-eyebrow">CLINICAL ASSESSMENT DOSSIER</div>
+      <h2 id="view-modal-title" style="margin: 0 0 5px; font-size: 22px;">Patient Record</h2>
+      <p id="view-modal-meta" style="color: #8fa5bd; font-size: 13px; margin: 0 0 18px;">Recorded on Date</p>
+
+      <div class="modal-details-grid" id="view-modal-details">
+        <!-- Populated dynamically via JS -->
+      </div>
+
+      <div style="margin-top: 22px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+        <button type="button" class="btn ghost" onclick="closeRecordModal()">Close</button>
+        <button type="button" class="btn success" id="view-modal-print-btn">📥 Download Report</button>
+      </div>
     </div>
   </div>
 
