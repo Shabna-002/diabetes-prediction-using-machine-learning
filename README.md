@@ -1,5 +1,7 @@
 # Diabetes Prediction Using Machine Learning
 
+> 🌐 **Live Web Application Demo**: [https://shabna-002.github.io/diabetes-prediction-using-machine-learning/docs/](https://shabna-002.github.io/diabetes-prediction-using-machine-learning/docs/)
+
 An end-to-end Machine Learning web application evaluating and deploying **Logistic Regression**, **Decision Tree**, **Random Forest**, and **Support Vector Machine (SVM)** for diabetes risk screening.
 
 ## Features
