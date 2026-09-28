@@ -1035,16 +1035,19 @@
 
   window.logoutUser = function() {
     localStorage.removeItem(STORAGE_KEY_ACTIVE_USER);
-    alert("You have logged out.");
+    localStorage.removeItem("diapredict_auth_active");
+    alert("You have logged out successfully.");
     updateProfileView();
     renderHistoryTable();
     renderHealthAnalytics();
     updateDashboardStats();
+    window.location.href = "login.html";
   };
 
   function updateProfileView() {
     const user = getActiveUser();
     const navAuthBtn = document.getElementById("nav-auth-btn");
+    const navLogoutBtn = document.getElementById("nav-logout-btn");
     const profName = document.getElementById("prof-name");
     const profEmail = document.getElementById("prof-email");
     const profAvatar = document.getElementById("prof-avatar");
@@ -1055,16 +1058,29 @@
     if (profCount) profCount.textContent = `${historyList.length} Assessments`;
 
     if (user && user.email) {
-      if (navAuthBtn) navAuthBtn.textContent = `👤 ${user.name}`;
+      if (navAuthBtn) {
+        navAuthBtn.textContent = `👤 ${user.name}`;
+        navAuthBtn.href = "#";
+        navAuthBtn.onclick = function(e) {
+          e.preventDefault();
+          switchTab("profile-tab");
+        };
+      }
+      if (navLogoutBtn) navLogoutBtn.style.display = "inline-flex";
       if (profName) profName.textContent = user.name;
       if (profEmail) profEmail.textContent = user.email;
       if (profAvatar) profAvatar.textContent = user.name.charAt(0).toUpperCase();
       if (profAuth) {
-        profAuth.textContent = "Authenticated Session (SHA-256)";
+        profAuth.textContent = "Authenticated Session (Active)";
         profAuth.style.color = "#34d399";
       }
     } else {
-      if (navAuthBtn) navAuthBtn.textContent = "🔐 Login/Register";
+      if (navAuthBtn) {
+        navAuthBtn.textContent = "🔐 Login Page";
+        navAuthBtn.href = "login.html";
+        navAuthBtn.onclick = null;
+      }
+      if (navLogoutBtn) navLogoutBtn.style.display = "none";
       if (profName) profName.textContent = "Guest Practitioner";
       if (profEmail) profEmail.textContent = "guest@diapredict.org";
       if (profAvatar) profAvatar.textContent = "👤";
