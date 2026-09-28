@@ -228,7 +228,7 @@
 
         <!-- Continue as Guest Link -->
         <div class="text-center mt-5">
-          <a href="index.html" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition inline-flex items-center gap-1">
+          <a href="index.html" onclick="localStorage.setItem('diapredict_active_user', JSON.stringify({name:'Guest Clinician', email:'guest@diapredict.org'})); localStorage.setItem('diapredict_auth_active', JSON.stringify({name:'Guest Clinician', email:'guest@diapredict.org'}));" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition inline-flex items-center gap-1">
             <span>Continue to website as Guest</span>
             <i class="fa-solid fa-chevron-right text-[10px]"></i>
           </a>

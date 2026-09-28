@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DiaPredict — Clinical Machine Learning Prediction System</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    (function() {
+      try {
+        var user = localStorage.getItem("diapredict_active_user") || localStorage.getItem("diapredict_auth_active");
+        if (!user) {
+          window.location.replace("login.html");
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <div class="bg-orb orb1"></div>
@@ -20,7 +30,7 @@
     <div class="floating-icon f-icon-6">✚</div>
   </div>
 
-  <!-- NAVIGATION BAR (8 Required Items) -->
+  <!-- NAVIGATION BAR -->
   <nav class="navbar">
     <a class="brand" href="#" onclick="switchTab('home-tab'); return false;">
       <span>✚</span> Dia<span>Predict</span>
@@ -32,8 +42,7 @@
       <a href="#" class="nav-tab" data-tab="history-tab">📋 History (<span id="history-count">0</span>)</a>
       <a href="#" class="nav-tab" data-tab="analytics-tab">📈 Health Analytics</a>
       <a href="#" class="nav-tab" data-tab="about-tab">ℹ️ About</a>
-      <a href="login.html" id="nav-login-btn" class="nav-tab" style="color: #38bdf8; font-weight: 600;">🔑 Login</a>
-      <button type="button" id="nav-logout-btn" onclick="logoutUser()" class="btn ghost" style="display: none; padding: 6px 14px; font-size: 12px; border-radius: 9999px; border-color: rgba(244, 63, 94, 0.45); color: #fb7185; cursor: pointer; transition: all 0.2s;" title="Sign out of your session">🚪 Logout</button>
+      <button type="button" id="nav-logout-btn" onclick="logoutUser()" class="btn ghost" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; font-size: 12px; border-radius: 9999px; border-color: rgba(244, 63, 94, 0.45); color: #fb7185; cursor: pointer; transition: all 0.2s;" title="Sign out of your session">🚪 Logout</button>
     </div>
   </nav>
 
