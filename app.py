@@ -370,7 +370,7 @@ def login():
             next_url = request.args.get("next") or url_for("home")
             return redirect(next_url)
         else:
-            flash("Invalid username or password. You can try the demo account: admin / admin123", "error")
+            flash("Invalid username or password. Please try again.", "error")
             
     return render_template("login.html")
 

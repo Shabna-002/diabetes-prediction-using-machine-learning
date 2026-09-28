@@ -43,30 +43,6 @@
       </button>
     </form>
 
-    <div style="margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
-      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.75rem; text-align: center; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">
-        Quick Demo Credentials
-      </div>
-      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-        <button 
-          type="button" 
-          onclick="fillDemo('admin', 'admin123')" 
-          class="btn ghost" 
-          style="font-size: 0.8rem; padding: 6px 14px; border-color: rgba(56,189,248,0.4);"
-        >
-          👤 Admin (admin / admin123)
-        </button>
-        <button 
-          type="button" 
-          onclick="fillDemo('doctor', 'doctor123')" 
-          class="btn ghost" 
-          style="font-size: 0.8rem; padding: 6px 14px; border-color: rgba(167,139,250,0.4);"
-        >
-          🩺 Clinician (doctor / doctor123)
-        </button>
-      </div>
-    </div>
-
     <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #94a3b8;">
       Don't have an account? 
       <a href="{{ url_for('register') }}" style="color: #38bdf8; text-decoration: none; font-weight: 600;">
@@ -75,11 +51,4 @@
     </div>
   </div>
 </div>
-
-<script>
-function fillDemo(u, p) {
-  document.getElementById('username').value = u;
-  document.getElementById('password').value = p;
-}
-</script>
 {% endblock %}
