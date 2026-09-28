@@ -32,9 +32,6 @@
       <a href="#" class="nav-tab" data-tab="history-tab">📋 History (<span id="history-count">0</span>)</a>
       <a href="#" class="nav-tab" data-tab="analytics-tab">📈 Health Analytics</a>
       <a href="#" class="nav-tab" data-tab="about-tab">ℹ️ About</a>
-      <a href="login.html" class="auth-nav-btn" id="nav-auth-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">🔐 Login Page</a>
-      <button type="button" class="btn ghost" id="nav-logout-btn" onclick="logoutUser()" style="display:none; padding: 6px 14px; font-size: 12px; border-radius: 9999px; border-color: rgba(244, 63, 94, 0.45); color: #fb7185; cursor: pointer; transition: all 0.2s;" title="Sign out of your session">🚪 Logout</button>
-      <a href="#" class="nav-tab" data-tab="profile-tab" id="nav-profile-tab">👤 Profile</a>
     </div>
   </nav>
 
@@ -51,7 +48,6 @@
           </p>
           <div class="actions">
             <button class="btn primary" onclick="switchTab('predict-tab')">🧠 Launch Prediction Tool</button>
-            <a href="login.html" class="btn ghost" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">🔐 Sign In / Login</a>
             <button class="btn ghost" onclick="switchTab('dashboard-tab')">📊 View Dashboard</button>
             <button class="btn ghost" onclick="switchTab('analytics-tab')">📈 Health Analytics</button>
           </div>
@@ -603,11 +599,6 @@
           <b>DATASET SPECIFICATIONS</b>
           <h3>Pima Indians Diabetes</h3>
           <p>768 clinical observations with 8 physiological risk predictors collected by the National Institute of Diabetes and Digestive and Kidney Diseases.</p>
-          <div style="margin-top: 14px;">
-            <a href="diabetes.csv" download="diabetes.csv" class="btn primary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px; border-radius: 8px; text-decoration: none; font-weight: 600;">
-              📥 Download Dataset (CSV)
-            </a>
-          </div>
         </article>
         <article>
           <b>PREPROCESSING</b>
@@ -621,81 +612,7 @@
         </article>
       </div>
     </section>
-
-    <!-- 7 & 8. PROFILE TAB -->
-    <section id="profile-tab" class="tab-pane">
-      <div class="page-head">
-        <div class="eyebrow">ACCOUNT & CLINICIAN PROFILE</div>
-        <h1>User Profile</h1>
-        <p>Manage your account credentials, practitioner identity, and audit access permissions.</p>
-      </div>
-
-      <div class="profile-card">
-        <div class="profile-header">
-          <div class="profile-avatar" id="prof-avatar">👤</div>
-          <div class="profile-info">
-            <h2 id="prof-name">Guest User</h2>
-            <p id="prof-role">Clinical Practitioner • Screening Analyst</p>
-            <p style="font-size: 13px; color: #38bdf8; margin-top: 4px;" id="prof-email">guest@diapredict.org</p>
-          </div>
-        </div>
-
-        <div class="mini-stat">
-          <span>Total Screenings Conducted:</span>
-          <b id="prof-eval-count">0 Assessments</b>
-        </div>
-        <div class="mini-stat">
-          <span>Active Classifier:</span>
-          <b>Decision Tree Pipeline</b>
-        </div>
-        <div class="mini-stat">
-          <span>Authentication Status:</span>
-          <b id="prof-auth-status" style="color: #34d399;">Active Session</b>
-        </div>
-
-        <div class="actions" style="margin-top: 25px;">
-          <button type="button" class="btn primary" onclick="openAuthModal()">🔐 Switch / Update Account</button>
-          <button type="button" class="btn ghost" onclick="logoutUser()">Logout Session</button>
-        </div>
-      </div>
-    </section>
   </main>
-
-  <!-- AUTH MODAL (LOGIN / REGISTER) -->
-  <div id="auth-modal" class="modal-overlay" onclick="handleModalOverlayClick(event)">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeAuthModal()">✕</button>
-      
-      <div class="auth-toggle">
-        <button id="tab-btn-login" class="active" onclick="setAuthMode('login')">Sign In</button>
-        <button id="tab-btn-register" onclick="setAuthMode('register')">Register</button>
-      </div>
-
-      <h2 id="auth-title" style="margin: 0 0 8px; font-size: 22px;">Sign In to DiaPredict</h2>
-      <p id="auth-subtitle" style="color: #8fa5bd; font-size: 13px; margin: 0 0 20px;">Access your saved clinical predictions and profile.</p>
-
-      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
-        <div id="reg-name-group" style="display: none; margin-bottom: 14px;">
-          <label style="display:block; color:#a9bad0; font-size:12px; font-weight:700; margin-bottom:6px;">Full Name</label>
-          <input type="text" id="auth-fullname" class="form-control" placeholder="e.g. Dr. Shabna">
-        </div>
-
-        <div style="margin-bottom: 14px;">
-          <label style="display:block; color:#a9bad0; font-size:12px; font-weight:700; margin-bottom:6px;">Email Address</label>
-          <input type="email" id="auth-email" class="form-control" required placeholder="name@domain.com">
-        </div>
-
-        <div style="margin-bottom: 18px;">
-          <label style="display:block; color:#a9bad0; font-size:12px; font-weight:700; margin-bottom:6px;">Password</label>
-          <input type="password" id="auth-password" class="form-control" required placeholder="••••••••">
-        </div>
-
-        <button type="submit" id="auth-submit-btn" class="btn primary full" style="margin-top: 10px;">
-          Sign In
-        </button>
-      </form>
-    </div>
-  </div>
 
   <!-- RECORD VIEW MODAL -->
   <div id="record-view-modal" class="modal-overlay" onclick="handleRecordModalOverlayClick(event)">
