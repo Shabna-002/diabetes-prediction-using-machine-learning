@@ -4,6 +4,7 @@ import sqlite3
 from datetime import datetime
 
 import joblib
+import numpy as np
 import pandas as pd
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -26,6 +27,7 @@ FEATURES = [
     "Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
     "Insulin", "BMI", "DiabetesPedigreeFunction", "Age"
 ]
+ZERO_AS_MISSING = ["Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI"]
 
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST", "127.0.0.1"),
@@ -36,12 +38,13 @@ DB_CONFIG = {
 
 MODEL_CHOICES = {
     "best": "Best Performing Model",
+    "naive_bayes": "Naive Bayes (GaussianNB)",
+    "logistic_regression": "Logistic Regression",
     "decision_tree": "Decision Tree",
-    "gradient_boosting": "Gradient Boosting",
-    "knn": "K-Nearest Neighbours (KNN)",
     "random_forest": "Random Forest",
+    "knn": "K-Nearest Neighbours (KNN)",
     "svm": "Support Vector Machine (SVM)",
-    "logistic_regression": "Logistic Regression"
+    "gradient_boosting": "Gradient Boosting"
 }
 
 # In-memory model cache
@@ -58,19 +61,20 @@ def get_metrics_data():
 
 def get_model(model_key="best"):
     metrics = get_metrics_data()
-    best_name = metrics.get("best_model", "Decision Tree") if metrics else "Decision Tree"
+    best_name = metrics.get("best_model", "Naive Bayes") if metrics else "Naive Bayes"
     
     if model_key in loaded_models:
         return loaded_models[model_key], MODEL_CHOICES.get(model_key, model_key)
     
     filename_map = {
         "best": "diabetes_model.joblib",
+        "naive_bayes": "naive_bayes.joblib",
+        "logistic_regression": "logistic_regression.joblib",
         "decision_tree": "decision_tree.joblib",
-        "gradient_boosting": "gradient_boosting.joblib",
-        "knn": "knn.joblib",
         "random_forest": "random_forest.joblib",
+        "knn": "knn.joblib",
         "svm": "svm.joblib",
-        "logistic_regression": "logistic_regression.joblib"
+        "gradient_boosting": "gradient_boosting.joblib"
     }
     
     fname = filename_map.get(model_key, "diabetes_model.joblib")
@@ -201,7 +205,7 @@ def db_execute(query_mysql, query_sqlite, params=(), fetch_mode=None):
 @app.route("/")
 def home():
     metrics = get_metrics_data()
-    best_model = metrics.get("best_model", "Decision Tree") if metrics else "Decision Tree"
+    best_model = metrics.get("best_model", "Naive Bayes") if metrics else "Naive Bayes"
     return render_template("index.html", best_model=best_model)
 
 @app.route("/models")
@@ -213,7 +217,7 @@ def models():
 def predict():
     if request.method == "GET":
         metrics = get_metrics_data()
-        best_name = metrics.get("best_model", "Decision Tree") if metrics else "Decision Tree"
+        best_name = metrics.get("best_model", "Naive Bayes") if metrics else "Naive Bayes"
         return render_template("predict.html", best_name=best_name, choices=MODEL_CHOICES)
 
     try:
@@ -236,9 +240,21 @@ def predict():
             flash("Trained model not found. Please run train_model.py first.", "error")
             return redirect(url_for("predict"))
 
-        X = pd.DataFrame([[values[f] for f in FEATURES]], columns=FEATURES)
+        # Convert biologically invalid zeros to NaN so pipeline imputer fills training medians
+        input_data = {f: values[f] for f in FEATURES}
+        for col in ZERO_AS_MISSING:
+            if input_data[col] == 0:
+                input_data[col] = np.nan
+
+        X = pd.DataFrame([input_data], columns=FEATURES)
         prediction = int(clf.predict(X)[0])
-        probability = float(clf.predict_proba(X)[0][1]) if hasattr(clf, "predict_proba") else float(prediction)
+        if hasattr(clf, "predict_proba"):
+            probability = float(clf.predict_proba(X)[0][1])
+        elif hasattr(clf, "decision_function"):
+            df_val = float(clf.decision_function(X)[0])
+            probability = float(1.0 / (1.0 + np.exp(-df_val)))
+        else:
+            probability = float(prediction)
 
         # Insert record into database
         q_mysql = """

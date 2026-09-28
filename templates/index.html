@@ -14,8 +14,8 @@
   <div class="hero-card">
     <div class="pulse">✚</div>
     <h3>ML Prediction Engine</h3>
-    <p>Preprocessing + Median Imputation + 4 Benchmarked Classifiers</p>
-    <div class="mini-stat"><b>4</b><span>ML Algorithms</span></div>
+    <p>Leak-Free Preprocessing Pipeline + 5-Fold Cross-Validation Model Selection</p>
+    <div class="mini-stat"><b>6</b><span>ML Classifiers</span></div>
     <div class="mini-stat"><b>8</b><span>Clinical Features</span></div>
     <div class="mini-stat"><b>Top</b><span>{{ best_model }}</span></div>
   </div>
@@ -24,17 +24,17 @@
   <article>
     <b>01</b>
     <h3>Data Imputation & Scaling</h3>
-    <p>Handles biologically invalid zero values with median imputation and standardization.</p>
+    <p>Biologically invalid zero values are imputed with median values and standardized within a leak-free Scikit-learn Pipeline.</p>
   </article>
   <article>
     <b>02</b>
-    <h3>4-Model Evaluation</h3>
-    <p>Trained and compared Logistic Regression, Decision Tree, Random Forest, and SVM.</p>
+    <h3>6-Classifier Comparison</h3>
+    <p>Evaluates Logistic Regression, Decision Tree, Random Forest, KNN, SVM, and Naive Bayes on identical stratified data.</p>
   </article>
   <article>
     <b>03</b>
-    <h3>Persistent Storage & Audit</h3>
-    <p>Predictions, risk probability, and classifier choices logged for reporting.</p>
+    <h3>Clinical Screening Selection</h3>
+    <p>Final model selected strictly via 5-fold cross-validation on the training set, optimizing F2-score to prioritize patient recall.</p>
   </article>
 </section>
 <div class="disclaimer"><strong>Important:</strong> This application is an academic demonstration. It does not diagnose diabetes and should not replace clinical evaluation.</div>

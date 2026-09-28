@@ -1,145 +1,464 @@
 {% extends "base.html" %}
-{% block title %}Algorithms Benchmark | DiaPredict{% endblock %}
+{% block title %}Multi-Classifier Benchmark & Model Selection | DiaPredict{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
-    <div class="eyebrow">MODEL BENCHMARK & EVALUATION</div>
-    <h1>Multi-Algorithm Performance Benchmark</h1>
-    <p>Comparative evaluation of {{ metrics.models|length if metrics and metrics.models else 6 }} machine learning models on a stratified test set (154 samples).</p>
+    <div class="eyebrow">CLINICAL MACHINE LEARNING BENCHMARK</div>
+    <h1>Multi-Classifier Evaluation & Model Selection</h1>
+    <p>Comprehensive comparison of machine learning algorithms trained on identical preprocessed data with leak-free Scikit-learn Pipelines, evaluated across both 5-fold training cross-validation and a stratified held-out test set.</p>
   </div>
 </div>
 
 {% if metrics and metrics.models %}
-<div class="stats">
+<!-- Top Level KPI Stats -->
+<div class="stats" style="margin-bottom: 2rem;">
   <div class="stat">
     <span>Evaluated Algorithms</span>
-    <strong>{{ metrics.models|length }} Models</strong>
+    <strong>{{ metrics.models|length }} Classifiers</strong>
   </div>
   <div class="stat">
-    <span>Total Dataset Records</span>
-    <strong>{{ metrics.dataset_info.total_samples }}</strong>
+    <span>Dataset Partition</span>
+    <strong>{{ metrics.dataset_info.train_samples }} Train / {{ metrics.dataset_info.test_samples }} Test</strong>
   </div>
   <div class="stat">
-    <span>Best Performing Model</span>
-    <strong style="color: #10b981;">{{ metrics.best_model }}</strong>
+    <span>Clinical Selection Metric</span>
+    <strong style="color: #38bdf8; font-size: 1.15rem;">Training CV F2-Score</strong>
+  </div>
+  <div class="stat">
+    <span>Selected Inference Engine</span>
+    <strong style="color: #10b981; font-size: 1.25rem;">★ {{ metrics.best_model }}</strong>
   </div>
 </div>
 
-<div class="dashboard-card" style="margin-bottom: 2rem; border-left: 4px solid #10b981;">
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-    <div>
-      <span class="badge safe" style="font-size: 0.85rem; padding: 4px 10px;">Recommended Classifier</span>
-      <h2 style="margin: 0.5rem 0 0.25rem 0; font-size: 1.5rem;">{{ metrics.best_model }}</h2>
-      <p style="margin: 0; color: #94a3b8; font-size: 0.95rem;">Selected as the primary inference engine based on optimal balance of F1-Score and test Accuracy.</p>
+<!-- Clinical Decision Rationale Card -->
+<div class="dashboard-card" style="margin-bottom: 2rem; border-left: 4px solid #10b981; background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="max-width: 820px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
+        <span class="badge safe" style="font-size: 0.85rem; padding: 4px 12px;">★ Clinically Selected Model</span>
+        <span class="badge" style="background: rgba(56, 189, 248, 0.2); color: #7dd3fc; font-size: 0.8rem;">Zero Test Leakage</span>
+      </div>
+      <h2 style="margin: 0.25rem 0 0.5rem 0; font-size: 1.6rem; color: #f8fafc;">
+        {{ metrics.best_model }}
+      </h2>
+      <p style="margin: 0 0 1rem 0; color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">
+        Selected strictly via <strong>5-Fold Stratified Cross-Validation on the training set</strong> (Mean CV F2: <strong>{{ '%.4f'|format(metrics.model_selection.best_cv_f2) }}</strong>, Mean CV Recall: <strong>{{ '%.4f'|format(metrics.model_selection.best_cv_recall) }}</strong>).
+      </p>
+      <div style="background: rgba(0, 0, 0, 0.35); border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.88rem; line-height: 1.55; color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.08);">
+        <strong style="color: #e2e8f0; display: block; margin-bottom: 0.35rem;">Medical Screening Rationale (Recall Prioritization):</strong>
+        In diabetes screening, a <em>False Negative</em> (failing to identify an undiagnosed diabetic patient) poses severe risks of unmanaged hyperglycemia, vascular damage, and clinical deterioration. Conversely, a <em>False Positive</em> merely prompts routine confirmatory laboratory tests (e.g., HbA1c / Oral Glucose Tolerance Test). Therefore, model selection was optimized using the <strong>F2-Score ($\beta=2$)</strong>, which places twice as much weight on <strong>Recall (Sensitivity)</strong> as Precision, while penalizing excessive false alarms. The test set was <strong>strictly held out</strong> and never used for model selection, ensuring zero optimistic bias or data snooping.
+      </div>
     </div>
-    <div>
-      <a class="btn primary" href="{{ url_for('predict') }}">Predict with {{ metrics.best_model }} →</a>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; align-self: center;">
+      <a class="btn primary" href="{{ url_for('predict') }}" style="white-space: nowrap; padding: 10px 22px;">
+        Predict with {{ metrics.best_model }} →
+      </a>
+      <a class="btn ghost" href="#benchmark-table" style="white-space: nowrap; text-align: center; font-size: 0.85rem;">
+        View Metric Table ↓
+      </a>
     </div>
   </div>
 </div>
 
-<div class="table-card" style="margin-bottom: 2.5rem;">
-  <h3 style="padding: 1.2rem 1.5rem 0.5rem 1.5rem; margin: 0; font-size: 1.15rem;">Comparative Performance Summary</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Algorithm</th>
-        <th>Accuracy</th>
-        <th>Precision</th>
-        <th>Recall</th>
-        <th>F1-Score</th>
-        <th>Confusion Matrix [TN, FP / FN, TP]</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for name, m in metrics.models.items() %}
-      <tr {% if name == metrics.best_model %}style="background: rgba(16, 185, 129, 0.08); font-weight: 600;"{% endif %}>
-        <td><strong>{{ name }}</strong></td>
-        <td>{{ '%.2f'|format(m.accuracy * 100) }}%</td>
-        <td>{{ '%.4f'|format(m.precision) }}</td>
-        <td>{{ '%.4f'|format(m.recall) }}</td>
-        <td>{{ '%.4f'|format(m.f1_score) }}</td>
-        <td>
-          <span style="font-family: monospace; font-size: 0.9rem;">
-            TN: {{ m.confusion_matrix[0][0] }} | FP: {{ m.confusion_matrix[0][1] }}<br>
-            FN: {{ m.confusion_matrix[1][0] }} | TP: {{ m.confusion_matrix[1][1] }}
-          </span>
-        </td>
-        <td>
-          {% if name == metrics.best_model %}
-            <span class="badge safe">★ Best Model</span>
-          {% else %}
-            <span class="badge" style="background: rgba(148, 163, 184, 0.2); color: #cbd5e1;">Evaluated</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- Interactive Chart Section -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+  <!-- Chart 1: Multi-Metric Comparison Bar Chart -->
+  <div class="dashboard-card" style="margin: 0; padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="margin: 0; font-size: 1.15rem; color: #f8fafc;">Classifier Metric Comparison</h3>
+      <span style="font-size: 0.75rem; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 4px 8px; border-radius: 6px;">Test Set + CV F2</span>
+    </div>
+    <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 1rem 0;">
+      Side-by-side comparison of Accuracy, Precision, Recall, F1-Score, ROC-AUC, and the Training CV F2 Selection Score across all classifiers. Click legend items to toggle metrics.
+    </p>
+    <div style="position: relative; height: 320px; width: 100%;">
+      <canvas id="metricsComparisonChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Chart 2: ROC Curves -->
+  <div class="dashboard-card" style="margin: 0; padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h3 style="margin: 0; font-size: 1.15rem; color: #f8fafc;">Multi-Model ROC Curves</h3>
+      <span style="font-size: 0.75rem; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 4px 8px; border-radius: 6px;">TPR vs FPR (Test Set)</span>
+    </div>
+    <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 1rem 0;">
+      Receiver Operating Characteristic (ROC) curves plotting True Positive Rate vs False Positive Rate across all diagnostic classification thresholds.
+    </p>
+    <div style="position: relative; height: 320px; width: 100%;">
+      <canvas id="rocCurvesChart"></canvas>
+    </div>
+  </div>
 </div>
 
-<h3 style="margin-bottom: 1rem; font-size: 1.25rem;">Algorithm Diagnostics & Confusion Matrices</h3>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+<!-- Comparison Summary Table -->
+<div id="benchmark-table" class="table-card" style="margin-bottom: 2.5rem;">
+  <div style="padding: 1.25rem 1.5rem 0.5rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+    <div>
+      <h3 style="margin: 0; font-size: 1.2rem;">Complete Classifier Benchmark Summary</h3>
+      <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: #94a3b8;">
+        All models trained using Scikit-learn Pipelines (Median Imputer + StandardScaler + Estimator). Evaluated on 154 stratified test samples.
+      </p>
+    </div>
+    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; font-size: 0.8rem; padding: 5px 10px;">
+      Zero Data Leakage Pipeline
+    </span>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Classifier</th>
+          <th title="Selection score computed via 5-fold cross validation on training data (Recall-weighted)">
+            5-Fold CV F2 <span style="font-size: 0.7rem; color: #38bdf8;">(Selection)</span>
+          </th>
+          <th title="Sensitivity on training folds">5-Fold CV Recall</th>
+          <th>Test Accuracy</th>
+          <th>Test Precision</th>
+          <th>Test Recall</th>
+          <th>Test F1</th>
+          <th>Test ROC-AUC</th>
+          <th>Confusion Matrix<br><small style="font-weight: 400; color: #94a3b8;">[TN, FP / FN, TP]</small></th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for name, m in metrics.models.items() %}
+        <tr {% if name == metrics.best_model %}style="background: rgba(16, 185, 129, 0.09); font-weight: 600;"{% endif %}>
+          <td>
+            <strong>{{ name }}</strong>
+            <small style="display: block; color: #94a3b8; font-weight: 400; font-size: 0.75rem;">
+              {{ m.description }}
+            </small>
+          </td>
+          <td style="color: #38bdf8; font-weight: 700;">
+            {{ '%.4f'|format(m.cv_metrics.cv_f2_score) }}
+          </td>
+          <td>{{ '%.4f'|format(m.cv_metrics.cv_recall) }}</td>
+          <td><b>{{ '%.2f'|format(m.accuracy * 100) }}%</b></td>
+          <td>{{ '%.4f'|format(m.precision) }}</td>
+          <td style="color: #f87171; font-weight: 600;">{{ '%.4f'|format(m.recall) }}</td>
+          <td>{{ '%.4f'|format(m.f1_score) }}</td>
+          <td style="color: #a78bfa; font-weight: 600;">{{ '%.4f'|format(m.roc_auc) }}</td>
+          <td>
+            <span style="font-family: monospace; font-size: 0.85rem; color: #cbd5e1; background: rgba(0,0,0,0.3); padding: 3px 8px; border-radius: 6px; display: inline-block;">
+              TN:{{ m.confusion_matrix[0][0] }} FP:{{ m.confusion_matrix[0][1] }}<br>
+              FN:{{ m.confusion_matrix[1][0] }} TP:{{ m.confusion_matrix[1][1] }}
+            </span>
+          </td>
+          <td>
+            {% if name == metrics.best_model %}
+              <span class="badge safe" style="white-space: nowrap;">★ Selected Winner</span>
+            {% else %}
+              <span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; white-space: nowrap;">Evaluated</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Detailed Confusion Matrix Cards & Diagnostic Rates -->
+<h3 style="margin-bottom: 0.5rem; font-size: 1.3rem;">Clinical Diagnostics & Confusion Matrix Breakdown</h3>
+<p style="color: #94a3b8; font-size: 0.9rem; margin-top: 0; margin-bottom: 1.5rem;">
+  Detailed breakdown of True Negatives (TN), False Positives (FP), False Negatives (FN), and True Positives (TP) on the 154-patient held-out test cohort, alongside clinical Sensitivity and Specificity.
+</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
   {% for name, m in metrics.models.items() %}
+  {% set tn = m.confusion_matrix[0][0] %}
+  {% set fp = m.confusion_matrix[0][1] %}
+  {% set fn = m.confusion_matrix[1][0] %}
+  {% set tp = m.confusion_matrix[1][1] %}
+  {% set sensitivity = (tp / (tp + fn)) if (tp + fn) > 0 else 0 %}
+  {% set specificity = (tn / (tn + fp)) if (tn + fp) > 0 else 0 %}
+  
   <div class="dashboard-card" style="margin: 0; border: 1px solid {% if name == metrics.best_model %}#10b981{% else %}rgba(255,255,255,0.08){% endif %};">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-      <h3 style="margin: 0; font-size: 1.1rem;">{{ name }}</h3>
+      <div>
+        <h4 style="margin: 0; font-size: 1.1rem; color: #f8fafc;">{{ name }}</h4>
+        <small style="color: #94a3b8; font-size: 0.78rem;">Pipeline: Median Imputer + Scaler</small>
+      </div>
       {% if name == metrics.best_model %}
-        <span class="badge safe" style="font-size: 0.75rem;">Top Performer</span>
+        <span class="badge safe" style="font-size: 0.75rem;">Selected Winner</span>
       {% endif %}
     </div>
 
+    <!-- Accuracy Meter -->
     <div style="margin-bottom: 1rem;">
       <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.3rem;">
-        <span>Accuracy</span>
+        <span>Test Accuracy</span>
         <b>{{ '%.2f'|format(m.accuracy * 100) }}%</b>
       </div>
       <div class="meter"><div style="width: {{ m.accuracy * 100 }}%"></div></div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; text-align: center; margin-bottom: 1rem; background: rgba(0,0,0,0.25); padding: 0.75rem; border-radius: 8px;">
+    <!-- Primary Metrics Strip -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.4rem; text-align: center; margin-bottom: 1rem; background: rgba(0,0,0,0.3); padding: 0.65rem 0.4rem; border-radius: 8px;">
       <div>
-        <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">Precision</div>
-        <b style="font-size: 0.95rem; color: #f8fafc;">{{ '%.2f'|format(m.precision * 100) }}%</b>
+        <div style="font-size: 0.68rem; color: #94a3b8; text-transform: uppercase;">CV F2</div>
+        <b style="font-size: 0.9rem; color: #38bdf8;">{{ '%.2f'|format(m.cv_metrics.cv_f2_score * 100) }}%</b>
       </div>
       <div>
-        <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">Recall</div>
-        <b style="font-size: 0.95rem; color: #f8fafc;">{{ '%.2f'|format(m.recall * 100) }}%</b>
+        <div style="font-size: 0.68rem; color: #94a3b8; text-transform: uppercase;">Recall</div>
+        <b style="font-size: 0.9rem; color: #f87171;">{{ '%.2f'|format(m.recall * 100) }}%</b>
       </div>
       <div>
-        <div style="font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;">F1-Score</div>
-        <b style="font-size: 0.95rem; color: #38bdf8;">{{ '%.2f'|format(m.f1_score * 100) }}%</b>
+        <div style="font-size: 0.68rem; color: #94a3b8; text-transform: uppercase;">Precision</div>
+        <b style="font-size: 0.9rem; color: #fbbf24;">{{ '%.2f'|format(m.precision * 100) }}%</b>
+      </div>
+      <div>
+        <div style="font-size: 0.68rem; color: #94a3b8; text-transform: uppercase;">ROC-AUC</div>
+        <b style="font-size: 0.9rem; color: #a78bfa;">{{ '%.2f'|format(m.roc_auc * 100) }}%</b>
       </div>
     </div>
 
-    <div style="font-size: 0.85rem; margin-bottom: 0.5rem; color: #94a3b8; font-weight: 600;">Confusion Matrix (Test Set):</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; font-size: 0.85rem;">
-      <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px; border-radius: 6px;">
-        <span style="font-size: 0.7rem; color: #6ee7b7; display: block;">True Neg (TN)</span>
-        <strong>{{ m.confusion_matrix[0][0] }}</strong>
+    <!-- 2x2 Confusion Matrix Heatmap -->
+    <div style="font-size: 0.82rem; margin-bottom: 0.5rem; color: #94a3b8; font-weight: 600;">
+      Confusion Matrix (Test Cohort):
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; font-size: 0.85rem; margin-bottom: 0.75rem;">
+      <div style="background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.35); padding: 8px 4px; border-radius: 6px;">
+        <span style="font-size: 0.68rem; color: #6ee7b7; display: block; text-transform: uppercase;">True Negative (TN)</span>
+        <strong style="font-size: 1.15rem; color: #f8fafc;">{{ tn }}</strong>
+        <span style="font-size: 0.68rem; color: #94a3b8; display: block;">Correct Non-Diabetic</span>
       </div>
-      <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px; border-radius: 6px;">
-        <span style="font-size: 0.7rem; color: #fca5a5; display: block;">False Pos (FP)</span>
-        <strong>{{ m.confusion_matrix[0][1] }}</strong>
+      <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 4px; border-radius: 6px;">
+        <span style="font-size: 0.68rem; color: #fca5a5; display: block; text-transform: uppercase;">False Positive (FP)</span>
+        <strong style="font-size: 1.15rem; color: #f8fafc;">{{ fp }}</strong>
+        <span style="font-size: 0.68rem; color: #94a3b8; display: block;">False Alarm</span>
       </div>
-      <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px; border-radius: 6px;">
-        <span style="font-size: 0.7rem; color: #fca5a5; display: block;">False Neg (FN)</span>
-        <strong>{{ m.confusion_matrix[1][0] }}</strong>
+      <div style="background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.4); padding: 8px 4px; border-radius: 6px;">
+        <span style="font-size: 0.68rem; color: #fca5a5; display: block; text-transform: uppercase;">False Negative (FN)</span>
+        <strong style="font-size: 1.15rem; color: #f87171;">{{ fn }}</strong>
+        <span style="font-size: 0.68rem; color: #fca5a5; display: block;">Missed Diabetic</span>
       </div>
-      <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 6px; border-radius: 6px;">
-        <span style="font-size: 0.7rem; color: #6ee7b7; display: block;">True Pos (TP)</span>
-        <strong>{{ m.confusion_matrix[1][1] }}</strong>
+      <div style="background: rgba(16, 185, 129, 0.16); border: 1px solid rgba(16, 185, 129, 0.35); padding: 8px 4px; border-radius: 6px;">
+        <span style="font-size: 0.68rem; color: #6ee7b7; display: block; text-transform: uppercase;">True Positive (TP)</span>
+        <strong style="font-size: 1.15rem; color: #f8fafc;">{{ tp }}</strong>
+        <span style="font-size: 0.68rem; color: #94a3b8; display: block;">Correct Diabetic</span>
       </div>
+    </div>
+
+    <!-- Diagnostic Clinical Rates -->
+    <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: #94a3b8; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.06);">
+      <span>Sensitivity (Recall): <strong style="color: #f8fafc;">{{ '%.1f'|format(sensitivity * 100) }}%</strong></span>
+      <span>Specificity: <strong style="color: #f8fafc;">{{ '%.1f'|format(specificity * 100) }}%</strong></span>
     </div>
   </div>
   {% endfor %}
 </div>
 
+<!-- Retraining Guide and Methodology Card -->
+<div class="dashboard-card" style="margin-bottom: 2rem; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2);">
+  <h3 style="margin-top: 0; color: #38bdf8; font-size: 1.15rem;">🔄 Dataset Update & Retraining Instructions</h3>
+  <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;">
+    To update the models when new clinical data is gathered, follow these steps:
+  </p>
+  <ol style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.7; padding-left: 1.4rem;">
+    <li>Place the updated CSV dataset in <code>diabetes.csv</code> or <code>data/diabetes.csv</code> with standard features: <code>Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age, Outcome</code>.</li>
+    <li>Execute the automated training script from the project root:
+      <pre style="background: #071525; padding: 0.75rem 1rem; border-radius: 8px; color: #38bdf8; font-size: 0.85rem; border: 1px solid #1e293b; margin: 0.5rem 0;">py -3.10 train_model.py</pre>
+    </li>
+    <li>The script will automatically clean biologically impossible zeros, execute 5-fold cross-validation on the training set, optimize the F2-score to select the best screening pipeline, evaluate all models on the held-out test set, update <code>model/diabetes_model.joblib</code>, and refresh <code>model/model_metrics.json</code>.</li>
+    <li>Restart or refresh the Flask web application to immediately apply the updated inference pipeline.</li>
+  </ol>
+</div>
+
+<!-- Chart.js Initialization Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof Chart === 'undefined') {
+    console.warn("Chart.js failed to load. Skipping chart rendering.");
+    return;
+  }
+
+  // Common Theme Colors
+  const chartColors = {
+    "Naive Bayes": "#10b981", // Emerald
+    "Logistic Regression": "#38bdf8", // Sky blue
+    "Random Forest": "#818cf8", // Indigo
+    "Support Vector Machine (SVM)": "#f59e0b", // Amber
+    "K-Nearest Neighbours (KNN)": "#ec4899", // Pink
+    "Decision Tree": "#06b6d4", // Cyan
+    "Gradient Boosting": "#a855f7" // Purple
+  };
+
+  // Metrics Data from Flask
+  const rawMetrics = {{ metrics.models|tojson }};
+  const modelNames = Object.keys(rawMetrics);
+
+  // 1. Render Multi-Metric Bar Chart
+  const ctxMetrics = document.getElementById("metricsComparisonChart");
+  if (ctxMetrics) {
+    const accuracyData = modelNames.map(k => (rawMetrics[k].accuracy * 100).toFixed(2));
+    const precisionData = modelNames.map(k => (rawMetrics[k].precision * 100).toFixed(2));
+    const recallData = modelNames.map(k => (rawMetrics[k].recall * 100).toFixed(2));
+    const f1Data = modelNames.map(k => (rawMetrics[k].f1_score * 100).toFixed(2));
+    const rocAucData = modelNames.map(k => (rawMetrics[k].roc_auc * 100).toFixed(2));
+    const cvF2Data = modelNames.map(k => (rawMetrics[k].cv_metrics.cv_f2_score * 100).toFixed(2));
+
+    new Chart(ctxMetrics, {
+      type: "bar",
+      data: {
+        labels: modelNames.map(n => n.replace("Support Vector Machine (SVM)", "SVM").replace("K-Nearest Neighbours (KNN)", "KNN")),
+        datasets: [
+          {
+            label: "CV F2 (Selection)",
+            data: cvF2Data,
+            backgroundColor: "rgba(56, 189, 248, 0.85)",
+            borderColor: "#38bdf8",
+            borderWidth: 1,
+            borderRadius: 4
+          },
+          {
+            label: "Test Recall (Sens.)",
+            data: recallData,
+            backgroundColor: "rgba(248, 113, 113, 0.85)",
+            borderColor: "#f87171",
+            borderWidth: 1,
+            borderRadius: 4
+          },
+          {
+            label: "Test Accuracy",
+            data: accuracyData,
+            backgroundColor: "rgba(16, 185, 129, 0.85)",
+            borderColor: "#10b981",
+            borderWidth: 1,
+            borderRadius: 4
+          },
+          {
+            label: "Test ROC-AUC",
+            data: rocAucData,
+            backgroundColor: "rgba(167, 139, 250, 0.85)",
+            borderColor: "#a78bfa",
+            borderWidth: 1,
+            borderRadius: 4
+          },
+          {
+            label: "Test F1-Score",
+            data: f1Data,
+            backgroundColor: "rgba(251, 191, 36, 0.85)",
+            borderColor: "#fbbf24",
+            borderWidth: 1,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12, padding: 8 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(c) { return `${c.dataset.label}: ${c.raw}%`; }
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 40,
+            max: 100,
+            ticks: { color: '#64748b', callback: v => v + '%' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+          },
+          x: {
+            ticks: { color: '#94a3b8', font: { size: 10.5 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Render ROC Curves Chart
+  const ctxRoc = document.getElementById("rocCurvesChart");
+  if (ctxRoc) {
+    const rocDatasets = [];
+
+    // Reference diagonal line (Random Guess)
+    rocDatasets.push({
+      label: "Random Guess (AUC = 0.50)",
+      data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
+      borderColor: "rgba(148, 163, 184, 0.4)",
+      borderWidth: 1.5,
+      borderDash: [5, 5],
+      pointRadius: 0,
+      fill: false
+    });
+
+    modelNames.forEach(name => {
+      const m = rawMetrics[name];
+      if (m.roc_curve && m.roc_curve.length > 0) {
+        const color = chartColors[name] || "#38bdf8";
+        rocDatasets.push({
+          label: `${name} (AUC = ${m.roc_auc.toFixed(4)})`,
+          data: m.roc_curve,
+          borderColor: color,
+          backgroundColor: color,
+          borderWidth: name === "{{ metrics.best_model }}" ? 3 : 1.8,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.1,
+          fill: false
+        });
+      }
+    });
+
+    new Chart(ctxRoc, {
+      type: "line",
+      data: { datasets: rocDatasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#94a3b8', font: { size: 10.5 }, boxWidth: 12, padding: 6 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(c) {
+                return `${c.dataset.label}: FPR=${(c.raw.x).toFixed(3)}, TPR=${(c.raw.y).toFixed(3)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            type: 'linear',
+            min: 0,
+            max: 1,
+            title: { display: true, text: 'False Positive Rate (1 - Specificity)', color: '#64748b', font: { size: 11 } },
+            ticks: { color: '#64748b' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+          },
+          y: {
+            type: 'linear',
+            min: 0,
+            max: 1,
+            title: { display: true, text: 'True Positive Rate (Sensitivity / Recall)', color: '#64748b', font: { size: 11 } },
+            ticks: { color: '#64748b' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+
 {% else %}
 <div class="dashboard-card">
   <h3>Benchmark metrics not found</h3>
-  <p>Please execute <code>python train_model.py</code> to train all 4 models and generate the evaluation benchmark.</p>
+  <p>Please execute <code>py -3.10 train_model.py</code> to train all candidate models and generate the evaluation benchmark.</p>
 </div>
 {% endif %}
 

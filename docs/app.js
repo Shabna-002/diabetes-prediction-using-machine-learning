@@ -273,6 +273,27 @@
     return { pred: df >= 0 ? 1 : 0, prob: Math.round(prob * 10000) / 10000 };
   }
 
+  function predictNaiveBayes(scaledFeats) {
+    if (!models.naive_bayes || !models.naive_bayes.theta) return predictDecisionTree(scaledFeats);
+    const nb = models.naive_bayes;
+    let logLikelihoods = [];
+    for (let c = 0; c < 2; c++) {
+      let ll = Math.log(nb.class_prior[c]);
+      for (let j = 0; j < 8; j++) {
+        const mean = nb.theta[c][j];
+        const variance = nb.var[c][j];
+        const diff = scaledFeats[j] - mean;
+        ll -= 0.5 * (Math.log(2 * Math.PI * variance) + (diff * diff) / variance);
+      }
+      logLikelihoods.push(ll);
+    }
+    const maxLL = Math.max(logLikelihoods[0], logLikelihoods[1]);
+    const exp0 = Math.exp(logLikelihoods[0] - maxLL);
+    const exp1 = Math.exp(logLikelihoods[1] - maxLL);
+    const prob = exp1 / (exp0 + exp1);
+    return { pred: prob >= 0.5 ? 1 : 0, prob: Math.round(prob * 10000) / 10000 };
+  }
+
   function evalGBTree(node, scaledFeats) {
     if (node.leaf) return node.val;
     if (scaledFeats[node.f] <= node.th) {
@@ -331,7 +352,10 @@
         const { imputed, scaled } = preprocess(rawVals);
 
         let res, modelLabel;
-        if (modelChoice === "gradient_boosting") {
+        if (modelChoice === "naive_bayes") {
+          res = predictNaiveBayes(scaled);
+          modelLabel = "Naive Bayes (GaussianNB)";
+        } else if (modelChoice === "gradient_boosting") {
           res = predictGradientBoosting(scaled);
           modelLabel = "Gradient Boosting";
         } else if (modelChoice === "knn") {
@@ -346,9 +370,12 @@
         } else if (modelChoice === "logistic_regression") {
           res = predictLogisticRegression(scaled);
           modelLabel = "Logistic Regression";
-        } else {
+        } else if (modelChoice === "decision_tree") {
           res = predictDecisionTree(scaled);
-          modelLabel = "Decision Tree (Best Model)";
+          modelLabel = "Decision Tree";
+        } else {
+          res = predictNaiveBayes(scaled);
+          modelLabel = "Naive Bayes (Best Model)";
         }
 
         const now = new Date();

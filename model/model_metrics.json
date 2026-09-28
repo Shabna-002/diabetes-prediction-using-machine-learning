@@ -12,16 +12,37 @@
       "BMI",
       "DiabetesPedigreeFunction",
       "Age"
-    ]
+    ],
+    "zero_as_missing": [
+      "Glucose",
+      "BloodPressure",
+      "SkinThickness",
+      "Insulin",
+      "BMI"
+    ],
+    "imputation_strategy": "median",
+    "scaling": "StandardScaler (mean=0, variance=1)"
   },
-  "best_model": "Decision Tree",
+  "model_selection": {
+    "selection_strategy": "5-Fold Stratified Cross-Validation on Training Set",
+    "selection_metric": "F2-Score (beta=2.0)",
+    "test_set_used_for_selection": false,
+    "rationale": "In clinical diabetes screening, failing to detect a diabetic patient (False Negative) imposes severe diagnostic risk, causing untreated disease progression. The F2-score prioritizes Recall (Sensitivity) with twice the weight of Precision, while maintaining sound specificity. Cross-validation on the training set ensures the selection is completely unbiased by test set data.",
+    "best_model": "Naive Bayes",
+    "best_cv_f2": 0.6128,
+    "best_cv_recall": 0.5984
+  },
+  "best_model": "Naive Bayes",
   "models": {
     "Logistic Regression": {
       "slug": "logistic_regression",
+      "description": "Linear classifier optimizing log-odds with L2 regularization.",
       "accuracy": 0.7078,
       "precision": 0.6,
       "recall": 0.5,
       "f1_score": 0.5455,
+      "f2_score": 0.5172,
+      "roc_auc": 0.813,
       "confusion_matrix": [
         [
           82,
@@ -32,14 +53,167 @@
           27
         ]
       ],
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0185
+        },
+        {
+          "x": 0.01,
+          "y": 0.0926
+        },
+        {
+          "x": 0.01,
+          "y": 0.1296
+        },
+        {
+          "x": 0.03,
+          "y": 0.1852
+        },
+        {
+          "x": 0.05,
+          "y": 0.1852
+        },
+        {
+          "x": 0.06,
+          "y": 0.2037
+        },
+        {
+          "x": 0.06,
+          "y": 0.3148
+        },
+        {
+          "x": 0.07,
+          "y": 0.3333
+        },
+        {
+          "x": 0.08,
+          "y": 0.3704
+        },
+        {
+          "x": 0.09,
+          "y": 0.3704
+        },
+        {
+          "x": 0.1,
+          "y": 0.4444
+        },
+        {
+          "x": 0.1,
+          "y": 0.463
+        },
+        {
+          "x": 0.14,
+          "y": 0.4815
+        },
+        {
+          "x": 0.18,
+          "y": 0.4815
+        },
+        {
+          "x": 0.2,
+          "y": 0.5
+        },
+        {
+          "x": 0.2,
+          "y": 0.537
+        },
+        {
+          "x": 0.21,
+          "y": 0.5556
+        },
+        {
+          "x": 0.22,
+          "y": 0.6481
+        },
+        {
+          "x": 0.24,
+          "y": 0.6481
+        },
+        {
+          "x": 0.25,
+          "y": 0.6667
+        },
+        {
+          "x": 0.25,
+          "y": 0.6852
+        },
+        {
+          "x": 0.26,
+          "y": 0.7037
+        },
+        {
+          "x": 0.27,
+          "y": 0.7037
+        },
+        {
+          "x": 0.28,
+          "y": 0.7593
+        },
+        {
+          "x": 0.28,
+          "y": 0.7963
+        },
+        {
+          "x": 0.32,
+          "y": 0.8333
+        },
+        {
+          "x": 0.33,
+          "y": 0.8519
+        },
+        {
+          "x": 0.35,
+          "y": 0.8519
+        },
+        {
+          "x": 0.42,
+          "y": 0.8889
+        },
+        {
+          "x": 0.42,
+          "y": 0.9259
+        },
+        {
+          "x": 0.44,
+          "y": 0.9444
+        },
+        {
+          "x": 0.48,
+          "y": 0.9444
+        },
+        {
+          "x": 0.83,
+          "y": 0.9815
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
+      ],
+      "cv_metrics": {
+        "cv_accuracy": 0.7882,
+        "cv_precision": 0.7638,
+        "cv_recall": 0.5748,
+        "cv_f1_score": 0.6545,
+        "cv_f2_score": 0.604,
+        "cv_roc_auc": 0.8434
+      },
       "model_file": "logistic_regression.joblib"
     },
     "Decision Tree": {
       "slug": "decision_tree",
+      "description": "Non-linear decision boundary tree with depth constraints to control overfitting.",
       "accuracy": 0.7662,
       "precision": 0.65,
       "recall": 0.7222,
       "f1_score": 0.6842,
+      "f2_score": 0.7065,
+      "roc_auc": 0.784,
       "confusion_matrix": [
         [
           79,
@@ -50,14 +224,83 @@
           39
         ]
       ],
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0185
+        },
+        {
+          "x": 0.07,
+          "y": 0.2593
+        },
+        {
+          "x": 0.1,
+          "y": 0.2963
+        },
+        {
+          "x": 0.12,
+          "y": 0.2963
+        },
+        {
+          "x": 0.21,
+          "y": 0.7222
+        },
+        {
+          "x": 0.22,
+          "y": 0.7407
+        },
+        {
+          "x": 0.26,
+          "y": 0.7593
+        },
+        {
+          "x": 0.35,
+          "y": 0.8333
+        },
+        {
+          "x": 0.36,
+          "y": 0.8519
+        },
+        {
+          "x": 0.65,
+          "y": 0.9444
+        },
+        {
+          "x": 0.69,
+          "y": 0.9444
+        },
+        {
+          "x": 1.0,
+          "y": 0.9815
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
+      ],
+      "cv_metrics": {
+        "cv_accuracy": 0.7248,
+        "cv_precision": 0.6203,
+        "cv_recall": 0.5463,
+        "cv_f1_score": 0.5763,
+        "cv_f2_score": 0.5571,
+        "cv_roc_auc": 0.7655
+      },
       "model_file": "decision_tree.joblib"
     },
     "Random Forest": {
       "slug": "random_forest",
+      "description": "Ensemble of 100 bagged trees with bootstrap aggregation and feature subsampling.",
       "accuracy": 0.7403,
       "precision": 0.6667,
       "recall": 0.5185,
       "f1_score": 0.5833,
+      "f2_score": 0.5426,
+      "roc_auc": 0.8167,
       "confusion_matrix": [
         [
           86,
@@ -68,32 +311,167 @@
           28
         ]
       ],
-      "model_file": "random_forest.joblib"
-    },
-    "Support Vector Machine (SVM)": {
-      "slug": "svm",
-      "accuracy": 0.7403,
-      "precision": 0.6522,
-      "recall": 0.5556,
-      "f1_score": 0.6,
-      "confusion_matrix": [
-        [
-          84,
-          16
-        ],
-        [
-          24,
-          30
-        ]
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0185
+        },
+        {
+          "x": 0.01,
+          "y": 0.0185
+        },
+        {
+          "x": 0.02,
+          "y": 0.1296
+        },
+        {
+          "x": 0.02,
+          "y": 0.2593
+        },
+        {
+          "x": 0.04,
+          "y": 0.2963
+        },
+        {
+          "x": 0.05,
+          "y": 0.2963
+        },
+        {
+          "x": 0.05,
+          "y": 0.3333
+        },
+        {
+          "x": 0.06,
+          "y": 0.3519
+        },
+        {
+          "x": 0.07,
+          "y": 0.3519
+        },
+        {
+          "x": 0.1,
+          "y": 0.4074
+        },
+        {
+          "x": 0.1,
+          "y": 0.463
+        },
+        {
+          "x": 0.13,
+          "y": 0.463
+        },
+        {
+          "x": 0.14,
+          "y": 0.5
+        },
+        {
+          "x": 0.14,
+          "y": 0.5185
+        },
+        {
+          "x": 0.15,
+          "y": 0.5926
+        },
+        {
+          "x": 0.18,
+          "y": 0.5926
+        },
+        {
+          "x": 0.21,
+          "y": 0.6481
+        },
+        {
+          "x": 0.21,
+          "y": 0.6852
+        },
+        {
+          "x": 0.22,
+          "y": 0.6852
+        },
+        {
+          "x": 0.23,
+          "y": 0.7222
+        },
+        {
+          "x": 0.23,
+          "y": 0.7407
+        },
+        {
+          "x": 0.27,
+          "y": 0.7593
+        },
+        {
+          "x": 0.33,
+          "y": 0.7593
+        },
+        {
+          "x": 0.33,
+          "y": 0.7963
+        },
+        {
+          "x": 0.35,
+          "y": 0.8519
+        },
+        {
+          "x": 0.37,
+          "y": 0.8519
+        },
+        {
+          "x": 0.51,
+          "y": 0.8889
+        },
+        {
+          "x": 0.51,
+          "y": 0.9074
+        },
+        {
+          "x": 0.53,
+          "y": 0.9074
+        },
+        {
+          "x": 0.62,
+          "y": 0.9444
+        },
+        {
+          "x": 0.62,
+          "y": 0.963
+        },
+        {
+          "x": 0.64,
+          "y": 0.9815
+        },
+        {
+          "x": 0.77,
+          "y": 0.9815
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
       ],
-      "model_file": "svm.joblib"
+      "cv_metrics": {
+        "cv_accuracy": 0.772,
+        "cv_precision": 0.7329,
+        "cv_recall": 0.5608,
+        "cv_f1_score": 0.6328,
+        "cv_f2_score": 0.5871,
+        "cv_roc_auc": 0.8351
+      },
+      "model_file": "random_forest.joblib"
     },
     "K-Nearest Neighbours (KNN)": {
       "slug": "knn",
+      "description": "Instance-based non-parametric classifier using standardized Euclidean distance.",
       "accuracy": 0.7532,
       "precision": 0.66,
       "recall": 0.6111,
       "f1_score": 0.6346,
+      "f2_score": 0.6203,
+      "roc_auc": 0.7899,
       "confusion_matrix": [
         [
           83,
@@ -104,14 +482,397 @@
           33
         ]
       ],
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.01,
+          "y": 0.0741
+        },
+        {
+          "x": 0.05,
+          "y": 0.3704
+        },
+        {
+          "x": 0.17,
+          "y": 0.6111
+        },
+        {
+          "x": 0.3,
+          "y": 0.7407
+        },
+        {
+          "x": 0.51,
+          "y": 0.8889
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
+      ],
+      "cv_metrics": {
+        "cv_accuracy": 0.7296,
+        "cv_precision": 0.6367,
+        "cv_recall": 0.5654,
+        "cv_f1_score": 0.5939,
+        "cv_f2_score": 0.5755,
+        "cv_roc_auc": 0.7843
+      },
       "model_file": "knn.joblib"
+    },
+    "Support Vector Machine (SVM)": {
+      "slug": "svm",
+      "description": "Kernelized maximum-margin hyperplane classifier with Radial Basis Function (RBF).",
+      "accuracy": 0.7403,
+      "precision": 0.6522,
+      "recall": 0.5556,
+      "f1_score": 0.6,
+      "f2_score": 0.5725,
+      "roc_auc": 0.7964,
+      "confusion_matrix": [
+        [
+          84,
+          16
+        ],
+        [
+          24,
+          30
+        ]
+      ],
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0185
+        },
+        {
+          "x": 0.01,
+          "y": 0.037
+        },
+        {
+          "x": 0.02,
+          "y": 0.0556
+        },
+        {
+          "x": 0.02,
+          "y": 0.1296
+        },
+        {
+          "x": 0.03,
+          "y": 0.2222
+        },
+        {
+          "x": 0.04,
+          "y": 0.3148
+        },
+        {
+          "x": 0.06,
+          "y": 0.3148
+        },
+        {
+          "x": 0.07,
+          "y": 0.3704
+        },
+        {
+          "x": 0.11,
+          "y": 0.3889
+        },
+        {
+          "x": 0.12,
+          "y": 0.4074
+        },
+        {
+          "x": 0.12,
+          "y": 0.4259
+        },
+        {
+          "x": 0.13,
+          "y": 0.5
+        },
+        {
+          "x": 0.15,
+          "y": 0.537
+        },
+        {
+          "x": 0.16,
+          "y": 0.5556
+        },
+        {
+          "x": 0.17,
+          "y": 0.5926
+        },
+        {
+          "x": 0.18,
+          "y": 0.6296
+        },
+        {
+          "x": 0.21,
+          "y": 0.7222
+        },
+        {
+          "x": 0.28,
+          "y": 0.7222
+        },
+        {
+          "x": 0.29,
+          "y": 0.7407
+        },
+        {
+          "x": 0.35,
+          "y": 0.7593
+        },
+        {
+          "x": 0.35,
+          "y": 0.7778
+        },
+        {
+          "x": 0.36,
+          "y": 0.7963
+        },
+        {
+          "x": 0.37,
+          "y": 0.8148
+        },
+        {
+          "x": 0.39,
+          "y": 0.8148
+        },
+        {
+          "x": 0.41,
+          "y": 0.8333
+        },
+        {
+          "x": 0.43,
+          "y": 0.8519
+        },
+        {
+          "x": 0.52,
+          "y": 0.8704
+        },
+        {
+          "x": 0.52,
+          "y": 0.9074
+        },
+        {
+          "x": 0.57,
+          "y": 0.9259
+        },
+        {
+          "x": 0.61,
+          "y": 0.9444
+        },
+        {
+          "x": 0.62,
+          "y": 0.9444
+        },
+        {
+          "x": 0.68,
+          "y": 0.963
+        },
+        {
+          "x": 0.95,
+          "y": 0.9815
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
+      ],
+      "cv_metrics": {
+        "cv_accuracy": 0.7801,
+        "cv_precision": 0.7415,
+        "cv_recall": 0.5842,
+        "cv_f1_score": 0.6485,
+        "cv_f2_score": 0.6074,
+        "cv_roc_auc": 0.8333
+      },
+      "model_file": "svm.joblib"
+    },
+    "Naive Bayes": {
+      "slug": "naive_bayes",
+      "description": "Probabilistic Gaussian classifier assuming conditional feature independence.",
+      "accuracy": 0.7013,
+      "precision": 0.5667,
+      "recall": 0.6296,
+      "f1_score": 0.5965,
+      "f2_score": 0.6159,
+      "roc_auc": 0.7646,
+      "confusion_matrix": [
+        [
+          74,
+          26
+        ],
+        [
+          20,
+          34
+        ]
+      ],
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0185
+        },
+        {
+          "x": 0.01,
+          "y": 0.0556
+        },
+        {
+          "x": 0.02,
+          "y": 0.0741
+        },
+        {
+          "x": 0.03,
+          "y": 0.0741
+        },
+        {
+          "x": 0.05,
+          "y": 0.1481
+        },
+        {
+          "x": 0.07,
+          "y": 0.1667
+        },
+        {
+          "x": 0.07,
+          "y": 0.2963
+        },
+        {
+          "x": 0.1,
+          "y": 0.3333
+        },
+        {
+          "x": 0.11,
+          "y": 0.4074
+        },
+        {
+          "x": 0.13,
+          "y": 0.4259
+        },
+        {
+          "x": 0.15,
+          "y": 0.4259
+        },
+        {
+          "x": 0.16,
+          "y": 0.463
+        },
+        {
+          "x": 0.18,
+          "y": 0.5
+        },
+        {
+          "x": 0.18,
+          "y": 0.5185
+        },
+        {
+          "x": 0.19,
+          "y": 0.5556
+        },
+        {
+          "x": 0.21,
+          "y": 0.5741
+        },
+        {
+          "x": 0.22,
+          "y": 0.5926
+        },
+        {
+          "x": 0.25,
+          "y": 0.5926
+        },
+        {
+          "x": 0.29,
+          "y": 0.6296
+        },
+        {
+          "x": 0.31,
+          "y": 0.6481
+        },
+        {
+          "x": 0.31,
+          "y": 0.6852
+        },
+        {
+          "x": 0.32,
+          "y": 0.7407
+        },
+        {
+          "x": 0.33,
+          "y": 0.7593
+        },
+        {
+          "x": 0.37,
+          "y": 0.7593
+        },
+        {
+          "x": 0.42,
+          "y": 0.7778
+        },
+        {
+          "x": 0.47,
+          "y": 0.7963
+        },
+        {
+          "x": 0.49,
+          "y": 0.8889
+        },
+        {
+          "x": 0.49,
+          "y": 0.9074
+        },
+        {
+          "x": 0.57,
+          "y": 0.9259
+        },
+        {
+          "x": 0.58,
+          "y": 0.9444
+        },
+        {
+          "x": 0.6,
+          "y": 0.9444
+        },
+        {
+          "x": 0.68,
+          "y": 0.963
+        },
+        {
+          "x": 0.87,
+          "y": 0.9815
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
+      ],
+      "cv_metrics": {
+        "cv_accuracy": 0.7623,
+        "cv_precision": 0.6859,
+        "cv_recall": 0.5984,
+        "cv_f1_score": 0.6369,
+        "cv_f2_score": 0.6128,
+        "cv_roc_auc": 0.8281
+      },
+      "model_file": "naive_bayes.joblib"
     },
     "Gradient Boosting": {
       "slug": "gradient_boosting",
+      "description": "Sequential boosting ensemble minimizing binomial deviance loss.",
       "accuracy": 0.7597,
       "precision": 0.6889,
       "recall": 0.5741,
       "f1_score": 0.6263,
+      "f2_score": 0.5939,
+      "roc_auc": 0.8306,
       "confusion_matrix": [
         [
           86,
@@ -122,6 +883,156 @@
           31
         ]
       ],
+      "roc_curve": [
+        {
+          "x": 0.0,
+          "y": 0.0
+        },
+        {
+          "x": 0.0,
+          "y": 0.0185
+        },
+        {
+          "x": 0.01,
+          "y": 0.0741
+        },
+        {
+          "x": 0.01,
+          "y": 0.2593
+        },
+        {
+          "x": 0.05,
+          "y": 0.3148
+        },
+        {
+          "x": 0.06,
+          "y": 0.3333
+        },
+        {
+          "x": 0.07,
+          "y": 0.3333
+        },
+        {
+          "x": 0.09,
+          "y": 0.4074
+        },
+        {
+          "x": 0.09,
+          "y": 0.4259
+        },
+        {
+          "x": 0.1,
+          "y": 0.4444
+        },
+        {
+          "x": 0.11,
+          "y": 0.4815
+        },
+        {
+          "x": 0.14,
+          "y": 0.4815
+        },
+        {
+          "x": 0.15,
+          "y": 0.5741
+        },
+        {
+          "x": 0.16,
+          "y": 0.5926
+        },
+        {
+          "x": 0.16,
+          "y": 0.6111
+        },
+        {
+          "x": 0.17,
+          "y": 0.6296
+        },
+        {
+          "x": 0.19,
+          "y": 0.6296
+        },
+        {
+          "x": 0.21,
+          "y": 0.6481
+        },
+        {
+          "x": 0.22,
+          "y": 0.6667
+        },
+        {
+          "x": 0.22,
+          "y": 0.7037
+        },
+        {
+          "x": 0.23,
+          "y": 0.7222
+        },
+        {
+          "x": 0.25,
+          "y": 0.7222
+        },
+        {
+          "x": 0.26,
+          "y": 0.7963
+        },
+        {
+          "x": 0.27,
+          "y": 0.8333
+        },
+        {
+          "x": 0.27,
+          "y": 0.8519
+        },
+        {
+          "x": 0.28,
+          "y": 0.8704
+        },
+        {
+          "x": 0.31,
+          "y": 0.8889
+        },
+        {
+          "x": 0.35,
+          "y": 0.8889
+        },
+        {
+          "x": 0.38,
+          "y": 0.9074
+        },
+        {
+          "x": 0.38,
+          "y": 0.9259
+        },
+        {
+          "x": 0.51,
+          "y": 0.9444
+        },
+        {
+          "x": 0.68,
+          "y": 0.963
+        },
+        {
+          "x": 0.69,
+          "y": 0.963
+        },
+        {
+          "x": 0.91,
+          "y": 0.9815
+        },
+        {
+          "x": 1.0,
+          "y": 1.0
+        }
+      ],
+      "cv_metrics": {
+        "cv_accuracy": 0.7541,
+        "cv_precision": 0.6693,
+        "cv_recall": 0.5981,
+        "cv_f1_score": 0.6293,
+        "cv_f2_score": 0.6098,
+        "cv_roc_auc": 0.8205
+      },
       "model_file": "gradient_boosting.joblib"
     }
   }
