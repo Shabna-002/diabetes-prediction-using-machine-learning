@@ -29,7 +29,8 @@ class TestLoginUI(unittest.TestCase):
             "name=\"username\"",
             "name=\"password\"",
             "togglePasswordVisibility",
-            "remember_me"
+            "remember_me",
+            "<span>Login</span>"
         ]
         
         for item in required_elements:
@@ -43,7 +44,8 @@ class TestLoginUI(unittest.TestCase):
             "Return to Home",
             "Register Account",
             "SSL 256-Bit Encrypted",
-            "HIPAA Compliant Protocol"
+            "HIPAA Compliant Protocol",
+            "Login to Account"
         ]
         for item in prohibited_elements:
             self.assertNotIn(item, html, f"Prohibited element found: {item}")
@@ -60,6 +62,8 @@ class TestLoginUI(unittest.TestCase):
             self.assertNotIn("Register Account", content, f"Register Account found in {path}")
             self.assertNotIn("SSL 256-Bit Encrypted", content, f"SSL found in {path}")
             self.assertNotIn("HIPAA Compliant Protocol", content, f"HIPAA found in {path}")
+            self.assertNotIn("Login to Account", content, f"Login to Account found in {path}")
+            self.assertIn("<span>Login</span>", content, f"<span>Login</span> missing in {path}")
 
     def test_login_post_flow(self):
         # Valid login
