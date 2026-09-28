@@ -29,13 +29,33 @@ class TestLoginUI(unittest.TestCase):
             "name=\"username\"",
             "name=\"password\"",
             "togglePasswordVisibility",
-            "remember_me",
-            "Forgot Password?",
-            "Register Now"
+            "remember_me"
         ]
         
         for item in required_elements:
-            self.assertIn(item, html, f"Missing element: {item}")
+            self.assertIn(item, html, f"Missing required element: {item}")
+
+        # Explicitly verify removed elements are NOT present
+        prohibited_elements = [
+            "Forgot Password?",
+            "Register Now",
+            "Don't have an account yet?",
+            "Return to Home",
+            "Register Account"
+        ]
+        for item in prohibited_elements:
+            self.assertNotIn(item, html, f"Prohibited element found: {item}")
+
+    def test_static_login_files_removed_elements(self):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        for path in [os.path.join(base_dir, "docs", "login.html"), os.path.join(base_dir, "login.html")]:
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read()
+            self.assertNotIn("Forgot Password?", content, f"Forgot Password found in {path}")
+            self.assertNotIn("Register Now", content, f"Register Now found in {path}")
+            self.assertNotIn("Don't have an account yet?", content, f"Don't have an account yet found in {path}")
+            self.assertNotIn("Return to Home", content, f"Return to Home found in {path}")
+            self.assertNotIn("Register Account", content, f"Register Account found in {path}")
 
     def test_login_post_flow(self):
         # Valid login
