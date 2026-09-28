@@ -5,7 +5,7 @@
   <div>
     <div class="eyebrow">MODEL BENCHMARK & EVALUATION</div>
     <h1>Multi-Algorithm Performance Benchmark</h1>
-    <p>Comparative evaluation of the 4 machine learning models on a stratified test set (154 samples).</p>
+    <p>Comparative evaluation of {{ metrics.models|length if metrics and metrics.models else 6 }} machine learning models on a stratified test set (154 samples).</p>
   </div>
 </div>
 
@@ -13,7 +13,7 @@
 <div class="stats">
   <div class="stat">
     <span>Evaluated Algorithms</span>
-    <strong>4 Models</strong>
+    <strong>{{ metrics.models|length }} Models</strong>
   </div>
   <div class="stat">
     <span>Total Dataset Records</span>

@@ -3,14 +3,16 @@
 > 🌐 **Live Web Application Demo**: [https://shabna-002.github.io/diabetes-prediction-using-machine-learning/docs/](https://shabna-002.github.io/diabetes-prediction-using-machine-learning/docs/)  
 > 📊 **Clinical Dataset (CSV)**: [diabetes.csv](https://github.com/Shabna-002/diabetes-prediction-using-machine-learning/blob/main/diabetes.csv) | [Direct Download (Raw CSV)](https://raw.githubusercontent.com/Shabna-002/diabetes-prediction-using-machine-learning/main/diabetes.csv)
 
-An end-to-end Machine Learning web application evaluating and deploying **Logistic Regression**, **Decision Tree**, **Random Forest**, and **Support Vector Machine (SVM)** for diabetes risk screening.
+An end-to-end Machine Learning web application evaluating and deploying **K-Nearest Neighbours (KNN)**, **Support Vector Machines (SVM)**, **Gradient Boosting**, **Decision Tree**, **Random Forest**, and **Logistic Regression** for diabetes risk screening.
 
 ## Features
-- **4 Machine Learning Classifiers**:
-  - Logistic Regression
-  - Decision Tree Classifier (Best Overall F1-Score)
-  - Random Forest Classifier
-  - Support Vector Machine (SVM with RBF Kernel)
+- **6 Machine Learning Classifiers**:
+  - Decision Tree Classifier (Best Overall F1-Score: 76.62% Accuracy)
+  - Gradient Boosting Classifier (Boosting Ensemble: 75.97% Accuracy)
+  - K-Nearest Neighbours (KNN, k=5: 75.32% Accuracy)
+  - Support Vector Machine (SVM with RBF Kernel: 74.03% Accuracy)
+  - Random Forest Classifier (Bagging Ensemble: 74.03% Accuracy)
+  - Logistic Regression (Linear Baseline: 70.78% Accuracy)
 - **Clinical Data Preprocessing**:
   - Median imputation of biologically implausible zero values (Glucose, Blood Pressure, Skin Thickness, Insulin, BMI)
   - Feature scaling via `StandardScaler`
@@ -42,10 +44,12 @@ diabetes_prediction_ml_project/
 │   ├── diabetes.csv            # 768-record Pima Indians Diabetes dataset
 │   └── predictions.db          # Auto-generated local SQLite fallback database
 ├── model/
-│   ├── diabetes_model.joblib   # Best performing model pipeline
+│   ├── diabetes_model.joblib   # Best performing model pipeline (Decision Tree)
 │   ├── decision_tree.joblib    # Trained Decision Tree pipeline
+│   ├── gradient_boosting.joblib # Trained Gradient Boosting pipeline
+│   ├── knn.joblib              # Trained K-Nearest Neighbours pipeline
+│   ├── svm.joblib              # Trained Support Vector Machine (SVM) pipeline
 │   ├── random_forest.joblib    # Trained Random Forest pipeline
-│   ├── svm.joblib              # Trained SVM pipeline
 │   ├── logistic_regression.joblib
 │   └── model_metrics.json      # Benchmark evaluation metrics & confusion matrices
 ├── templates/                  # Jinja2 HTML templates

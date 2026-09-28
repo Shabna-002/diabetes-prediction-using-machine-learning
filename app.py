@@ -37,6 +37,8 @@ DB_CONFIG = {
 MODEL_CHOICES = {
     "best": "Best Performing Model",
     "decision_tree": "Decision Tree",
+    "gradient_boosting": "Gradient Boosting",
+    "knn": "K-Nearest Neighbours (KNN)",
     "random_forest": "Random Forest",
     "svm": "Support Vector Machine (SVM)",
     "logistic_regression": "Logistic Regression"
@@ -64,6 +66,8 @@ def get_model(model_key="best"):
     filename_map = {
         "best": "diabetes_model.joblib",
         "decision_tree": "decision_tree.joblib",
+        "gradient_boosting": "gradient_boosting.joblib",
+        "knn": "knn.joblib",
         "random_forest": "random_forest.joblib",
         "svm": "svm.joblib",
         "logistic_regression": "logistic_regression.joblib"
