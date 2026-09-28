@@ -129,6 +129,9 @@
             <label for="model_choice" style="color:#a9bad0; font-size:13px; font-weight:700;">ML Classifier</label>
             <select id="model_choice" class="form-control" style="color:#38bdf8; font-weight:600;">
               <option value="decision_tree" selected>Decision Tree (Best: 76.62%)</option>
+              <option value="gradient_boosting">Gradient Boosting (75.97%)</option>
+              <option value="knn">K-Nearest Neighbours (KNN: 75.32%)</option>
+              <option value="svm">Support Vector Machine (SVM: 74.03%)</option>
               <option value="random_forest">Random Forest (100 Trees: 74.03%)</option>
               <option value="logistic_regression">Logistic Regression (70.78%)</option>
             </select>
@@ -523,12 +526,20 @@
               <td><span class="badge safe">★ Best Model</span></td>
             </tr>
             <tr>
-              <td>Random Forest Classifier (100 Trees)</td>
-              <td>74.03%</td>
-              <td>66.67%</td>
-              <td>51.85%</td>
-              <td>0.5833</td>
-              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Ensemble</span></td>
+              <td>Gradient Boosting (100 Estimators)</td>
+              <td><b style="color: #10b981;">75.97%</b></td>
+              <td>68.89%</td>
+              <td>57.41%</td>
+              <td>0.6263</td>
+              <td><span class="badge" style="background:#132d4b; color:#34d399;">Boosting</span></td>
+            </tr>
+            <tr>
+              <td>K-Nearest Neighbours (KNN, k=5)</td>
+              <td><b style="color: #a78bfa;">75.32%</b></td>
+              <td>66.00%</td>
+              <td>61.11%</td>
+              <td>0.6346</td>
+              <td><span class="badge" style="background:#132d4b; color:#c4b5fd;">Instance ML</span></td>
             </tr>
             <tr>
               <td>Support Vector Machine (SVM RBF)</td>
@@ -537,6 +548,14 @@
               <td>55.56%</td>
               <td>0.6000</td>
               <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Kernel ML</span></td>
+            </tr>
+            <tr>
+              <td>Random Forest Classifier (100 Trees)</td>
+              <td>74.03%</td>
+              <td>66.67%</td>
+              <td>51.85%</td>
+              <td>0.5833</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Bagging</span></td>
             </tr>
             <tr>
               <td>Logistic Regression</td>
@@ -559,13 +578,23 @@
             <strong>76.6%</strong>
           </div>
           <div class="bar-row">
-            <span>Random Forest</span>
-            <div class="bar"><i style="width: 74.03%; background: #38bdf8;"></i></div>
-            <strong>74.0%</strong>
+            <span>Gradient Boosting</span>
+            <div class="bar"><i style="width: 75.97%; background: #10b981;"></i></div>
+            <strong>76.0%</strong>
+          </div>
+          <div class="bar-row">
+            <span>K-Nearest Neighbours</span>
+            <div class="bar"><i style="width: 75.32%; background: #a855f7;"></i></div>
+            <strong>75.3%</strong>
           </div>
           <div class="bar-row">
             <span>SVM Classifier</span>
             <div class="bar"><i style="width: 74.03%; background: #818cf8;"></i></div>
+            <strong>74.0%</strong>
+          </div>
+          <div class="bar-row">
+            <span>Random Forest</span>
+            <div class="bar"><i style="width: 74.03%; background: #38bdf8;"></i></div>
             <strong>74.0%</strong>
           </div>
           <div class="bar-row">

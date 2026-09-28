@@ -232,6 +232,68 @@
     return { pred: avgProb >= 0.5 ? 1 : 0, prob: Math.round(avgProb * 10000) / 10000 };
   }
 
+  function predictKNN(scaledFeats) {
+    if (!models.knn || !models.knn.X_train) return predictDecisionTree(scaledFeats);
+    const knn = models.knn;
+    const k = knn.k || 5;
+    const distances = [];
+    for (let i = 0; i < knn.X_train.length; i++) {
+      const trainRow = knn.X_train[i];
+      let dist = 0;
+      for (let j = 0; j < 8; j++) {
+        const diff = scaledFeats[j] - trainRow[j];
+        dist += diff * diff;
+      }
+      distances.push({ dist, y: knn.y_train[i] });
+    }
+    distances.sort((a, b) => a.dist - b.dist);
+    let positiveVotes = 0;
+    for (let i = 0; i < k; i++) {
+      if (distances[i].y === 1) positiveVotes++;
+    }
+    const prob = positiveVotes / k;
+    return { pred: prob >= 0.5 ? 1 : 0, prob: Math.round(prob * 10000) / 10000 };
+  }
+
+  function predictSVM(scaledFeats) {
+    if (!models.svm || !models.svm.support_vectors) return predictDecisionTree(scaledFeats);
+    const svm = models.svm;
+    let df = svm.intercept;
+    for (let i = 0; i < svm.support_vectors.length; i++) {
+      const sv = svm.support_vectors[i];
+      let distSq = 0;
+      for (let j = 0; j < 8; j++) {
+        const diff = scaledFeats[j] - sv[j];
+        distSq += diff * diff;
+      }
+      const k = Math.exp(-svm.gamma * distSq);
+      df += svm.dual_coef[i] * k;
+    }
+    const prob = 1.0 / (1.0 + Math.exp(-df));
+    return { pred: df >= 0 ? 1 : 0, prob: Math.round(prob * 10000) / 10000 };
+  }
+
+  function evalGBTree(node, scaledFeats) {
+    if (node.leaf) return node.val;
+    if (scaledFeats[node.f] <= node.th) {
+      return evalGBTree(node.l, scaledFeats);
+    } else {
+      return evalGBTree(node.r, scaledFeats);
+    }
+  }
+
+  function predictGradientBoosting(scaledFeats) {
+    if (!models.gradient_boosting || !models.gradient_boosting.trees) return predictDecisionTree(scaledFeats);
+    const gb = models.gradient_boosting;
+    let score = gb.init_val;
+    const lr = gb.learning_rate || 0.1;
+    for (let i = 0; i < gb.trees.length; i++) {
+      score += lr * evalGBTree(gb.trees[i], scaledFeats);
+    }
+    const prob = 1.0 / (1.0 + Math.exp(-score));
+    return { pred: prob >= 0.5 ? 1 : 0, prob: Math.round(prob * 10000) / 10000 };
+  }
+
   // --- Prediction Form Submit with Loading Animation ---
   const predictForm = document.getElementById("predict-form");
   const submitBtn = document.getElementById("predict-submit-btn");
@@ -269,12 +331,21 @@
         const { imputed, scaled } = preprocess(rawVals);
 
         let res, modelLabel;
-        if (modelChoice === "logistic_regression") {
-          res = predictLogisticRegression(scaled);
-          modelLabel = "Logistic Regression";
+        if (modelChoice === "gradient_boosting") {
+          res = predictGradientBoosting(scaled);
+          modelLabel = "Gradient Boosting";
+        } else if (modelChoice === "knn") {
+          res = predictKNN(scaled);
+          modelLabel = "K-Nearest Neighbours (KNN)";
+        } else if (modelChoice === "svm") {
+          res = predictSVM(scaled);
+          modelLabel = "Support Vector Machine (SVM)";
         } else if (modelChoice === "random_forest") {
           res = predictRandomForest(scaled);
           modelLabel = "Random Forest";
+        } else if (modelChoice === "logistic_regression") {
+          res = predictLogisticRegression(scaled);
+          modelLabel = "Logistic Regression";
         } else {
           res = predictDecisionTree(scaled);
           modelLabel = "Decision Tree (Best Model)";
