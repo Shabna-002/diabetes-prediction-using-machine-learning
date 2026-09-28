@@ -260,6 +260,9 @@
           <a href="#batch" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
             <i class="fa-solid fa-users text-teal-500 text-xs"></i> Patient Screening
           </a>
+          <a href="#datasetSection" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-database text-amber-500 text-xs"></i> Dataset Explorer
+          </a>
         </div>
 
         <!-- Right Quick Actions, Auth & Dark Mode Toggle -->
@@ -881,6 +884,183 @@
       </div>
     </section>
 
+    <!-- DATASET EXPLORER & CLINICAL COHORT SECTION -->
+    <section id="datasetSection" class="scroll-mt-28 mb-16 no-print">
+      <div class="glass-card p-6 sm:p-8 space-y-6">
+        
+        <!-- Header & Action Controls -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200 pb-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-database"></i> Training &amp; Validation Cohort
+            </div>
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+              Pima Indians Diabetes Clinical Dataset
+            </h2>
+            <p class="text-sm text-slate-500 mt-1 max-w-3xl">
+              National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) benchmark dataset. Consists of 768 patient cases, 8 diagnostic physiological features, and binary ground truth outcomes.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button onclick="downloadDatasetCsv()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold shadow-md shadow-emerald-500/20 transition flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-cloud-arrow-down text-sm"></i> Download Dataset (CSV)
+            </button>
+            <button onclick="resetDatasetFilters()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-2 border border-slate-200 cursor-pointer">
+              <i class="fa-solid fa-arrows-rotate"></i> Reset Filters
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Summary KPI Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-100 shadow-xs">
+            <span class="text-xs font-bold text-sky-700 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-hospital-user"></i> Total Records
+            </span>
+            <div class="text-2xl font-extrabold text-slate-900 mt-1" id="datasetTotalCount">768</div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Validated patient cases</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-100 shadow-xs">
+            <span class="text-xs font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-triangle-exclamation"></i> Positive Cases (Diabetic)
+            </span>
+            <div class="text-2xl font-extrabold text-rose-600 mt-1" id="datasetPositiveCount">268 (34.9%)</div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Ground Truth Outcome = 1</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 shadow-xs">
+            <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-check"></i> Negative Cases (Healthy)
+            </span>
+            <div class="text-2xl font-extrabold text-emerald-600 mt-1" id="datasetNegativeCount">500 (65.1%)</div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Ground Truth Outcome = 0</p>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 shadow-xs">
+            <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-vial-circle-check"></i> Clinical Dimensions
+            </span>
+            <div class="text-2xl font-extrabold text-indigo-600 mt-1">8 Features</div>
+            <p class="text-[11px] text-slate-500 mt-0.5">Physiological parameters</p>
+          </div>
+        </div>
+
+        <!-- Filter, Search & View Controls Bar -->
+        <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/80">
+          
+          <!-- Search box -->
+          <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="datasetSearchInput" oninput="onDatasetFilterChange()" placeholder="Search patient ID, glucose, age, BMI..." class="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800 placeholder-slate-400">
+          </div>
+
+          <!-- Outcome filter -->
+          <div class="flex items-center gap-2">
+            <label for="datasetFilterOutcome" class="text-xs font-bold text-slate-600 shrink-0">Cohort:</label>
+            <select id="datasetFilterOutcome" onchange="onDatasetFilterChange()" class="py-2 px-3 text-xs rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 font-semibold cursor-pointer">
+              <option value="all">All Cohorts (768)</option>
+              <option value="1">Diabetic (Outcome = 1)</option>
+              <option value="0">Non-Diabetic (Outcome = 0)</option>
+            </select>
+          </div>
+
+          <!-- Sort by -->
+          <div class="flex items-center gap-2">
+            <label for="datasetSortField" class="text-xs font-bold text-slate-600 shrink-0">Sort By:</label>
+            <select id="datasetSortField" onchange="onDatasetFilterChange()" class="py-2 px-3 text-xs rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 font-semibold cursor-pointer">
+              <option value="id_asc">Patient ID (Ascending)</option>
+              <option value="Glucose_desc">Glucose (High to Low)</option>
+              <option value="Glucose_asc">Glucose (Low to High)</option>
+              <option value="BMI_desc">BMI (High to Low)</option>
+              <option value="Age_desc">Age (Oldest First)</option>
+              <option value="Insulin_desc">Insulin (High to Low)</option>
+            </select>
+          </div>
+
+          <!-- Rows per page -->
+          <div class="flex items-center gap-2">
+            <label for="datasetRowsPerPage" class="text-xs font-bold text-slate-600 shrink-0">Rows:</label>
+            <select id="datasetRowsPerPage" onchange="onDatasetFilterChange()" class="py-2 px-3 text-xs rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700 font-semibold cursor-pointer">
+              <option value="10">10</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100/90 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
+                <th class="py-3 px-3">Patient ID</th>
+                <th class="py-3 px-3">Pregnancies</th>
+                <th class="py-3 px-3">Glucose <span class="text-[10px] font-normal text-slate-500">(mg/dL)</span></th>
+                <th class="py-3 px-3">Blood Pressure <span class="text-[10px] font-normal text-slate-500">(mm Hg)</span></th>
+                <th class="py-3 px-3">Skin Thickness <span class="text-[10px] font-normal text-slate-500">(mm)</span></th>
+                <th class="py-3 px-3">Insulin <span class="text-[10px] font-normal text-slate-500">(µU/mL)</span></th>
+                <th class="py-3 px-3">BMI <span class="text-[10px] font-normal text-slate-500">(kg/m²)</span></th>
+                <th class="py-3 px-3">Pedigree (DPF)</th>
+                <th class="py-3 px-3">Age</th>
+                <th class="py-3 px-3">Ground Truth</th>
+                <th class="py-3 px-3 text-center">Interactive Action</th>
+              </tr>
+            </thead>
+            <tbody id="datasetTableBody" class="divide-y divide-slate-100 text-slate-700 bg-white">
+              <tr>
+                <td colspan="11" class="p-6 text-center text-slate-400">Loading dataset records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2">
+          <div class="text-xs font-semibold text-slate-500" id="datasetPaginationInfo">
+            Showing records 1 - 25 of 768
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btnDatasetPrev" onclick="changeDatasetPage(-1)" class="px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+            </button>
+            <span class="text-xs font-bold px-3 py-1 rounded-lg bg-sky-50 text-sky-700 border border-sky-100" id="datasetCurrentPageBadge">Page 1 / 31</span>
+            <button id="btnDatasetNext" onclick="changeDatasetPage(1)" class="px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+              Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Feature Reference Intervals -->
+        <div class="pt-4 border-t border-slate-200/80">
+          <h3 class="text-sm font-extrabold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-book-medical text-sky-600"></i> Clinical Feature Dictionary &amp; Normal Reference Intervals
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="font-bold text-slate-900 block">Glucose (Plasma)</span>
+              <p class="text-slate-500 mt-1">Normal: 70–99 mg/dL. Impaired / Pre-diabetes: 100–125 mg/dL. Diabetic: &ge;126 mg/dL.</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="font-bold text-slate-900 block">BMI (Body Mass Index)</span>
+              <p class="text-slate-500 mt-1">Normal: 18.5–24.9 kg/m&sup2;. Overweight: 25.0–29.9 kg/m&sup2;. Obese: &ge;30.0 kg/m&sup2;.</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="font-bold text-slate-900 block">Blood Pressure (Diastolic)</span>
+              <p class="text-slate-500 mt-1">Normal: &lt;80 mm Hg. Pre-hypertension: 80–89 mm Hg. Stage 2 / Hypertension: &ge;90 mm Hg.</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+              <span class="font-bold text-slate-900 block">Insulin (2-hr Post-load)</span>
+              <p class="text-slate-500 mt-1">Physiological: 16–166 &mu;U/mL. Hyperinsulinemia (&gt;166 &mu;U/mL) indicates insulin resistance.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
   </main>
 
 
@@ -1834,6 +2014,325 @@
       });
     }
 
+    // ==========================================
+    // DATASET EXPLORER & COHORT INSPECTOR
+    // ==========================================
+    let allDatasetRecords = [];
+    let filteredDatasetRecords = [];
+    let datasetCurrentPage = 1;
+    let datasetRowsPerPage = 25;
+
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(',').map(h => h.trim());
+      const records = [];
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const values = line.split(',');
+        const obj = {};
+        headers.forEach((h, idx) => {
+          const val = values[idx] !== undefined ? values[idx].trim() : '';
+          obj[h] = (val !== '' && !isNaN(val)) ? parseFloat(val) : val;
+        });
+        records.push(obj);
+      }
+      return records;
+    }
+
+    async function initDatasetSection() {
+      // Attempt 1: Fetch via API
+      try {
+        const res = await fetch('/api/dataset');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.records && data.records.length > 0) {
+            allDatasetRecords = data.records.map((r, idx) => ({ ...r, _originalIndex: idx, _id: idx + 1 }));
+            applyDatasetStats(data.stats);
+            onDatasetFilterChange();
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Attempt 2: Fetch via diabetes.csv directly
+      try {
+        const resCsv = await fetch('diabetes.csv');
+        if (resCsv.ok) {
+          const text = await resCsv.text();
+          const records = parseCSV(text);
+          if (records.length > 0) {
+            allDatasetRecords = records.map((r, idx) => ({ ...r, _originalIndex: idx, _id: idx + 1 }));
+            calculateAndApplyDatasetStats(allDatasetRecords);
+            onDatasetFilterChange();
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Attempt 3: If still empty
+      const tbody = document.getElementById('datasetTableBody');
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="p-6 text-center text-slate-500">
+              <p class="font-semibold text-slate-700">Dataset file is present in project root (<code>diabetes.csv</code>).</p>
+              <p class="text-xs text-slate-500 mt-1">Click "Download Dataset (CSV)" above to inspect the complete 768-record dataset directly.</p>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function calculateAndApplyDatasetStats(records) {
+      const total = records.length;
+      const positive = records.filter(r => r.Outcome == 1).length;
+      const negative = total - positive;
+      const posPct = ((positive / total) * 100).toFixed(1);
+      const negPct = ((negative / total) * 100).toFixed(1);
+
+      const totalEl = document.getElementById('datasetTotalCount');
+      const posEl = document.getElementById('datasetPositiveCount');
+      const negEl = document.getElementById('datasetNegativeCount');
+
+      if (totalEl) totalEl.innerText = `${total}`;
+      if (posEl) posEl.innerText = `${positive} (${posPct}%)`;
+      if (negEl) negEl.innerText = `${negative} (${negPct}%)`;
+    }
+
+    function applyDatasetStats(stats) {
+      if (!stats) return;
+      const totalEl = document.getElementById('datasetTotalCount');
+      const posEl = document.getElementById('datasetPositiveCount');
+      const negEl = document.getElementById('datasetNegativeCount');
+
+      if (totalEl && stats.total_samples) totalEl.innerText = `${stats.total_samples}`;
+      if (posEl && stats.diabetic_count !== undefined) posEl.innerText = `${stats.diabetic_count} (${stats.diabetic_percentage}%)`;
+      if (negEl && stats.non_diabetic_count !== undefined) negEl.innerText = `${stats.non_diabetic_count} (${(100 - stats.diabetic_percentage).toFixed(1)}%)`;
+    }
+
+    function onDatasetFilterChange() {
+      const query = (document.getElementById('datasetSearchInput')?.value || '').trim().toLowerCase();
+      const outcomeFilter = document.getElementById('datasetFilterOutcome')?.value || 'all';
+      const sortField = document.getElementById('datasetSortField')?.value || 'id_asc';
+      datasetRowsPerPage = parseInt(document.getElementById('datasetRowsPerPage')?.value || '25', 10);
+
+      filteredDatasetRecords = allDatasetRecords.filter(r => {
+        if (outcomeFilter === '1' && r.Outcome != 1) return false;
+        if (outcomeFilter === '0' && r.Outcome != 0) return false;
+
+        if (query) {
+          const matchId = `pt-${r._id}`.includes(query) || `${r._id}` === query;
+          const matchGlucose = `${r.Glucose}`.includes(query);
+          const matchBmi = `${r.BMI}`.includes(query);
+          const matchAge = `${r.Age}`.includes(query);
+          const matchInsulin = `${r.Insulin}`.includes(query);
+          const matchBp = `${r.BloodPressure}`.includes(query);
+          if (!matchId && !matchGlucose && !matchBmi && !matchAge && !matchInsulin && !matchBp) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      if (sortField === 'Glucose_desc') filteredDatasetRecords.sort((a, b) => b.Glucose - a.Glucose);
+      else if (sortField === 'Glucose_asc') filteredDatasetRecords.sort((a, b) => a.Glucose - b.Glucose);
+      else if (sortField === 'BMI_desc') filteredDatasetRecords.sort((a, b) => b.BMI - a.BMI);
+      else if (sortField === 'Age_desc') filteredDatasetRecords.sort((a, b) => b.Age - a.Age);
+      else if (sortField === 'Insulin_desc') filteredDatasetRecords.sort((a, b) => b.Insulin - a.Insulin);
+      else filteredDatasetRecords.sort((a, b) => a._id - b._id);
+
+      datasetCurrentPage = 1;
+      renderDatasetTable();
+    }
+
+    function renderDatasetTable() {
+      const tbody = document.getElementById('datasetTableBody');
+      if (!tbody) return;
+
+      if (filteredDatasetRecords.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" class="p-8 text-center text-slate-400">
+              <i class="fa-solid fa-filter-circle-xmark text-2xl text-slate-300 mb-2 block"></i>
+              No clinical records match your current search and filter criteria.
+            </td>
+          </tr>
+        `;
+        updateDatasetPagination(0, 0, 0);
+        return;
+      }
+
+      const total = filteredDatasetRecords.length;
+      const totalPages = Math.ceil(total / datasetRowsPerPage);
+      if (datasetCurrentPage > totalPages) datasetCurrentPage = totalPages;
+      if (datasetCurrentPage < 1) datasetCurrentPage = 1;
+
+      const startIdx = (datasetCurrentPage - 1) * datasetRowsPerPage;
+      const endIdx = Math.min(startIdx + datasetRowsPerPage, total);
+      const pageRecords = filteredDatasetRecords.slice(startIdx, endIdx);
+
+      tbody.innerHTML = pageRecords.map(r => {
+        const isDiabetic = r.Outcome == 1;
+        const isHighGlucose = r.Glucose >= 126;
+        const isHighBmi = r.BMI >= 30.0;
+        const isHighBp = r.BloodPressure >= 90;
+
+        return `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-2.5 px-3 font-bold text-slate-800">#PT-${r._id}</td>
+            <td class="py-2.5 px-3">${r.Pregnancies}</td>
+            <td class="py-2.5 px-3 font-semibold ${isHighGlucose ? 'text-rose-600 font-bold' : 'text-slate-700'}">${r.Glucose}</td>
+            <td class="py-2.5 px-3 ${isHighBp ? 'text-amber-600 font-bold' : 'text-slate-700'}">${r.BloodPressure}</td>
+            <td class="py-2.5 px-3">${r.SkinThickness}</td>
+            <td class="py-2.5 px-3">${r.Insulin}</td>
+            <td class="py-2.5 px-3 ${isHighBmi ? 'text-amber-600 font-bold' : 'text-slate-700'}">${parseFloat(r.BMI).toFixed(1)}</td>
+            <td class="py-2.5 px-3">${parseFloat(r.DiabetesPedigreeFunction).toFixed(3)}</td>
+            <td class="py-2.5 px-3">${r.Age}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold inline-flex items-center gap-1 ${isDiabetic ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
+                <span class="w-1.5 h-1.5 rounded-full ${isDiabetic ? 'bg-rose-500' : 'bg-emerald-500'}"></span>
+                ${isDiabetic ? 'Diabetic (1)' : 'Healthy (0)'}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-center">
+              <button onclick="loadDatasetRecordIntoPredictor(${r._originalIndex})" title="Load this patient's clinical markers into the prediction form" class="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 font-bold border border-sky-200 transition text-[11px] inline-flex items-center gap-1 cursor-pointer shadow-2xs">
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Test in Predictor
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      updateDatasetPagination(startIdx + 1, endIdx, total);
+    }
+
+    function updateDatasetPagination(start, end, total) {
+      const infoEl = document.getElementById('datasetPaginationInfo');
+      const badgeEl = document.getElementById('datasetCurrentPageBadge');
+      const btnPrev = document.getElementById('btnDatasetPrev');
+      const btnNext = document.getElementById('btnDatasetNext');
+
+      const totalPages = Math.ceil(total / datasetRowsPerPage) || 1;
+
+      if (infoEl) {
+        if (total === 0) infoEl.innerText = 'Showing 0 records';
+        else infoEl.innerText = `Showing records ${start} - ${end} of ${total}`;
+      }
+      if (badgeEl) {
+        badgeEl.innerText = `Page ${datasetCurrentPage} / ${totalPages}`;
+      }
+      if (btnPrev) {
+        btnPrev.disabled = datasetCurrentPage <= 1;
+      }
+      if (btnNext) {
+        btnNext.disabled = datasetCurrentPage >= totalPages;
+      }
+    }
+
+    function changeDatasetPage(delta) {
+      const totalPages = Math.ceil(filteredDatasetRecords.length / datasetRowsPerPage) || 1;
+      const newPage = datasetCurrentPage + delta;
+      if (newPage >= 1 && newPage <= totalPages) {
+        datasetCurrentPage = newPage;
+        renderDatasetTable();
+      }
+    }
+
+    function resetDatasetFilters() {
+      const searchInput = document.getElementById('datasetSearchInput');
+      const filterOutcome = document.getElementById('datasetFilterOutcome');
+      const sortField = document.getElementById('datasetSortField');
+      const rowsPerPage = document.getElementById('datasetRowsPerPage');
+
+      if (searchInput) searchInput.value = '';
+      if (filterOutcome) filterOutcome.value = 'all';
+      if (sortField) sortField.value = 'id_asc';
+      if (rowsPerPage) rowsPerPage.value = '25';
+
+      onDatasetFilterChange();
+      showToast('Dataset filters reset to default view');
+    }
+
+    function loadDatasetRecordIntoPredictor(originalIndex) {
+      const patient = allDatasetRecords.find(r => r._originalIndex === originalIndex);
+      if (!patient) return;
+
+      setGender('Female');
+      setActivity('Moderate');
+      setSmoking('Never');
+
+      allInputFields.forEach(f => {
+        const val = patient[f];
+        if (val !== undefined) {
+          const rangeEl = document.getElementById(`range_${f}`);
+          const numEl = document.getElementById(`num_${f}`);
+          if (rangeEl) rangeEl.value = val;
+          if (numEl) numEl.value = val;
+        }
+      });
+
+      const glucoseVal = parseFloat(patient.Glucose) || 120;
+      const estimatedHba1c = ((glucoseVal + 46.7) / 28.7).toFixed(1);
+      const hba1cRange = document.getElementById('range_HbA1c');
+      const hba1cNum = document.getElementById('num_HbA1c');
+      if (hba1cRange) hba1cRange.value = estimatedHba1c;
+      if (hba1cNum) hba1cNum.value = estimatedHba1c;
+
+      const calcEl = document.getElementById('calculator');
+      if (calcEl) {
+        calcEl.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      runPrediction();
+
+      const outcomeLabel = patient.Outcome == 1 ? 'Positive/Diabetic' : 'Negative/Healthy';
+      showToast(`Loaded Patient #PT-${patient._id} (Ground Truth: ${outcomeLabel}) into Clinical Predictor!`);
+    }
+
+    function downloadDatasetCsv() {
+      if (allDatasetRecords && allDatasetRecords.length > 0) {
+        const headers = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome'];
+        const lines = [headers.join(',')];
+        allDatasetRecords.forEach(r => {
+          lines.push(headers.map(h => r[h] !== undefined ? r[h] : '').join(','));
+        });
+        const csvContent = lines.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'diabetes.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('Downloaded diabetes.csv successfully!');
+      } else {
+        window.location.href = 'diabetes.csv';
+      }
+    }
+
+    function showToast(message) {
+      let toast = document.getElementById('floatingAppToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'floatingAppToast';
+        toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-slate-900/90 text-white text-xs font-semibold shadow-xl backdrop-blur-md border border-slate-700 transition-all duration-300 transform translate-y-10 opacity-0 flex items-center gap-2.5';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i> <span>${message}</span>`;
+      toast.classList.remove('translate-y-10', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-10', 'opacity-0');
+      }, 3500);
+    }
+
     // Auto-initialize on page load
     window.addEventListener('DOMContentLoaded', () => {
       initTheme();
@@ -1842,6 +2341,7 @@
       loadBenchmarks();
       loadPreset('healthy');
       initAnimatedBackground();
+      initDatasetSection();
     });
 
     // Medical / Neural Network Particle Animation

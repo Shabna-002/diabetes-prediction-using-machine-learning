@@ -200,6 +200,10 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
             self.send_json_response(self.get_models_list())
         elif path == "/api/metrics":
             self.send_json_response(self.get_metrics_data())
+        elif path == "/api/dataset":
+            self.send_json_response(self.get_dataset_data())
+        elif path == "/diabetes.csv":
+            self.serve_dataset_file()
         elif path == "/login":
             self.send_response(302)
             self.send_header("Location", "/login.html")
@@ -273,6 +277,42 @@ class DiabetesRequestHandler(SimpleHTTPRequestHandler):
         if METRICS_DF.empty:
             return {"metrics": []}
         return {"metrics": METRICS_DF.to_dict(orient="records")}
+
+    def get_dataset_data(self):
+        """Loads and returns dataset records and summary stats."""
+        try:
+            csv_path = os.path.join(BASE_DIR, "diabetes.csv")
+            if not os.path.exists(csv_path):
+                return {"error": "Dataset file not found"}
+            df = pd.read_csv(csv_path)
+            stats = {
+                "total_samples": len(df),
+                "diabetic_count": int((df['Outcome'] == 1).sum()),
+                "non_diabetic_count": int((df['Outcome'] == 0).sum()),
+                "diabetic_percentage": round(float((df['Outcome'] == 1).mean() * 100), 1),
+                "columns": list(df.columns),
+                "features": [c for c in df.columns if c != 'Outcome']
+            }
+            records = df.to_dict(orient="records")
+            return {"stats": stats, "records": records}
+        except Exception as e:
+            return {"error": str(e)}
+
+    def serve_dataset_file(self):
+        """Streams diabetes.csv with appropriate download headers."""
+        csv_path = os.path.join(BASE_DIR, "diabetes.csv")
+        if os.path.exists(csv_path):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/csv")
+            self.send_header("Content-Disposition", 'attachment; filename="diabetes.csv"')
+            with open(csv_path, 'rb') as f:
+                content = f.read()
+            self.send_header("Content-Length", str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+        else:
+            self.send_response(404)
+            self.end_headers()
 
     def perform_prediction(self, payload):
         gender = str(payload.get('Gender', 'Female')).strip().capitalize()
