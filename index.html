@@ -32,7 +32,7 @@
       <a href="#" class="nav-tab" data-tab="history-tab">📋 History (<span id="history-count">0</span>)</a>
       <a href="#" class="nav-tab" data-tab="analytics-tab">📈 Health Analytics</a>
       <a href="#" class="nav-tab" data-tab="about-tab">ℹ️ About</a>
-      <button type="button" class="auth-nav-btn" id="nav-auth-btn" onclick="openAuthModal()">🔐 Login/Register</button>
+      <a href="login.html" class="auth-nav-btn" id="nav-auth-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">🔐 Login Page</a>
       <a href="#" class="nav-tab" data-tab="profile-tab" id="nav-profile-tab">👤 Profile</a>
     </div>
   </nav>
@@ -50,6 +50,7 @@
           </p>
           <div class="actions">
             <button class="btn primary" onclick="switchTab('predict-tab')">🧠 Launch Prediction Tool</button>
+            <a href="login.html" class="btn ghost" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">🔐 Sign In / Login</a>
             <button class="btn ghost" onclick="switchTab('dashboard-tab')">📊 View Dashboard</button>
             <button class="btn ghost" onclick="switchTab('analytics-tab')">📈 Health Analytics</button>
           </div>
