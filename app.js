@@ -1036,10 +1036,27 @@
   window.logoutUser = function() {
     localStorage.removeItem(STORAGE_KEY_ACTIVE_USER);
     localStorage.removeItem("diapredict_auth_active");
+    alert("You have logged out successfully.");
+    updateAuthNavbar();
+    window.location.href = "login.html";
   };
 
+  function updateAuthNavbar() {
+    const user = getActiveUser();
+    const loginBtn = document.getElementById("nav-login-btn");
+    const logoutBtn = document.getElementById("nav-logout-btn");
+
+    if (user && (user.email || user.name)) {
+      if (loginBtn) loginBtn.style.display = "none";
+      if (logoutBtn) logoutBtn.style.display = "inline-flex";
+    } else {
+      if (loginBtn) loginBtn.style.display = "inline-flex";
+      if (logoutBtn) logoutBtn.style.display = "none";
+    }
+  }
+
   function updateProfileView() {
-    // Navigation bar doctor/profile/login elements removed per user request
+    updateAuthNavbar();
   }
 
   function escapeHtml(str) {
