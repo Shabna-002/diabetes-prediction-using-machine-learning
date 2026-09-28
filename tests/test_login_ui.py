@@ -41,7 +41,9 @@ class TestLoginUI(unittest.TestCase):
             "Register Now",
             "Don't have an account yet?",
             "Return to Home",
-            "Register Account"
+            "Register Account",
+            "SSL 256-Bit Encrypted",
+            "HIPAA Compliant Protocol"
         ]
         for item in prohibited_elements:
             self.assertNotIn(item, html, f"Prohibited element found: {item}")
@@ -56,6 +58,8 @@ class TestLoginUI(unittest.TestCase):
             self.assertNotIn("Don't have an account yet?", content, f"Don't have an account yet found in {path}")
             self.assertNotIn("Return to Home", content, f"Return to Home found in {path}")
             self.assertNotIn("Register Account", content, f"Register Account found in {path}")
+            self.assertNotIn("SSL 256-Bit Encrypted", content, f"SSL found in {path}")
+            self.assertNotIn("HIPAA Compliant Protocol", content, f"HIPAA found in {path}")
 
     def test_login_post_flow(self):
         # Valid login
