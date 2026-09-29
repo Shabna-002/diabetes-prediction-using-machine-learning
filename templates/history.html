@@ -24,7 +24,7 @@
 {% for r in rows %}
 <tr>
   <td><strong>{{ r.created_at }}</strong><br><small style="color:#64748b;">{{ r.patient_name or ('PID-' ~ r.id) }}</small></td>
-  <td>{{ r.glucose }} mg/dL</td>
+  <td>{{ r.glucose }} mg/dL{% if r.hba1c is defined and r.hba1c %}<br><small style="color:#64748b;">HbA1c: {{ '%.1f'|format(r.hba1c) }}%</small>{% endif %}</td>
   <td>{{ '%.1f'|format(r.bmi) }}</td>
   <td><strong>{{ '%.0f'|format(r.probability*100) }}%</strong></td>
   <td>

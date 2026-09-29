@@ -57,13 +57,14 @@
           name: "Eleanor Vance",
           dateFormatted: "19-09-2026",
           timestamp: "19-09-2026 • 11:30 AM",
-          model: "Decision Tree (Best Model)",
-          rawVals: [6, 145, 78, 34, 140, 29.4, 0.655, 52],
+          model: "Logistic Regression (Best Model)",
+          rawVals: [6, 145, 78, 34, 140, 29.4, 0.655, 52, 0, 7.4, 0, 2],
           glucose: 145,
+          hba1c: 7.4,
           bmi: 29.4,
           bp: 78,
           age: 52,
-          prob: 72,
+          prob: 88,
           pred: 1,
           result: "High"
         },
@@ -73,8 +74,9 @@
           dateFormatted: "12-09-2026",
           timestamp: "12-09-2026 • 02:15 PM",
           model: "Random Forest",
-          rawVals: [3, 118, 74, 28, 110, 25.2, 0.420, 42],
+          rawVals: [3, 118, 74, 28, 110, 25.2, 0.420, 42, 1, 5.8, 1, 1],
           glucose: 118,
+          hba1c: 5.8,
           bmi: 25.2,
           bp: 74,
           age: 42,
@@ -88,12 +90,13 @@
           dateFormatted: "04-09-2026",
           timestamp: "04-09-2026 • 09:45 AM",
           model: "Decision Tree",
-          rawVals: [1, 92, 68, 22, 75, 22.8, 0.235, 28],
+          rawVals: [1, 92, 68, 22, 75, 22.8, 0.235, 28, 0, 5.2, 2, 0],
           glucose: 92,
+          hba1c: 5.2,
           bmi: 22.8,
           bp: 68,
           age: 28,
-          prob: 15,
+          prob: 12,
           pred: 0,
           result: "Low"
         }
@@ -153,7 +156,11 @@
       insulin: 80,
       bmi: 22.4,
       pedigree: 0.235,
-      age: 27
+      age: 27,
+      gender: 0,
+      hba1c: 5.2,
+      physicalActivity: 2,
+      smokingStatus: 0
     },
     risk: {
       name: "Eleanor Vance (High Risk Profile)",
@@ -164,7 +171,11 @@
       insulin: 140,
       bmi: 29.4,
       pedigree: 0.655,
-      age: 52
+      age: 52,
+      gender: 0,
+      hba1c: 7.4,
+      physicalActivity: 0,
+      smokingStatus: 2
     }
   };
 
@@ -180,12 +191,16 @@
     document.getElementById("bmi").value = s.bmi;
     document.getElementById("diabetes_pedigree").value = s.pedigree;
     document.getElementById("age").value = s.age;
+    if (document.getElementById("gender")) document.getElementById("gender").value = s.gender;
+    if (document.getElementById("hba1c")) document.getElementById("hba1c").value = s.hba1c;
+    if (document.getElementById("physical_activity")) document.getElementById("physical_activity").value = s.physicalActivity;
+    if (document.getElementById("smoking_status")) document.getElementById("smoking_status").value = s.smokingStatus;
     switchTab("predict-tab");
   };
 
   // --- ML Inference Pipeline ---
   function preprocess(inputVals) {
-    const zeroIndices = [1, 2, 3, 4, 5];
+    const zeroIndices = [1, 2, 3, 4, 5, 9];
     const imputed = inputVals.map((v, i) => {
       if (zeroIndices.includes(i) && (v === 0 || isNaN(v))) {
         return models.imputer_stats[i];
@@ -215,7 +230,7 @@
   function predictLogisticRegression(scaledFeats) {
     const lr = models.logistic_regression;
     let z = lr.intercept;
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < scaledFeats.length; i++) {
       z += scaledFeats[i] * lr.coef[i];
     }
     const prob = 1.0 / (1.0 + Math.exp(-z));
@@ -240,7 +255,7 @@
     for (let i = 0; i < knn.X_train.length; i++) {
       const trainRow = knn.X_train[i];
       let dist = 0;
-      for (let j = 0; j < 8; j++) {
+      for (let j = 0; j < scaledFeats.length; j++) {
         const diff = scaledFeats[j] - trainRow[j];
         dist += diff * diff;
       }
@@ -262,7 +277,7 @@
     for (let i = 0; i < svm.support_vectors.length; i++) {
       const sv = svm.support_vectors[i];
       let distSq = 0;
-      for (let j = 0; j < 8; j++) {
+      for (let j = 0; j < scaledFeats.length; j++) {
         const diff = scaledFeats[j] - sv[j];
         distSq += diff * diff;
       }
@@ -279,7 +294,7 @@
     let logLikelihoods = [];
     for (let c = 0; c < 2; c++) {
       let ll = Math.log(nb.class_prior[c]);
-      for (let j = 0; j < 8; j++) {
+      for (let j = 0; j < scaledFeats.length; j++) {
         const mean = nb.theta[c][j];
         const variance = nb.var[c][j];
         const diff = scaledFeats[j] - mean;
@@ -337,7 +352,11 @@
         parseFloat(document.getElementById("insulin").value) || 0,
         parseFloat(document.getElementById("bmi").value) || 0,
         parseFloat(document.getElementById("diabetes_pedigree").value) || 0,
-        parseFloat(document.getElementById("age").value) || 0
+        parseFloat(document.getElementById("age").value) || 0,
+        parseFloat(document.getElementById("gender") ? document.getElementById("gender").value : 0) || 0,
+        parseFloat(document.getElementById("hba1c") ? document.getElementById("hba1c").value : 5.7) || 5.7,
+        parseFloat(document.getElementById("physical_activity") ? document.getElementById("physical_activity").value : 1) || 0,
+        parseFloat(document.getElementById("smoking_status") ? document.getElementById("smoking_status").value : 0) || 0
       ];
 
       // 1. Show Animated Loading State & Activate AI Holographic Scanner
@@ -369,13 +388,13 @@
           modelLabel = "Random Forest";
         } else if (modelChoice === "logistic_regression") {
           res = predictLogisticRegression(scaled);
-          modelLabel = "Logistic Regression";
+          modelLabel = "Logistic Regression (Best Model)";
         } else if (modelChoice === "decision_tree") {
           res = predictDecisionTree(scaled);
           modelLabel = "Decision Tree";
         } else {
-          res = predictNaiveBayes(scaled);
-          modelLabel = "Naive Bayes (Best Model)";
+          res = predictLogisticRegression(scaled);
+          modelLabel = "Logistic Regression (Best Model)";
         }
 
         const now = new Date();
@@ -399,6 +418,10 @@
           bp: rawVals[2],
           bmi: rawVals[5],
           age: rawVals[7],
+          gender: rawVals[8],
+          hba1c: rawVals[9],
+          physicalActivity: rawVals[10],
+          smokingStatus: rawVals[11],
           prob: probPct,
           pred: res.pred,
           result: resultTier,
@@ -520,16 +543,56 @@
 
     const ageElem = document.getElementById("ind-age-val");
     const ageStatus = document.getElementById("ind-age-status");
-    ageElem.innerHTML = `${age} <span class="ind-unit">Yrs</span>`;
-    if (age >= 50) {
-      ageStatus.className = "ind-status danger";
-      ageStatus.textContent = "Elevated Age Factor";
-    } else if (age >= 35) {
-      ageStatus.className = "ind-status warning";
-      ageStatus.textContent = "Moderate Age Risk";
-    } else {
-      ageStatus.className = "ind-status normal";
-      ageStatus.textContent = "Standard Tier";
+    if (ageElem) {
+      ageElem.innerHTML = `${age} <span class="ind-unit">Yrs</span>`;
+      if (age >= 50) {
+        ageStatus.className = "ind-status danger";
+        ageStatus.textContent = "Elevated Age Factor";
+      } else if (age >= 35) {
+        ageStatus.className = "ind-status warning";
+        ageStatus.textContent = "Moderate Age Risk";
+      } else {
+        ageStatus.className = "ind-status normal";
+        ageStatus.textContent = "Standard Tier";
+      }
+    }
+
+    // HbA1c Indicator
+    const hba1c = rawVals[9] !== undefined ? rawVals[9] : (data.hba1c || 5.7);
+    const hba1cElem = document.getElementById("ind-hba1c-val");
+    const hba1cStatus = document.getElementById("ind-hba1c-status");
+    if (hba1cElem) {
+      hba1cElem.innerHTML = `${Number(hba1c).toFixed(1)} <span class="ind-unit">%</span>`;
+      if (hba1c >= 6.5) {
+        hba1cStatus.className = "ind-status danger";
+        hba1cStatus.textContent = "Diabetic (≥6.5%)";
+      } else if (hba1c >= 5.7) {
+        hba1cStatus.className = "ind-status warning";
+        hba1cStatus.textContent = "Pre-diabetic (5.7-6.4%)";
+      } else {
+        hba1cStatus.className = "ind-status normal";
+        hba1cStatus.textContent = "Normal (<5.7%)";
+      }
+    }
+
+    // Demographics & Lifestyle Factor
+    const gender = rawVals[8] !== undefined ? rawVals[8] : (data.gender || 0);
+    const act = rawVals[10] !== undefined ? rawVals[10] : (data.physicalActivity || 1);
+    const smoke = rawVals[11] !== undefined ? rawVals[11] : (data.smokingStatus || 0);
+    const lifeElem = document.getElementById("ind-lifestyle-val");
+    const lifeStatus = document.getElementById("ind-lifestyle-status");
+    if (lifeElem) {
+      const gStr = gender == 1 ? "Male" : "Female";
+      const actStr = act == 2 ? "Active" : (act == 1 ? "Moderate" : "Sedentary");
+      lifeElem.textContent = `${gStr} • ${actStr}`;
+
+      const smokeStr = smoke == 2 ? "Current Smoker" : (smoke == 1 ? "Former Smoker" : "Never Smoked");
+      lifeStatus.textContent = smokeStr;
+      if (smoke == 2 || act == 0) {
+        lifeStatus.className = "ind-status warning";
+      } else {
+        lifeStatus.className = "ind-status normal";
+      }
     }
 
     // Feature Contribution Breakdown
@@ -684,20 +747,29 @@
 
     const modal = document.getElementById("record-view-modal");
     document.getElementById("view-modal-title").textContent = record.name || record.patientName || "Patient Assessment";
-    document.getElementById("view-modal-meta").textContent = `ID: ${record.id || 'PID-XXXX'} • Recorded on ${record.timestamp || record.dateFormatted}`;
-
-    const raw = record.rawVals || [0, record.glucose, record.bp || 70, 20, 80, record.bmi, 0.45, record.age || 35];
+    const raw = record.rawVals || [0, record.glucose, record.bp || 70, 20, 80, record.bmi, 0.45, record.age || 35, 0, record.hba1c || 5.7, 1, 0];
     const detailsContainer = document.getElementById("view-modal-details");
-    
+
+    const hba1cVal = record.hba1c !== undefined ? record.hba1c : (raw[9] !== undefined ? raw[9] : 5.7);
+    const genderVal = (raw[8] == 1 || record.gender == 1) ? 'Male' : 'Female';
+    const actRaw = raw[10] !== undefined ? raw[10] : (record.physicalActivity !== undefined ? record.physicalActivity : 1);
+    const actVal = actRaw == 2 ? 'Active' : (actRaw == 0 ? 'Sedentary' : 'Moderate');
+    const smokeRaw = raw[11] !== undefined ? raw[11] : (record.smokingStatus !== undefined ? record.smokingStatus : 0);
+    const smokeVal = smokeRaw == 2 ? 'Current Smoker' : (smokeRaw == 1 ? 'Former Smoker' : 'Never Smoked');
+
     detailsContainer.innerHTML = `
       <div class="detail-item"><span>Plasma Glucose</span><strong>${record.glucose} mg/dL</strong></div>
+      <div class="detail-item"><span>Glycated HbA1c</span><strong>${Number(hba1cVal).toFixed(1)}%</strong></div>
       <div class="detail-item"><span>Body Mass Index</span><strong>${Number(record.bmi).toFixed(1)} kg/m²</strong></div>
       <div class="detail-item"><span>Blood Pressure</span><strong>${record.bp || raw[2] || 72} mm Hg</strong></div>
+      <div class="detail-item"><span>Biological Gender</span><strong>${genderVal}</strong></div>
       <div class="detail-item"><span>Patient Age</span><strong>${record.age || raw[7] || 35} Years</strong></div>
+      <div class="detail-item"><span>Physical Activity</span><strong>${actVal}</strong></div>
+      <div class="detail-item"><span>Smoking Status</span><strong>${smokeVal}</strong></div>
       <div class="detail-item"><span>Serum Insulin</span><strong>${raw[4] || 80} μU/mL</strong></div>
       <div class="detail-item"><span>Skin Thickness</span><strong>${raw[3] || 25} mm</strong></div>
       <div class="detail-item"><span>Calculated Risk</span><strong style="color:${record.prob>=65?'#f87171':(record.prob>=35?'#fbbf24':'#34d399')}">${record.prob}% (${record.result})</strong></div>
-      <div class="detail-item"><span>Evaluated Model</span><strong style="color:#38bdf8;">${record.model || 'Decision Tree'}</strong></div>
+      <div class="detail-item"><span>Evaluated Model</span><strong style="color:#38bdf8;">${record.model || 'Logistic Regression'}</strong></div>
     `;
 
     const printBtn = document.getElementById("view-modal-print-btn");

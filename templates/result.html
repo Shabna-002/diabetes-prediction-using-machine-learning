@@ -20,9 +20,13 @@
     <div style="font-weight: 600; color: #94a3b8; margin-bottom: 0.4rem;">Evaluated Clinical Features:</div>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem; color: #cbd5e1;">
       <div>Glucose: <b>{{ inputs.Glucose }} mg/dL</b></div>
+      <div>HbA1c: <b>{{ inputs.HbA1c }}%</b></div>
       <div>BMI: <b>{{ inputs.BMI }}</b></div>
       <div>Blood Pressure: <b>{{ inputs.BloodPressure }}</b></div>
       <div>Age: <b>{{ inputs.Age }} yrs</b></div>
+      <div>Gender: <b>{{ 'Male' if inputs.Gender == 1 else 'Female' }}</b></div>
+      <div>Activity: <b>{{ 'Sedentary' if inputs.PhysicalActivity == 0 else ('Moderate' if inputs.PhysicalActivity == 1 else 'Active') }}</b></div>
+      <div>Smoking: <b>{{ 'Never' if inputs.SmokingStatus == 0 else ('Former' if inputs.SmokingStatus == 1 else 'Current') }}</b></div>
       <div>Insulin: <b>{{ inputs.Insulin }}</b></div>
       <div>Pregnancies: <b>{{ inputs.Pregnancies }}</b></div>
       <div>Skin Thickness: <b>{{ inputs.SkinThickness }}</b></div>

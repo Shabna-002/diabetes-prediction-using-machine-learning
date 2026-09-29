@@ -42,7 +42,11 @@ class DiabetesMLFullTestSuite(unittest.TestCase):
             "Insulin": 0.0,        # Biologically missing
             "BMI": 28.4,
             "DiabetesPedigreeFunction": 0.35,
-            "Age": 32.0
+            "Age": 32.0,
+            "Gender": 0.0,
+            "HbA1c": 6.2,
+            "PhysicalActivity": 1.0,
+            "SmokingStatus": 0.0
         }
         
         # In app inference, zeros in ZERO_AS_MISSING are converted to np.nan
@@ -112,7 +116,11 @@ class DiabetesMLFullTestSuite(unittest.TestCase):
                 "insulin": "0",         # Zero handled
                 "bmi": "31.2",
                 "diabetes_pedigree": "0.45",
-                "age": "45"
+                "age": "45",
+                "gender": "0",
+                "hba1c": "6.8",
+                "physical_activity": "1",
+                "smoking_status": "0"
             }
             response = self.client.post("/predict", data=payload, follow_redirects=True)
             self.assertEqual(response.status_code, 200)

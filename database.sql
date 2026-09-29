@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS predictions (
     bmi FLOAT NOT NULL,
     diabetes_pedigree FLOAT NOT NULL,
     age INT NOT NULL,
+    gender INT NOT NULL DEFAULT 0,
+    hba1c FLOAT NOT NULL DEFAULT 5.7,
+    physical_activity INT NOT NULL DEFAULT 1,
+    smoking_status INT NOT NULL DEFAULT 0,
     prediction TINYINT NOT NULL,
     probability FLOAT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

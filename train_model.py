@@ -67,12 +67,13 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 
 FEATURES = [
     "Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
-    "Insulin", "BMI", "DiabetesPedigreeFunction", "Age"
+    "Insulin", "BMI", "DiabetesPedigreeFunction", "Age",
+    "Gender", "HbA1c", "PhysicalActivity", "SmokingStatus"
 ]
 TARGET = "Outcome"
 
 # Features where 0 is physiologically invalid and represents missing data
-ZERO_AS_MISSING = ["Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI"]
+ZERO_AS_MISSING = ["Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI", "HbA1c"]
 
 
 def load_and_clean_data(filepath=DATA_PATH):

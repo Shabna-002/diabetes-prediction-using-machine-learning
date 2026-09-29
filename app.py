@@ -25,9 +25,10 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "change-this-secret-key")
 
 FEATURES = [
     "Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
-    "Insulin", "BMI", "DiabetesPedigreeFunction", "Age"
+    "Insulin", "BMI", "DiabetesPedigreeFunction", "Age",
+    "Gender", "HbA1c", "PhysicalActivity", "SmokingStatus"
 ]
-ZERO_AS_MISSING = ["Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI"]
+ZERO_AS_MISSING = ["Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI", "HbA1c"]
 
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST", "127.0.0.1"),
@@ -119,11 +120,21 @@ def init_sqlite_db():
             bmi REAL,
             diabetes_pedigree REAL,
             age REAL,
+            gender REAL DEFAULT 0,
+            hba1c REAL DEFAULT 5.7,
+            physical_activity REAL DEFAULT 1,
+            smoking_status REAL DEFAULT 0,
             prediction INTEGER,
             probability REAL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    # Migration: Add new columns if table already existed without them
+    for col, default_val in [("gender", 0), ("hba1c", 5.7), ("physical_activity", 1), ("smoking_status", 0)]:
+        try:
+            cur.execute(f"ALTER TABLE predictions ADD COLUMN {col} REAL DEFAULT {default_val}")
+        except Exception:
+            pass
     # Seed default accounts if users table is empty
     cur.execute("SELECT COUNT(*) FROM users")
     if cur.fetchone()[0] == 0:
@@ -225,7 +236,7 @@ def predict():
         patient_name = request.form.get("patient_name", "").strip() or None
         
         values = {
-            "Pregnancies": float(request.form["pregnancies"]),
+            "Pregnancies": float(request.form.get("pregnancies", 0)),
             "Glucose": float(request.form["glucose"]),
             "BloodPressure": float(request.form["blood_pressure"]),
             "SkinThickness": float(request.form["skin_thickness"]),
@@ -233,6 +244,10 @@ def predict():
             "BMI": float(request.form["bmi"]),
             "DiabetesPedigreeFunction": float(request.form["diabetes_pedigree"]),
             "Age": float(request.form["age"]),
+            "Gender": float(request.form.get("gender", 0)),
+            "HbA1c": float(request.form.get("hba1c", 5.7)),
+            "PhysicalActivity": float(request.form.get("physical_activity", 1)),
+            "SmokingStatus": float(request.form.get("smoking_status", 0)),
         }
 
         clf, model_label = get_model(model_key)
@@ -260,32 +275,37 @@ def predict():
         q_mysql = """
             INSERT INTO predictions
             (patient_name, model_used, pregnancies, glucose, blood_pressure, skin_thickness,
-             insulin, bmi, diabetes_pedigree, age, prediction, probability)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+             insulin, bmi, diabetes_pedigree, age, gender, hba1c, physical_activity, smoking_status,
+             prediction, probability)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """
         q_sqlite = """
             INSERT INTO predictions
             (patient_name, model_used, pregnancies, glucose, blood_pressure, skin_thickness,
-             insulin, bmi, diabetes_pedigree, age, prediction, probability)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+             insulin, bmi, diabetes_pedigree, age, gender, hba1c, physical_activity, smoking_status,
+             prediction, probability)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """
         params = (
             patient_name, model_label, values["Pregnancies"], values["Glucose"],
             values["BloodPressure"], values["SkinThickness"], values["Insulin"],
             values["BMI"], values["DiabetesPedigreeFunction"], values["Age"],
+            values["Gender"], values["HbA1c"], values["PhysicalActivity"], values["SmokingStatus"],
             prediction, probability
         )
         
         try:
             _, db_type = db_execute(q_mysql, q_sqlite, params)
         except Exception:
-            # Table in MySQL might not have model_used yet, try fallback without model_used
+            # Fallback in case of schema discrepancy
             try:
                 db_execute(
                     """INSERT INTO predictions (patient_name, pregnancies, glucose, blood_pressure, skin_thickness,
                                                 insulin, bmi, diabetes_pedigree, age, prediction, probability)
                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                    q_sqlite,
+                    """INSERT INTO predictions (patient_name, pregnancies, glucose, blood_pressure, skin_thickness,
+                                                insulin, bmi, diabetes_pedigree, age, prediction, probability)
+                       VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
                     (patient_name, values["Pregnancies"], values["Glucose"], values["BloodPressure"],
                      values["SkinThickness"], values["Insulin"], values["BMI"],
                      values["DiabetesPedigreeFunction"], values["Age"], prediction, probability)
