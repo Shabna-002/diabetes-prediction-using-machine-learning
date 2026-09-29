@@ -283,21 +283,56 @@
       <!-- ======================================================== -->
       <!-- RIGHT PANEL: CENTERED WHITE MODERN LOGIN CARD -->
       <!-- ======================================================== -->
-      <div class="lg:col-span-5 bg-white p-8 sm:p-10 lg:p-12 flex flex-col justify-center relative">
+      <div class="lg:col-span-5 bg-white p-8 sm:p-10 lg:p-12 flex flex-col justify-center relative overflow-hidden">
 
-        <div class="max-w-md w-full mx-auto">
+        <!-- Subtle Ambient Background Glow -->
+        <div class="absolute -top-16 -right-16 w-44 h-44 bg-gradient-to-br from-blue-100 to-indigo-100/40 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-44 h-44 bg-gradient-to-tr from-teal-100/50 to-cyan-100/30 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="max-w-md w-full mx-auto relative z-10">
           
-          <!-- Card Header -->
-          <div class="text-left mb-8">
-            <div class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full mb-3 border border-blue-100">
-              <i class="fa-solid fa-lock text-[10px]"></i> Secure Clinical Login
+          <!-- Attractive Welcome Back Hero Card -->
+          <div class="text-left mb-8 p-6 rounded-2xl bg-gradient-to-br from-slate-50/90 via-blue-50/40 to-indigo-50/30 border border-blue-100/80 shadow-sm relative overflow-hidden group transition-all duration-300 hover:shadow-md hover:border-blue-200">
+            <!-- Subtle Decorative Radial Glow inside Header -->
+            <div class="absolute -right-8 -top-8 w-28 h-28 bg-gradient-to-br from-blue-400/20 to-teal-400/20 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500 pointer-events-none"></div>
+
+            <!-- Top Status Row -->
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-blue-500/25 ring-4 ring-white transition-all duration-300 group-hover:scale-105">
+                <i class="fa-solid fa-user-doctor text-xl"></i>
+              </div>
+              <div class="inline-flex items-center gap-2 text-[11px] font-semibold text-emerald-700 bg-white/95 px-3 py-1.5 rounded-full border border-emerald-200/80 shadow-xs backdrop-blur-sm">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span class="tracking-wide">Clinician Workspace</span>
+              </div>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Welcome Back
+
+            <!-- Category Badge -->
+            <div class="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-700 bg-blue-100/80 px-2.5 py-1 rounded-full mb-2.5 border border-blue-200/60 relative z-10">
+              <i class="fa-solid fa-shield-halved text-blue-600 text-[10px]"></i>
+              <span>AI Clinical Intelligence</span>
+            </div>
+
+            <!-- Prominent Heading -->
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 relative z-10">
+              Welcome Back <span class="text-3xl animate-bounce">👋</span>
             </h2>
-            <p class="text-slate-500 text-sm mt-1">
+
+            <!-- Subtitle -->
+            <p class="text-slate-600 text-sm mt-2 leading-relaxed font-normal relative z-10">
               Login to your account to access patient screening tools.
             </p>
+
+            <!-- Decorative Multi-Stage Divider Accent -->
+            <div class="flex items-center gap-1.5 mt-4 relative z-10">
+              <div class="h-1.5 w-14 bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-400 rounded-full"></div>
+              <div class="h-1.5 w-3 bg-teal-400 rounded-full"></div>
+              <div class="h-1.5 w-1.5 bg-blue-200 rounded-full"></div>
+            </div>
+
           </div>
 
           <!-- Flash Notifications Block (Backend Errors/Success) -->
