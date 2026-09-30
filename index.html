@@ -20,7 +20,7 @@
     <div class="floating-icon f-icon-6">✚</div>
   </div>
 
-  <!-- NAVIGATION BAR (8 Required Items) -->
+  <!-- NAVIGATION BAR -->
   <nav class="navbar">
     <a class="brand" href="#" onclick="switchTab('home-tab'); return false;">
       <span>✚</span> Dia<span>Predict</span>
@@ -32,8 +32,8 @@
       <a href="#" class="nav-tab" data-tab="history-tab">📋 History (<span id="history-count">0</span>)</a>
       <a href="#" class="nav-tab" data-tab="analytics-tab">📈 Health Analytics</a>
       <a href="#" class="nav-tab" data-tab="about-tab">ℹ️ About</a>
-      <a href="login.html" id="nav-login-btn" class="nav-tab" style="color: #38bdf8; font-weight: 600;">🔑 Login</a>
-      <button type="button" id="nav-logout-btn" onclick="logoutUser()" class="btn ghost" style="display: none; padding: 6px 14px; font-size: 12px; border-radius: 9999px; border-color: rgba(244, 63, 94, 0.45); color: #fb7185; cursor: pointer; transition: all 0.2s;" title="Sign out of your session">🚪 Logout</button>
+      <a href="login.html" id="nav-login-btn" class="btn ghost" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; font-size: 12px; border-radius: 9999px; border-color: rgba(56, 189, 248, 0.45); color: #38bdf8; text-decoration: none; cursor: pointer; transition: all 0.2s;" title="Sign in to your account">🔐 Login</a>
+      <button type="button" id="nav-logout-btn" onclick="logoutUser()" class="btn ghost" style="display: none; align-items: center; gap: 4px; padding: 6px 14px; font-size: 12px; border-radius: 9999px; border-color: rgba(244, 63, 94, 0.45); color: #fb7185; cursor: pointer; transition: all 0.2s;" title="Sign out of your session">🚪 Logout</button>
     </div>
   </nav>
 
@@ -128,17 +128,18 @@
           <div>
             <label for="model_choice" style="color:#a9bad0; font-size:13px; font-weight:700;">ML Classifier</label>
             <select id="model_choice" class="form-control" style="color:#38bdf8; font-weight:600;">
-              <option value="decision_tree" selected>Decision Tree (Best: 76.62%)</option>
-              <option value="gradient_boosting">Gradient Boosting (75.97%)</option>
-              <option value="knn">K-Nearest Neighbours (KNN: 75.32%)</option>
-              <option value="svm">Support Vector Machine (SVM: 74.03%)</option>
-              <option value="random_forest">Random Forest (100 Trees: 74.03%)</option>
-              <option value="logistic_regression">Logistic Regression (70.78%)</option>
+              <option value="logistic_regression" selected>★ Logistic Regression (CV F2: 72.46% • Best Overall)</option>
+              <option value="random_forest">Random Forest (79.22%)</option>
+              <option value="gradient_boosting">Gradient Boosting (78.57%)</option>
+              <option value="svm">Support Vector Machine (SVM: 78.57%)</option>
+              <option value="decision_tree">Decision Tree (76.62%)</option>
+              <option value="naive_bayes">Naive Bayes (74.03%)</option>
+              <option value="knn">K-Nearest Neighbours (KNN: 69.48%)</option>
             </select>
           </div>
         </div>
 
-        <!-- 8 Required Clinical Features -->
+        <!-- 12 Required Clinical Features -->
         <div class="form-grid">
           <div class="form-group">
             <label for="pregnancies"><span>1. Number of Pregnancies</span> <span class="feature-tag">Count</span></label>
@@ -171,6 +172,33 @@
           <div class="form-group">
             <label for="age"><span>8. Age</span> <span class="feature-tag">Years</span></label>
             <input type="number" step="1" min="1" max="120" id="age" class="form-control" required placeholder="e.g. 38">
+          </div>
+          <div class="form-group">
+            <label for="gender"><span>9. Biological Gender</span> <span class="feature-tag">Demographic</span></label>
+            <select id="gender" class="form-control" required>
+              <option value="0" selected>Female</option>
+              <option value="1">Male</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="hba1c"><span>10. Glycated HbA1c</span> <span class="feature-tag">%</span></label>
+            <input type="number" step="0.1" min="3.0" max="18.0" id="hba1c" class="form-control" required placeholder="e.g. 5.7 (Normal: <5.7%)">
+          </div>
+          <div class="form-group">
+            <label for="physical_activity"><span>11. Physical Activity Level</span> <span class="feature-tag">Lifestyle</span></label>
+            <select id="physical_activity" class="form-control" required>
+              <option value="0">Sedentary (Rarely / No regular exercise)</option>
+              <option value="1" selected>Moderate (1-3 sessions per week)</option>
+              <option value="2">Active (Daily / Rigorous exercise)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="smoking_status"><span>12. Smoking Status</span> <span class="feature-tag">Risk Factor</span></label>
+            <select id="smoking_status" class="form-control" required>
+              <option value="0" selected>Never Smoked</option>
+              <option value="1">Former Smoker</option>
+              <option value="2">Current Smoker</option>
+            </select>
           </div>
         </div>
 
@@ -229,7 +257,7 @@
             </div>
           </div>
 
-          <!-- 4 Clinical Biomarker Indicators Grid -->
+          <!-- 6 Clinical Biomarker Indicators Grid -->
           <div class="indicator-grid">
             <!-- Glucose Indicator -->
             <div class="indicator-card">
@@ -239,6 +267,16 @@
               </div>
               <div class="ind-val" id="ind-glucose-val">120 <span class="ind-unit">mg/dL</span></div>
               <div class="ind-status normal" id="ind-glucose-status">Normal Fasting</div>
+            </div>
+
+            <!-- HbA1c Indicator -->
+            <div class="indicator-card">
+              <div class="ind-title">
+                <span>Glycated HbA1c</span>
+                <span>🧪</span>
+              </div>
+              <div class="ind-val" id="ind-hba1c-val">5.7 <span class="ind-unit">%</span></div>
+              <div class="ind-status normal" id="ind-hba1c-status">Normal (<5.7%)</div>
             </div>
 
             <!-- BMI Indicator -->
@@ -259,6 +297,16 @@
               </div>
               <div class="ind-val" id="ind-bp-val">72 <span class="ind-unit">mm Hg</span></div>
               <div class="ind-status normal" id="ind-bp-status">Normal Diastolic</div>
+            </div>
+
+            <!-- Demographics & Lifestyle Factor -->
+            <div class="indicator-card">
+              <div class="ind-title">
+                <span>Demographics & Lifestyle</span>
+                <span>🏃</span>
+              </div>
+              <div class="ind-val" id="ind-lifestyle-val" style="font-size:18px; margin-top:4px;">Female • Active</div>
+              <div class="ind-status normal" id="ind-lifestyle-status">Never Smoked</div>
             </div>
 
             <!-- Age Indicator -->
@@ -518,52 +566,60 @@
           </thead>
           <tbody>
             <tr style="background: rgba(56,189,248,0.08);">
-              <td><strong>Decision Tree Classifier (max_depth=5)</strong></td>
-              <td><b style="color: #38bdf8;">76.62%</b></td>
-              <td>65.00%</td>
-              <td>72.22%</td>
-              <td><strong>0.6842</strong></td>
-              <td><span class="badge safe">★ Best Model</span></td>
-            </tr>
-            <tr>
-              <td>Gradient Boosting (100 Estimators)</td>
-              <td><b style="color: #10b981;">75.97%</b></td>
-              <td>68.89%</td>
-              <td>57.41%</td>
-              <td>0.6263</td>
-              <td><span class="badge" style="background:#132d4b; color:#34d399;">Boosting</span></td>
-            </tr>
-            <tr>
-              <td>K-Nearest Neighbours (KNN, k=5)</td>
-              <td><b style="color: #a78bfa;">75.32%</b></td>
-              <td>66.00%</td>
-              <td>61.11%</td>
-              <td>0.6346</td>
-              <td><span class="badge" style="background:#132d4b; color:#c4b5fd;">Instance ML</span></td>
-            </tr>
-            <tr>
-              <td>Support Vector Machine (SVM RBF)</td>
-              <td>74.03%</td>
-              <td>65.22%</td>
-              <td>55.56%</td>
-              <td>0.6000</td>
-              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Kernel ML</span></td>
+              <td><strong>Logistic Regression (L2 Regularized)</strong></td>
+              <td><b style="color: #38bdf8;">80.52%</b></td>
+              <td>74.00%</td>
+              <td>68.52%</td>
+              <td><strong>0.7115</strong></td>
+              <td><span class="badge safe">★ Best Model (CV F2: 72.46%)</span></td>
             </tr>
             <tr>
               <td>Random Forest Classifier (100 Trees)</td>
-              <td>74.03%</td>
-              <td>66.67%</td>
-              <td>51.85%</td>
-              <td>0.5833</td>
-              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Bagging</span></td>
+              <td><b style="color: #10b981;">79.22%</b></td>
+              <td>72.55%</td>
+              <td>68.52%</td>
+              <td>0.7048</td>
+              <td><span class="badge" style="background:#132d4b; color:#34d399;">Bagging</span></td>
             </tr>
             <tr>
-              <td>Logistic Regression</td>
-              <td>70.78%</td>
-              <td>60.00%</td>
-              <td>50.00%</td>
-              <td>0.5455</td>
-              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Linear</span></td>
+              <td>Gradient Boosting (100 Estimators)</td>
+              <td><b style="color: #a78bfa;">78.57%</b></td>
+              <td>71.70%</td>
+              <td>70.37%</td>
+              <td>0.7103</td>
+              <td><span class="badge" style="background:#132d4b; color:#c4b5fd;">Boosting</span></td>
+            </tr>
+            <tr>
+              <td>Support Vector Machine (SVM RBF)</td>
+              <td>78.57%</td>
+              <td>72.00%</td>
+              <td>66.67%</td>
+              <td>0.6923</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Kernel ML</span></td>
+            </tr>
+            <tr>
+              <td>Decision Tree Classifier (max_depth=5)</td>
+              <td>76.62%</td>
+              <td>69.57%</td>
+              <td>59.26%</td>
+              <td>0.6400</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Tree</span></td>
+            </tr>
+            <tr>
+              <td>Naive Bayes (GaussianNB)</td>
+              <td>74.03%</td>
+              <td>63.16%</td>
+              <td>66.67%</td>
+              <td>0.6486</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Probabilistic</span></td>
+            </tr>
+            <tr>
+              <td>K-Nearest Neighbours (KNN, k=5)</td>
+              <td>69.48%</td>
+              <td>57.41%</td>
+              <td>57.41%</td>
+              <td>0.5741</td>
+              <td><span class="badge" style="background:#132d4b; color:#7dd3fc;">Instance ML</span></td>
             </tr>
           </tbody>
         </table>
